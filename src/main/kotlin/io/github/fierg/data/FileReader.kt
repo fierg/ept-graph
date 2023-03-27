@@ -4,6 +4,7 @@ import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.LabeledEdge
 import io.github.fierg.model.SelfAwareEdge
+import io.github.fierg.periodic.Periodic
 import org.jgrapht.graph.DefaultDirectedGraph
 import org.jgrapht.graph.builder.GraphBuilder
 import java.io.File
@@ -45,8 +46,17 @@ class FileReader {
         val edges = mutableListOf<SelfAwareEdge>()
         val steps = mutableMapOf<SelfAwareEdge, MutableList<Boolean>>()
         val labels = readF2FFile(id,people, steps, edges)
-
-        return EPTGraph(nodes = (0..people).toList(), edges, steps.map { it.key to it.value.toBooleanArray() }.toMap(), labels)
+        val nrOfSteps = steps[edges.last()]!!.size
+        val shortenedSteps = steps.map {
+            val array = it.value.toBooleanArray()
+            val period = Periodic().findShortestPeriod(array)
+            if (period == nrOfSteps) {
+                it.key to array
+            } else {
+                it.key to array.copyOfRange(0, period)
+            }
+        }.toMap()
+        return EPTGraph(nodes = (0..people).toList(), edges, shortenedSteps, labels)
     }
 
     private fun readF2FFile(id: Int, people: Int, steps: MutableMap<SelfAwareEdge, MutableList<Boolean>>, edges: MutableList<SelfAwareEdge>): List<String> {

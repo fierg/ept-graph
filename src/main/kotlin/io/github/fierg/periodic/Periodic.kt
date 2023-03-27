@@ -4,9 +4,9 @@ import io.github.fierg.model.MSResult
 
 class Periodic {
 
-    private fun isPrefix(str: String, i: Int, k: Int): Boolean {
+    private fun isPrefix(str: BooleanArray, i: Int, k: Int): Boolean {
         var i = i
-        if (i + k > str.length) return false
+        if (i + k > str.size) return false
         for (j in 0 until k) {
             if (str[i] != str[j]) return false
             i++
@@ -14,18 +14,18 @@ class Periodic {
         return true
     }
 
-    fun isKPeriodic(str: String, k: Int): Boolean {
+    private fun isKPeriodic(str: BooleanArray, k: Int): Boolean {
         var i = k
-        while (i < str.length) {
+        while (i < str.size) {
             if (!isPrefix(str, i, k)) return false
             i += k
         }
         return true
     }
 
-    fun findShortestPeriod(str: String): Int {
-        var k = 2
-        while (k <= str.length) {
+    fun findShortestPeriod(str: BooleanArray): Int {
+        var k = 1
+        while (k <= str.size) {
             if (isKPeriodic(str, k)) return k
             else k++
         }
