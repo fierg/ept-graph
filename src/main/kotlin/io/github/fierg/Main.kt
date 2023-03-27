@@ -1,11 +1,14 @@
 package io.github.fierg
 
 import io.github.fierg.data.FileReader
+import io.github.fierg.periodic.Periodic
 
 fun main(){
-    val simpleGraph = FileReader().readSimpleGraph("data/stanford/wiki-talk-temporal.txt")
-    val f2fGraph = FileReader().readF2FNetwork(0)
+    //val simpleGraph = FileReader().readSimpleGraph("data/stanford/wiki-talk-temporal.txt")
+    val f2fGraph = FileReader().getF2FNetwork(0)
 
+    f2fGraph.getGraphAtStep(1)
 
-    simpleGraph
+    val period = Periodic().findShortestPeriod("00010001")
+    println("period is $period")
 }

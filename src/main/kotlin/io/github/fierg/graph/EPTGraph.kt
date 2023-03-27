@@ -12,7 +12,7 @@ class EPTGraph(val nodes: List<Int>, val edges: Collection<SelfAwareEdge>, val s
 
         edges.forEach { edge ->
             if (steps[edge]!![step % steps[edge]!!.size]) {
-                graph.addEdge(edge.source, edge.target)
+                graph.addEdge(edge.source, edge.target, edge)
             }
         }
         return graph.build()
