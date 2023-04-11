@@ -1,16 +1,17 @@
 package io.github.fierg.algo
 
-import io.github.fierg.graph.EPTGraph
+import io.github.fierg.automata.impl.UnaryAutomata
+import io.github.fierg.extensions.factorsSequence
 
 class Decomposition {
 
-    fun decomposition(): List<EPTGraph> {
-        val decomposition = mutableListOf<EPTGraph>()
+    fun findComposite(a: UnaryAutomata): Boolean {
+        val factors = a.qStates.size.factorsSequence().iterator()
+        a.qStates.forEach { p ->
+            factors.forEach { factor ->
 
-
-
-
-
-        return decomposition
+            }
+        }
+        return false
     }
 }

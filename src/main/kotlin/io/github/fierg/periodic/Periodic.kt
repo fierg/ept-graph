@@ -54,12 +54,12 @@ class Periodic {
 
                 if ((x.substring(ms + 1..i) + x.substring(per + i + 1)).takeLast(k).endsWith(x.substring(1..ms))) {
                     if (j - ms > p) {
-                        per = per + p
-                        i = i - p
-                        j = j - p
+                        per += p
+                        i -= p
+                        j -= p
                     } else {
-                        per = per + p
-                        i = i - p
+                        per += p
+                        i -= p
                         ms = 0
                         j = 1
                         k = 1
@@ -83,7 +83,7 @@ class Periodic {
         var k1 = k
         var p1 = p
         while (j1 + k1 <= x.length) {
-            var i = 0
+            val i = 0
             if (x[i + k1] == x[j1 + k1]) {
                 if (k1 == p) {
                     j1 += k1
