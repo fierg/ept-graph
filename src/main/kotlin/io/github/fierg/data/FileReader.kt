@@ -60,7 +60,7 @@ class FileReader {
     }
 
     private fun readF2FFile(id: Int, people: Int, steps: MutableMap<SelfAwareEdge, MutableList<Boolean>>, edges: MutableList<SelfAwareEdge>): List<String> {
-        logger.info("Expecting $people people in network (${people + 1} nodes) and ${people * (people + 1)} edges.")
+        logger.debug("Expecting $people people in network (${people + 1} nodes) and ${people * (people + 1)} edges.")
 
         for (i in 0 until (people * (people + 1))) {
             val edge = SelfAwareEdge((i / (people + 1)) + 1, i % (people + 1))

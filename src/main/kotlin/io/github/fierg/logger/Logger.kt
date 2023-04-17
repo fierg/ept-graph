@@ -1,5 +1,6 @@
 package io.github.fierg.logger
 
+import org.fusesource.jansi.AnsiConsole
 import java.util.logging.Level
 import java.util.logging.LogManager
 import java.util.logging.Logger
@@ -14,6 +15,7 @@ object Logger {
             Logger.getLogger(Logger::class.java.name).log(Level.SEVERE, "Failed to read logging.properties file", ex)
         }
         LOGGER = Logger.getLogger(Logger::class.java.name)
+        AnsiConsole.systemInstall()
     }
 
     fun debug(msg:String) {

@@ -1,21 +1,32 @@
 package io.github.fierg
 
 import io.github.fierg.algo.Decomposition
-import io.github.fierg.extensions.factorsSequence
-import io.github.fierg.periodic.Periodic
+import io.github.fierg.data.FileReader
+import io.github.fierg.logger.Logger
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
+import kotlinx.cli.default
 
-fun main(){
-    //val simpleGraph = FileReader().readSimpleGraph("data/stanford/wiki-talk-temporal.txt")
-    //val f2fGraph = FileReader().getF2FNetwork(0)
-    //f2fGraph.getGraphAtStep(1)
 
-    val array = arrayOf(true,false,false,true,false,false).toBooleanArray()
-    val period = Periodic().findShortestPeriod(array)
-    println("period is $period")
+fun main(args: Array<String>){
 
-    val number = 24
-    println("Factors of ${number} are ${number.factorsSequence().toList()}")
+    val parser = ArgParser("EPT Graph Reader")
 
-    val periods = Decomposition().findComposite(array)
-    periods
+    val input by parser.argument(ArgType.Int, description = "input (Network id in range (0..61")
+    val debug by parser.option(ArgType.Boolean, shortName = "d", description = "Turn on debug mode").default(false)
+    val quiet by parser.option(ArgType.Boolean, shortName = "q", description = "Turn on quiet mode").default(false)
+
+    parser.parse(args = args)
+
+    if (debug){
+        Logger.setLogLevelToDebug()
+    }
+
+    if (quiet){
+        Logger.setLogLevelToQuiet()
+    }
+
+    val f2fGraph = FileReader().getF2FNetwork(input)
+    Decomposition().findComposite(f2fGraph)
+
 }
