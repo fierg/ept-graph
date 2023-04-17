@@ -10,7 +10,7 @@ import io.github.fierg.logger.Logger
 class Decomposition {
 
     companion object {
-        val STATE = false
+        val STATE = true
     }
 
     fun findComposite(graph: EPTGraph) {
@@ -53,14 +53,12 @@ class Decomposition {
     }
 
     private fun getPeriods(array: BooleanArray): MutableSet<Pair<Int, Int>> {
-        val factors = array.size.factorsSequence()
         val periods = mutableSetOf<Pair<Int, Int>>()
-        val maxRange = array.size.toFloat() / 2
-        factors.forEach { factor ->
+        array.indices.forEach { factor ->
             array.forEachIndexed { index, p ->
-                if (index < maxRange) {
+                if (index < factor) {
                     if (p == STATE && isPeriodic(array, index, factor)) {
-                        periods.add(Pair(index % factor, factor))
+                        periods.add(Pair(index, factor))
                     }
                 }
             }
@@ -69,9 +67,10 @@ class Decomposition {
     }
 
     private fun isPeriodic(array: BooleanArray, index: Int, factor: Int): Boolean {
-        val stepsToCheck = array.size / factor
-        for (i in 0..stepsToCheck) {
-            if (array[(index + i * factor) % array.size] != STATE) return false
+        var pos = (index + factor) % array.size
+        while (pos != index) {
+            if (array[pos] != STATE) return false
+            pos = (pos + factor) % array.size
         }
         return true
     }
