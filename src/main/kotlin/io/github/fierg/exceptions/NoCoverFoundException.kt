@@ -1,3 +1,3 @@
-package io.github.fierg.algo.exceptions
+package io.github.fierg.exceptions
 
 class NoCoverFoundException(s: String) : Throwable()

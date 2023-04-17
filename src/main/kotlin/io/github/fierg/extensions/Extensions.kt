@@ -11,3 +11,17 @@ fun Int.factorsSequence(): Sequence<Int> {
         }
     }
 }
+
+
+
+/*
+Lets you apply the && operator for BooleanArrays iff they are of same size.
+ */
+operator fun BooleanArray.plus(other: BooleanArray): BooleanArray {
+    if (this.size != other.size) throw IllegalArgumentException("Arrays are not of same size.")
+    val result = BooleanArray(this.size)
+    for (i in 0..this.size) {
+        result[i] = this[i] && other[i]
+    }
+    return result
+}
