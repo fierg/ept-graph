@@ -9,7 +9,9 @@ import io.github.fierg.logger.Logger
 
 class Decomposition {
 
-    val STATE = true
+    companion object {
+        val STATE = false
+    }
 
     fun findComposite(graph: EPTGraph) {
         graph.edges.forEach { edge ->
@@ -31,15 +33,14 @@ class Decomposition {
             applyPeriod(cover, period)
             appliedPeriods.add(period)
 
-            if ((array.plus(cover)).contentEquals(array)) {
+            if (array.contentEquals(cover)) {
                 return appliedPeriods
             }
         }
-        val coveredOnes = array.minus(cover).asIterable().count { it }
-        val uncoveredOnes = array.asIterable().count { it }
-        val coverage =
-            if ((coveredOnes.toFloat() / (uncoveredOnes + coveredOnes)).isNaN()) 0
-            else (coveredOnes.toFloat() / (uncoveredOnes + coveredOnes))
+
+        var coverage = cover.count { it == STATE }.toDouble() / array.count { it == STATE }
+        if (coverage.isNaN()) coverage = 0.0
+
         throw NoCoverFoundException("with coverage of $coverage")
     }
 
