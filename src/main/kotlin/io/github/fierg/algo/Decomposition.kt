@@ -1,9 +1,6 @@
 package io.github.fierg.algo
 
 import io.github.fierg.exceptions.NoCoverFoundException
-import io.github.fierg.extensions.factorsSequence
-import io.github.fierg.extensions.minus
-import io.github.fierg.extensions.plus
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
 
@@ -16,13 +13,17 @@ class Decomposition {
     fun findComposite(graph: EPTGraph) {
         graph.edges.forEach { edge ->
             try {
-                val decomp = Decomposition().findCover(graph.steps[edge]!!)
-                Logger.info("Found decomposition with ${decomp.size} trivial periods.")
+                val decomposition = Decomposition().findCover(graph.steps[edge]!!)
+                val valuesToCover = graph.steps[edge]!!.count { it == STATE }
+                val trivialPeriods = decomposition.count {it.second == graph.steps[edge]!!.size}
+
+                Logger.info("Found decomposition with ${decomposition.size} periods, covered $valuesToCover values, used ${((trivialPeriods.toFloat() / decomposition.size) * 100).toInt()}% trivial periods.")
             } catch (e: NoCoverFoundException) {
                 Logger.error("${e.javaClass.simpleName} ${e.message} (edge length ${graph.steps[edge]!!.size})")
             }
         }
     }
+
 
     fun findCover(array: BooleanArray): Set<Pair<Int, Int>> {
         val periods = getPeriods(array)
