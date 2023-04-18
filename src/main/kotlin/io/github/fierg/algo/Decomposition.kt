@@ -8,12 +8,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.log
 
 class Decomposition(private val state: Boolean = true, private val check: Boolean = false, private val coroutines: Boolean = false) {
 
     fun findComposite(graph: EPTGraph) {
         Logger.info("Looking for $state values while decomposing.")
-        Logger.info("Checking ${if (check) "" else "not"} exactly.")
+        Logger.info("Checking ${if (check) "" else "not"} exactly before applying a period.")
+        if (coroutines) Logger.info("Using coroutines to compute periods.")
         graph.edges.forEach { edge ->
             try {
                 val decomposition = findCover(graph.steps[edge]!!)
