@@ -5,16 +5,13 @@ import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.SelfAwareEdge
 
-class Decomposition {
-
-    companion object {
-        val STATE = false
-    }
+class Decomposition(private val state: Boolean = true) {
 
     fun findComposite(graph: EPTGraph) {
+        Logger.info("Looking for $state values while decomposing.")
         graph.edges.forEach { edge ->
             try {
-                val decomposition = Decomposition().findCover(graph.steps[edge]!!)
+                val decomposition = findCover(graph.steps[edge]!!)
                 analyze(graph, edge, decomposition)
             } catch (e: NoCoverFoundException) {
                 Logger.error("${e.javaClass.simpleName} ${e.message} (edge length ${graph.steps[edge]!!.size})")
@@ -23,7 +20,7 @@ class Decomposition {
     }
 
     private fun analyze(graph: EPTGraph, edge: SelfAwareEdge, decomposition: Set<Pair<Int, Int>>) {
-        val valuesToCover = graph.steps[edge]!!.count { it == STATE }
+        val valuesToCover = graph.steps[edge]!!.count { it == state }
         val trivialPeriods = decomposition.count { it.second == graph.steps[edge]!!.size }
 
         Logger.info(
@@ -37,12 +34,12 @@ class Decomposition {
 
     fun findCover(array: BooleanArray): Set<Pair<Int, Int>> {
         val periods = getPeriods(array)
-        val cover = BooleanArray(array.size) { !STATE }
+        val cover = BooleanArray(array.size) { !state }
         val appliedPeriods = mutableSetOf<Pair<Int, Int>>()
 
         periods.forEach { period ->
             if (period.second == array.size) {
-                if (cover[period.first] != STATE) {
+                if (cover[period.first] != state) {
                     applyPeriod(cover, period)
                     appliedPeriods.add(period)
                 }
@@ -60,7 +57,7 @@ class Decomposition {
             return appliedPeriods
         }
 
-        var coverage = cover.count { it == STATE }.toDouble() / array.count { it == STATE }
+        var coverage = cover.count { it == state }.toDouble() / array.count { it == state }
         if (coverage.isNaN()) coverage = 0.0
 
         throw NoCoverFoundException("with coverage of $coverage")
@@ -69,7 +66,7 @@ class Decomposition {
     private fun applyPeriod(cover: BooleanArray, period: Pair<Int, Int>) {
         var position = period.first
         while (position < cover.size) {
-            cover[position] = STATE
+            cover[position] = state
             position += period.second
         }
     }
@@ -78,7 +75,7 @@ class Decomposition {
         val periods = mutableSetOf<Pair<Int, Int>>()
         for (factor in 1..array.size) {
             for (index in 0 until factor) {
-                if (array[index] == STATE && isPeriodic(array, index, factor)) {
+                if (array[index] == state && isPeriodic(array, index, factor)) {
 
                     if (!periods.filter { it.first == index }.any { factor / it.second % 2 == 0 })
                         periods.add(Pair(index % factor, factor))
@@ -91,7 +88,7 @@ class Decomposition {
     private fun isPeriodic(array: BooleanArray, index: Int, factor: Int): Boolean {
         var pos = (index + factor) % array.size
         while (pos != index) {
-            if (array[pos] != STATE) return false
+            if (array[pos] != state) return false
             pos = (pos + factor) % array.size
         }
         return true

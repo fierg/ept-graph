@@ -5,11 +5,11 @@ import io.github.fierg.model.MSResult
 class Periodic {
 
     private fun isPrefix(str: BooleanArray, i: Int, k: Int): Boolean {
-        var i = i
-        if (i + k > str.size) return false
+        var ii = i
+        if (ii + k > str.size) return false
         for (j in 0 until k) {
-            if (str[i] != str[j]) return false
-            i++
+            if (str[ii] != str[j]) return false
+            ii++
         }
         return true
     }
@@ -62,8 +62,6 @@ class Periodic {
                         i -= p
                         ms = 0
                         j = 1
-                        k = 1
-                        p = 1
                     }
                 }
                 per += ms.coerceAtLeast((i - ms).coerceAtMost(j)) + 1

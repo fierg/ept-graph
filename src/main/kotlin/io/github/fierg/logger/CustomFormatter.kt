@@ -29,7 +29,7 @@ class CustomFormatter : Formatter() {
 
         private fun getLoggingFormat(): String {
             try {
-                val loggingProperties = this.javaClass.classLoader.getResource("logging.properties").readText(Charset.defaultCharset())
+                val loggingProperties = this::class.java.classLoader.getResource("logging.properties").readText(Charset.defaultCharset())
                 val regex = Regex("^java.util.logging.CustomFormatter.format=(.+)\$")
                 loggingProperties.lines().forEach { line ->
                     if (regex.matches(line)) return regex.find(line)!!.groupValues[1]
