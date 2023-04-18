@@ -34,19 +34,12 @@ class Decomposition(private val state: Boolean = true) {
 
     fun findCover(array: BooleanArray): Set<Pair<Int, Int>> {
         val periods = getPeriods(array)
-        val cover = BooleanArray(array.size) { !state }
+        var cover = BooleanArray(array.size) { !state }
         val appliedPeriods = mutableSetOf<Pair<Int, Int>>()
 
         periods.forEach { period ->
-            if (period.second == array.size) {
-                if (cover[period.first] != state) {
-                    applyPeriod(cover, period)
-                    appliedPeriods.add(period)
-                }
-            } else {
-                applyPeriod(cover, period)
-                appliedPeriods.add(period)
-            }
+            cover = applyPeriod(cover, period)
+            appliedPeriods.add(period)
 
             if (array.contentEquals(cover)) {
                 return appliedPeriods
@@ -63,12 +56,14 @@ class Decomposition(private val state: Boolean = true) {
         throw NoCoverFoundException("with coverage of $coverage")
     }
 
-    private fun applyPeriod(cover: BooleanArray, period: Pair<Int, Int>) {
+    private fun applyPeriod(cover: BooleanArray, period: Pair<Int, Int>): BooleanArray {
+        val newCover = cover.copyInto(BooleanArray(cover.size))
         var position = period.first
         while (position < cover.size) {
-            cover[position] = state
+            newCover[position] = state
             position += period.second
         }
+        return if (cover.contentEquals(newCover)) cover else newCover
     }
 
     private fun getPeriods(array: BooleanArray): List<Pair<Int, Int>> {
@@ -76,7 +71,6 @@ class Decomposition(private val state: Boolean = true) {
         for (factor in 1..array.size) {
             for (index in 0 until factor) {
                 if (array[index] == state && isPeriodic(array, index, factor)) {
-
                     if (!periods.filter { it.first == index }.any { factor / it.second % 2 == 0 })
                         periods.add(Pair(index % factor, factor))
                 }
