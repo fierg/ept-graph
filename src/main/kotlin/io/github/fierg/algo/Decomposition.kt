@@ -3,25 +3,35 @@ package io.github.fierg.algo
 import io.github.fierg.exceptions.NoCoverFoundException
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
+import io.github.fierg.model.SelfAwareEdge
 
 class Decomposition {
 
     companion object {
-        val STATE = true
+        val STATE = false
     }
 
     fun findComposite(graph: EPTGraph) {
         graph.edges.forEach { edge ->
             try {
                 val decomposition = Decomposition().findCover(graph.steps[edge]!!)
-                val valuesToCover = graph.steps[edge]!!.count { it == STATE }
-                val trivialPeriods = decomposition.count {it.second == graph.steps[edge]!!.size}
-
-                Logger.info("Found decomposition with ${decomposition.size} periods, covered $valuesToCover values, used ${((trivialPeriods.toFloat() / decomposition.size) * 100).toInt()}% trivial periods.")
+                analyze(graph, edge, decomposition)
             } catch (e: NoCoverFoundException) {
                 Logger.error("${e.javaClass.simpleName} ${e.message} (edge length ${graph.steps[edge]!!.size})")
             }
         }
+    }
+
+    private fun analyze(graph: EPTGraph, edge: SelfAwareEdge, decomposition: Set<Pair<Int, Int>>) {
+        val valuesToCover = graph.steps[edge]!!.count { it == STATE }
+        val trivialPeriods = decomposition.count { it.second == graph.steps[edge]!!.size }
+
+        Logger.info(
+            "Found decomposition with ${String.format("%5d", decomposition.size)} " +
+                    "periods, covered ${String.format("%5d", valuesToCover)} values, used " +
+                    "${String.format("%3d", ((trivialPeriods.toFloat() / decomposition.size) * 100).toInt())}% " +
+                    "trivial periods."
+        )
     }
 
 
@@ -31,8 +41,8 @@ class Decomposition {
         val appliedPeriods = mutableSetOf<Pair<Int, Int>>()
 
         periods.forEach { period ->
-            if (period.second == array.size){
-                if (cover[period.first] != STATE){
+            if (period.second == array.size) {
+                if (cover[period.first] != STATE) {
                     applyPeriod(cover, period)
                     appliedPeriods.add(period)
                 }
@@ -66,12 +76,12 @@ class Decomposition {
 
     private fun getPeriods(array: BooleanArray): List<Pair<Int, Int>> {
         val periods = mutableSetOf<Pair<Int, Int>>()
-        for(factor in 1 .. (array.indices + array.size).lastIndex) {
-            for (index in  0 .. array.indices.last) {
-                if (index < factor) {
-                    if (array[index] == STATE && isPeriodic(array, index, factor)) {
+        for (factor in 1..array.size) {
+            for (index in 0 until factor) {
+                if (array[index] == STATE && isPeriodic(array, index, factor)) {
+
+                    if (!periods.filter { it.first == index }.any { factor / it.second % 2 == 0 })
                         periods.add(Pair(index % factor, factor))
-                    }
                 }
             }
         }

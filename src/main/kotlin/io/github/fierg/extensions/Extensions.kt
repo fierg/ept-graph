@@ -11,3 +11,6 @@ fun Int.factorsSequence(): Sequence<Int> {
         }
     }
 }
+
+fun Double.format(digits: Int = 5) = "%.${digits}f".format(this)
+
