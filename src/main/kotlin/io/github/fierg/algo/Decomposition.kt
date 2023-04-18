@@ -16,8 +16,8 @@ class Decomposition {
     fun findComposite(graph: EPTGraph) {
         graph.edges.forEach { edge ->
             try {
-                Decomposition().findCover(graph.steps[edge]!!)
-                Logger.info("Found decomposition.")
+                val decomp = Decomposition().findCover(graph.steps[edge]!!)
+                Logger.info("Found decomposition with ${decomp.size} trivial periods.")
             } catch (e: NoCoverFoundException) {
                 Logger.error("${e.javaClass.simpleName} ${e.message} (edge length ${graph.steps[edge]!!.size})")
             }
@@ -30,12 +30,23 @@ class Decomposition {
         val appliedPeriods = mutableSetOf<Pair<Int, Int>>()
 
         periods.forEach { period ->
-            applyPeriod(cover, period)
-            appliedPeriods.add(period)
+            if (period.second == array.size){
+                if (cover[period.first] != STATE){
+                    applyPeriod(cover, period)
+                    appliedPeriods.add(period)
+                }
+            } else {
+                applyPeriod(cover, period)
+                appliedPeriods.add(period)
+            }
 
             if (array.contentEquals(cover)) {
                 return appliedPeriods
             }
+        }
+
+        if (array.contentEquals(cover)) {
+            return appliedPeriods
         }
 
         var coverage = cover.count { it == STATE }.toDouble() / array.count { it == STATE }
@@ -52,18 +63,18 @@ class Decomposition {
         }
     }
 
-    private fun getPeriods(array: BooleanArray): MutableSet<Pair<Int, Int>> {
+    private fun getPeriods(array: BooleanArray): List<Pair<Int, Int>> {
         val periods = mutableSetOf<Pair<Int, Int>>()
-        array.indices.forEach { factor ->
-            array.forEachIndexed { index, p ->
+        for(factor in 1 .. (array.indices + array.size).lastIndex) {
+            for (index in  0 .. array.indices.last) {
                 if (index < factor) {
-                    if (p == STATE && isPeriodic(array, index, factor)) {
-                        periods.add(Pair(index, factor))
+                    if (array[index] == STATE && isPeriodic(array, index, factor)) {
+                        periods.add(Pair(index % factor, factor))
                     }
                 }
             }
         }
-        return periods
+        return periods.toList()
     }
 
     private fun isPeriodic(array: BooleanArray, index: Int, factor: Int): Boolean {
