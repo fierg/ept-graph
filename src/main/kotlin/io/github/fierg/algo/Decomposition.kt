@@ -5,10 +5,11 @@ import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.SelfAwareEdge
 
-class Decomposition(private val state: Boolean = true) {
+class Decomposition(private val state: Boolean = true, private val check: Boolean = false) {
 
     fun findComposite(graph: EPTGraph) {
         Logger.info("Looking for $state values while decomposing.")
+        Logger.info("Checking ${if (check) "" else "not"} exactly.")
         graph.edges.forEach { edge ->
             try {
                 val decomposition = findCover(graph.steps[edge]!!)
@@ -37,12 +38,29 @@ class Decomposition(private val state: Boolean = true) {
         var cover = BooleanArray(array.size) { !state }
         val appliedPeriods = mutableSetOf<Pair<Int, Int>>()
 
-        periods.forEach { period ->
-            cover = applyPeriod(cover, period)
-            appliedPeriods.add(period)
+        if (check) {
+            periods.forEach { period ->
+                cover = applyPeriodOnlyIfChangesOccur(cover, period, appliedPeriods)
 
-            if (array.contentEquals(cover)) {
-                return appliedPeriods
+                if (array.contentEquals(cover)) {
+                    return appliedPeriods
+                }
+            }
+        } else {
+            periods.forEach { period ->
+                if (period.second == array.size) {
+                    if (cover[period.first] != state) {
+                        applyPeriod(cover, period)
+                        appliedPeriods.add(period)
+                    }
+                } else {
+                    applyPeriod(cover, period)
+                    appliedPeriods.add(period)
+                }
+
+                if (array.contentEquals(cover)) {
+                    return appliedPeriods
+                }
             }
         }
 
@@ -52,18 +70,30 @@ class Decomposition(private val state: Boolean = true) {
 
         var coverage = cover.count { it == state }.toDouble() / array.count { it == state }
         if (coverage.isNaN()) coverage = 0.0
-
         throw NoCoverFoundException("with coverage of $coverage")
     }
 
-    private fun applyPeriod(cover: BooleanArray, period: Pair<Int, Int>): BooleanArray {
-        val newCover = cover.copyInto(BooleanArray(cover.size))
+    private fun applyPeriodOnlyIfChangesOccur(cover: BooleanArray, period: Pair<Int, Int>, appliedPeriods: MutableSet<Pair<Int, Int>>): BooleanArray {
+        val newCover = cover.copyInto(BooleanArray(cover.size) { !state })
         var position = period.first
         while (position < cover.size) {
             newCover[position] = state
             position += period.second
         }
-        return if (cover.contentEquals(newCover)) cover else newCover
+        return if (cover.contentEquals(newCover))
+            cover
+        else {
+            appliedPeriods.add(period)
+            newCover
+        }
+    }
+
+    private fun applyPeriod(cover: BooleanArray, period: Pair<Int, Int>) {
+        var position = period.first
+        while (position < cover.size) {
+            cover[position] = state
+            position += period.second
+        }
     }
 
     private fun getPeriods(array: BooleanArray): List<Pair<Int, Int>> {
