@@ -4,8 +4,12 @@ import io.github.fierg.exceptions.NoCoverFoundException
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.SelfAwareEdge
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.util.concurrent.atomic.AtomicReference
 
-class Decomposition(private val state: Boolean = true, private val check: Boolean = false) {
+class Decomposition(private val state: Boolean = true, private val check: Boolean = false, private val coroutines: Boolean = false) {
 
     fun findComposite(graph: EPTGraph) {
         Logger.info("Looking for $state values while decomposing.")
@@ -34,7 +38,7 @@ class Decomposition(private val state: Boolean = true, private val check: Boolea
 
 
     fun findCover(array: BooleanArray): Set<Pair<Int, Int>> {
-        val periods = getPeriods(array)
+        val periods = if (coroutines) getPeriodsCO(array) else getPeriods(array)
         var cover = BooleanArray(array.size) { !state }
         val appliedPeriods = mutableSetOf<Pair<Int, Int>>()
 
@@ -107,6 +111,25 @@ class Decomposition(private val state: Boolean = true, private val check: Boolea
             }
         }
         return periods.toList()
+    }
+
+    private fun getPeriodsCO(array: BooleanArray): List<Pair<Int, Int>> {
+        val atomicPeriods = AtomicReference(mutableSetOf<Pair<Int, Int>>())
+        val coroutines = mutableListOf<Job>()
+        runBlocking {
+            for (factor in 1..array.size) {
+                val coroutine = launch {
+                    for (index in 0 until factor) {
+                        if (array[index] == state && isPeriodic(array, index, factor)) {
+                            atomicPeriods.get().add(Pair(index % factor, factor))
+                        }
+                    }
+                }
+                coroutines.add(coroutine)
+            }
+            coroutines.forEach { it.join() }
+        }
+        return atomicPeriods.get().toList()
     }
 
     private fun isPeriodic(array: BooleanArray, index: Int, factor: Int): Boolean {

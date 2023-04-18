@@ -12,6 +12,6 @@ fun main(){
     val number = 24
     println("Factors of ${number} are ${number.factorsSequence().toList()}")
 
-    val periods = Decomposition().findCover(array)
+    val periods = Decomposition(coroutines = coroutines).findCover(array)
     periods
 }
