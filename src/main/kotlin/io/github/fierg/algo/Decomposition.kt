@@ -4,13 +4,15 @@ import io.github.fierg.exceptions.NoCoverFoundException
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.SelfAwareEdge
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.log
 
-class Decomposition(private val state: Boolean = true, private val check: Boolean = false, private val coroutines: Boolean = false) {
+class Decomposition(
+    private val state: Boolean = true,
+    private val check: Boolean = false,
+    private val coroutines: Boolean = false
+) {
 
     fun findComposite(graph: EPTGraph) {
         Logger.info("Looking for $state values while decomposing.")
@@ -79,7 +81,11 @@ class Decomposition(private val state: Boolean = true, private val check: Boolea
         throw NoCoverFoundException("with coverage of $coverage")
     }
 
-    private fun applyPeriodOnlyIfChangesOccur(cover: BooleanArray, period: Pair<Int, Int>, appliedPeriods: MutableSet<Pair<Int, Int>>): BooleanArray {
+    private fun applyPeriodOnlyIfChangesOccur(
+        cover: BooleanArray,
+        period: Pair<Int, Int>,
+        appliedPeriods: MutableSet<Pair<Int, Int>>
+    ): BooleanArray {
         val newCover = cover.copyInto(BooleanArray(cover.size) { !state })
         var position = period.first
         while (position < cover.size) {
@@ -116,22 +122,28 @@ class Decomposition(private val state: Boolean = true, private val check: Boolea
     }
 
     private fun getPeriodsCO(array: BooleanArray): List<Pair<Int, Int>> {
-        val atomicPeriods = AtomicReference(mutableSetOf<Pair<Int, Int>>())
-        val coroutines = mutableListOf<Job>()
-        runBlocking {
-            for (factor in 1..array.size) {
-                val coroutine = launch {
-                    for (index in 0 until factor) {
-                        if (array[index] == state && isPeriodic(array, index, factor)) {
-                            atomicPeriods.get().add(Pair(index % factor, factor))
-                        }
-                    }
-                }
-                coroutines.add(coroutine)
-            }
-            coroutines.forEach { it.join() }
+        val jobs = mutableListOf<Deferred<List<Pair<Int,Int>>>>()
+        val results = mutableListOf<Pair<Int,Int>>()
+        for (factor in 1..array.size) {
+            jobs.add(compute(array, factor))
         }
-        return atomicPeriods.get().toList()
+        runBlocking {
+            jobs.forEach { results.addAll(it.await()) }
+        }
+
+
+        return results
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun compute(array: BooleanArray, factor: Int): Deferred<List<Pair<Int, Int>>> = GlobalScope.async {
+        val periods = mutableListOf<Pair<Int, Int>>()
+        for (index in 0 until factor) {
+            if (array[index] == state && isPeriodic(array, index, factor)) {
+                periods.add(Pair(index % factor, factor))
+            }
+        }
+        periods
     }
 
     private fun isPeriodic(array: BooleanArray, index: Int, factor: Int): Boolean {
