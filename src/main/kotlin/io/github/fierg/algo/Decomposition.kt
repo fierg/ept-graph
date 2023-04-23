@@ -5,18 +5,12 @@ import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.SelfAwareEdge
 import kotlinx.coroutines.*
-import java.util.concurrent.atomic.AtomicReference
-import kotlin.math.log
 
-class Decomposition(
-    private val state: Boolean = true,
-    private val check: Boolean = false,
-    private val coroutines: Boolean = false
-) {
+class Decomposition(private val state: Boolean = true, private val check: Boolean = false, private val coroutines: Boolean = false) {
 
     fun findComposite(graph: EPTGraph) {
         Logger.info("Looking for $state values while decomposing.")
-        Logger.info("Checking ${if (check) "" else "not"} exactly before applying a period.")
+        Logger.info("Checking${if (check) "" else " not"} exactly before applying a period.")
         if (coroutines) Logger.info("Using coroutines to compute periods.")
         graph.edges.forEach { edge ->
             try {
@@ -35,8 +29,7 @@ class Decomposition(
         Logger.info(
             "Found decomposition with ${String.format("%5d", decomposition.size)} " +
                     "periods, covered ${String.format("%5d", valuesToCover)} values, used " +
-                    "${String.format("%3d", ((trivialPeriods.toFloat() / decomposition.size) * 100).toInt())}% " +
-                    "trivial periods."
+                    "${String.format("%3d", ((trivialPeriods.toFloat() / decomposition.size) * 100).toInt())}% trivial periods."
         )
     }
 
@@ -81,17 +74,9 @@ class Decomposition(
         throw NoCoverFoundException("with coverage of $coverage")
     }
 
-    private fun applyPeriodOnlyIfChangesOccur(
-        cover: BooleanArray,
-        period: Pair<Int, Int>,
-        appliedPeriods: MutableSet<Pair<Int, Int>>
-    ): BooleanArray {
-        val newCover = cover.copyInto(BooleanArray(cover.size) { !state })
-        var position = period.first
-        while (position < cover.size) {
-            newCover[position] = state
-            position += period.second
-        }
+    private fun applyPeriodOnlyIfChangesOccur(cover: BooleanArray, period: Pair<Int, Int>, appliedPeriods: MutableSet<Pair<Int, Int>>): BooleanArray {
+        val newCover = cover.copyInto(BooleanArray(cover.size))
+        applyPeriod(newCover,period)
         return if (cover.contentEquals(newCover))
             cover
         else {
@@ -101,10 +86,12 @@ class Decomposition(
     }
 
     private fun applyPeriod(cover: BooleanArray, period: Pair<Int, Int>) {
-        var position = period.first
-        while (position < cover.size) {
+        cover[period.first] = state
+        var position = (period.first + period.second) % cover.size
+
+        while (position != period.first) {
             cover[position] = state
-            position += period.second
+            position = (position + period.second) % cover.size
         }
     }
 
@@ -122,8 +109,8 @@ class Decomposition(
     }
 
     private fun getPeriodsCO(array: BooleanArray): List<Pair<Int, Int>> {
-        val jobs = mutableListOf<Deferred<List<Pair<Int,Int>>>>()
-        val results = mutableListOf<Pair<Int,Int>>()
+        val jobs = mutableListOf<Deferred<List<Pair<Int, Int>>>>()
+        val results = mutableListOf<Pair<Int, Int>>()
         for (factor in 1..array.size) {
             jobs.add(compute(array, factor))
         }
