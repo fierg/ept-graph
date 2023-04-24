@@ -6,11 +6,12 @@ import io.github.fierg.logger.Logger
 import io.github.fierg.model.SelfAwareEdge
 import kotlinx.coroutines.*
 
-class Decomposition(private val state: Boolean = true, private val check: Boolean = false, private val coroutines: Boolean = false) {
+class Decomposition(private val state: Boolean = true, private val check: Boolean = false, private val coroutines: Boolean = false, private val clean: Boolean = false) {
 
     fun findComposite(graph: EPTGraph) {
         Logger.info("Looking for $state values while decomposing.")
         Logger.info("Checking${if (check) "" else " not"} exactly before applying a period.")
+        Logger.info("${if (check) "Using" else "Not using"} clean up of multiples before applying the periods.")
         if (coroutines) Logger.info("Using coroutines to compute periods.")
         graph.edges.forEach { edge ->
             try {
@@ -27,15 +28,15 @@ class Decomposition(private val state: Boolean = true, private val check: Boolea
         val trivialPeriods = decomposition.count { it.second == graph.steps[edge]!!.size }
 
         Logger.info(
-            "Found decomposition with ${String.format("%5d", decomposition.size)} " +
-                    "periods, covered ${String.format("%5d", valuesToCover)} values, used " +
-                    "${String.format("%3d", ((trivialPeriods.toFloat() / decomposition.size) * 100).toInt())}% trivial periods."
+            "Found decomposition with ${String.format("%5d", decomposition.size)} periods, " +
+                    "covered ${String.format("%5d", valuesToCover)} values, " +
+                    "used ${String.format("%3d", ((trivialPeriods.toFloat() / decomposition.size) * 100).toInt())}% trivial periods."
         )
     }
 
 
     fun findCover(array: BooleanArray): Set<Pair<Int, Int>> {
-        val periods = if (coroutines) getPeriodsCO(array) else getPeriods(array)
+        val periods = cleanMultiplesOfIntervals(if (coroutines) getPeriodsCO(array) else getPeriods(array), check)
         var cover = BooleanArray(array.size) { !state }
         val appliedPeriods = mutableSetOf<Pair<Int, Int>>()
 
@@ -74,9 +75,22 @@ class Decomposition(private val state: Boolean = true, private val check: Boolea
         throw NoCoverFoundException("with coverage of $coverage")
     }
 
+    private fun cleanMultiplesOfIntervals(periods: List<Pair<Int, Int>>, check: Boolean): List<Pair<Int, Int>> {
+        return if (check) {
+            val cleanPeriods = mutableListOf<Pair<Int, Int>>()
+            periods.forEach { period ->
+                if (!cleanPeriods.filter { it.first == period.first }.any { period.second / it.second % 2 == 0 }) {
+                    cleanPeriods.add(period)
+                }
+            }
+            cleanPeriods
+        } else
+            periods
+    }
+
     private fun applyPeriodOnlyIfChangesOccur(cover: BooleanArray, period: Pair<Int, Int>, appliedPeriods: MutableSet<Pair<Int, Int>>): BooleanArray {
         val newCover = cover.copyInto(BooleanArray(cover.size))
-        applyPeriod(newCover,period)
+        applyPeriod(newCover, period)
         return if (cover.contentEquals(newCover))
             cover
         else {
@@ -86,13 +100,11 @@ class Decomposition(private val state: Boolean = true, private val check: Boolea
     }
 
     private fun applyPeriod(cover: BooleanArray, period: Pair<Int, Int>) {
-        cover[period.first] = state
-        var position = (period.first + period.second) % cover.size
-
-        while (position != period.first) {
+        var position = period.first
+        do {
             cover[position] = state
             position = (position + period.second) % cover.size
-        }
+        } while (position != period.first)
     }
 
     private fun getPeriods(array: BooleanArray): List<Pair<Int, Int>> {
@@ -100,8 +112,7 @@ class Decomposition(private val state: Boolean = true, private val check: Boolea
         for (factor in 1..array.size) {
             for (index in 0 until factor) {
                 if (array[index] == state && isPeriodic(array, index, factor)) {
-                    if (!periods.filter { it.first == index }.any { factor / it.second % 2 == 0 })
-                        periods.add(Pair(index % factor, factor))
+                    periods.add(Pair(index % factor, factor))
                 }
             }
         }
@@ -112,18 +123,17 @@ class Decomposition(private val state: Boolean = true, private val check: Boolea
         val jobs = mutableListOf<Deferred<List<Pair<Int, Int>>>>()
         val results = mutableListOf<Pair<Int, Int>>()
         for (factor in 1..array.size) {
-            jobs.add(compute(array, factor))
+            jobs.add(computeAsync(array, factor))
         }
         runBlocking {
             jobs.forEach { results.addAll(it.await()) }
         }
 
-
         return results
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    private fun compute(array: BooleanArray, factor: Int): Deferred<List<Pair<Int, Int>>> = GlobalScope.async {
+    private fun computeAsync(array: BooleanArray, factor: Int): Deferred<List<Pair<Int, Int>>> = GlobalScope.async {
         val periods = mutableListOf<Pair<Int, Int>>()
         for (index in 0 until factor) {
             if (array[index] == state && isPeriodic(array, index, factor)) {
