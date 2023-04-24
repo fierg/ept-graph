@@ -24,3 +24,16 @@ hs_err_pid*
 
 .idea/*
 target/*
+
+# Tex Stuff...
+*.bst
+*.aux
+*.sty
+*.bbl
+*.blg
+*.idx
+*.lof
+*.lot
+*.synctex.gz
+*.toc
+*.cls
