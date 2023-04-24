@@ -37,3 +37,4 @@ target/*
 *.synctex.gz
 *.toc
 *.cls
+thesis/*.pdf
