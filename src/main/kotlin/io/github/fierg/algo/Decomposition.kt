@@ -36,7 +36,7 @@ class Decomposition(private val state: Boolean = true, private val check: Boolea
 
 
     fun findCover(array: BooleanArray): Set<Pair<Int, Int>> {
-        val periods = cleanMultiplesOfIntervals(if (coroutines) getPeriodsCO(array) else getPeriods(array), check)
+        val periods = cleanMultiplesOfIntervals(if (coroutines) getPeriodsCO(array) else getPeriods(array), clean)
         var cover = BooleanArray(array.size) { !state }
         val appliedPeriods = mutableSetOf<Pair<Int, Int>>()
 

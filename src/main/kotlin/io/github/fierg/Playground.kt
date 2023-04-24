@@ -14,4 +14,7 @@ fun main(){
 
     val periods = Decomposition().findCover(array)
     periods
+
+    Decomposition().findCover(BooleanArray(16))
+
 }

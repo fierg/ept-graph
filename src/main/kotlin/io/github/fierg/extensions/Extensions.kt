@@ -9,6 +9,7 @@ fun Int.factorsSequence(): Sequence<Int> {
         (1..n / 2).forEach {
             if (n % it == 0) yield(it)
         }
+        yield(n)
     }
 }
 
