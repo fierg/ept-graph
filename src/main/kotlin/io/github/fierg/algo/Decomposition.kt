@@ -3,16 +3,16 @@ package io.github.fierg.algo
 import io.github.fierg.exceptions.NoCoverFoundException
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
+import io.github.fierg.model.CompositionMode
 import io.github.fierg.model.SelfAwareEdge
 import kotlinx.coroutines.*
 
-class Decomposition(private val state: Boolean = true, private val check: Boolean = false, private val coroutines: Boolean = false, private val clean: Boolean = false) {
+class Decomposition(private val state: Boolean = true, private val coroutines: Boolean = false, private val clean: Boolean = false, private val mode: CompositionMode = CompositionMode.ALL) {
 
     fun findComposite(graph: EPTGraph) {
         Logger.info("Looking for $state values while decomposing.")
-        Logger.info("Checking${if (check) "" else " not"} exactly before applying a period.")
-        Logger.info("${if (check) "Using" else "Not using"} clean up of multiples before applying the periods.")
         if (coroutines) Logger.info("Using coroutines to compute periods.")
+        Logger.info("${if (clean) "Using" else "Not using"} clean up of multiples before applying the periods.")
         graph.edges.forEach { edge ->
             try {
                 val decomposition = findCover(graph.steps[edge]!!)
@@ -40,28 +40,35 @@ class Decomposition(private val state: Boolean = true, private val check: Boolea
         var cover = BooleanArray(array.size) { !state }
         val appliedPeriods = mutableSetOf<Pair<Int, Int>>()
 
-        if (check) {
-            periods.forEach { period ->
-                cover = applyPeriodOnlyIfChangesOccur(cover, period, appliedPeriods)
+        when (mode) {
+            CompositionMode.SIMPLE -> {
+                periods.forEach { period ->
+                    cover = applyPeriodOnlyIfChangesOccur(cover, period, appliedPeriods)
 
-                if (array.contentEquals(cover)) {
-                    return appliedPeriods
+                    if (array.contentEquals(cover)) {
+                        return appliedPeriods
+                    }
                 }
             }
-        } else {
-            periods.forEach { period ->
-                if (period.second == array.size) {
-                    if (cover[period.first] != state) {
+            CompositionMode.GREEDY -> {
+                
+            }
+
+            CompositionMode.ALL -> {
+                periods.forEach { period ->
+                    if (period.second == array.size) {
+                        if (cover[period.first] != state) {
+                            applyPeriod(cover, period)
+                            appliedPeriods.add(period)
+                        }
+                    } else {
                         applyPeriod(cover, period)
                         appliedPeriods.add(period)
                     }
-                } else {
-                    applyPeriod(cover, period)
-                    appliedPeriods.add(period)
-                }
 
-                if (array.contentEquals(cover)) {
-                    return appliedPeriods
+                    if (array.contentEquals(cover)) {
+                        return appliedPeriods
+                    }
                 }
             }
         }
@@ -75,8 +82,8 @@ class Decomposition(private val state: Boolean = true, private val check: Boolea
         throw NoCoverFoundException("with coverage of $coverage")
     }
 
-    private fun cleanMultiplesOfIntervals(periods: List<Pair<Int, Int>>, check: Boolean): List<Pair<Int, Int>> {
-        return if (check) {
+    private fun cleanMultiplesOfIntervals(periods: List<Pair<Int, Int>>, clean: Boolean): List<Pair<Int, Int>> {
+        return if (clean) {
             val cleanPeriods = mutableListOf<Pair<Int, Int>>()
             periods.forEach { period ->
                 if (!cleanPeriods.filter { it.first == period.first }.any { period.second / it.second % 2 == 0 }) {
