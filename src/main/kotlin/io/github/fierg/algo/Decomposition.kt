@@ -1,6 +1,7 @@
 package io.github.fierg.algo
 
 import io.github.fierg.exceptions.NoCoverFoundException
+import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.CompositionMode
@@ -51,7 +52,7 @@ class Decomposition(private val state: Boolean = true, private val coroutines: B
                 }
             }
             CompositionMode.GREEDY -> {
-                
+
             }
 
             CompositionMode.ALL -> {
@@ -116,20 +117,20 @@ class Decomposition(private val state: Boolean = true, private val coroutines: B
 
     private fun getPeriods(array: BooleanArray): List<Pair<Int, Int>> {
         val periods = mutableSetOf<Pair<Int, Int>>()
-        for (factor in 1..array.size) {
+        for (factor in array.size.factorsSequence()) {
             for (index in 0 until factor) {
                 if (array[index] == state && isPeriodic(array, index, factor)) {
                     periods.add(Pair(index % factor, factor))
                 }
             }
-        }
+        }git 
         return periods.toList()
     }
 
     private fun getPeriodsCO(array: BooleanArray): List<Pair<Int, Int>> {
         val jobs = mutableListOf<Deferred<List<Pair<Int, Int>>>>()
         val results = mutableListOf<Pair<Int, Int>>()
-        for (factor in 1..array.size) {
+        for (factor in array.size.factorsSequence()) {
             jobs.add(computeAsync(array, factor))
         }
         runBlocking {
