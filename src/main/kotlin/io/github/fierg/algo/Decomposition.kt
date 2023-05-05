@@ -13,7 +13,9 @@ class Decomposition(private val state: Boolean = true, private val coroutines: B
     fun findComposite(graph: EPTGraph) {
         Logger.info("Looking for $state values while decomposing.")
         if (coroutines) Logger.info("Using coroutines to compute periods.")
-        Logger.info("${if (clean) "Using" else "Not using"} clean up of multiples before applying the periods.")
+        if (clean) Logger.info("Cleaning up multiples/duplicates before applying the periods.")
+        Logger.info("Choosing periods in $mode mode.")
+
         graph.edges.forEach { edge ->
             try {
                 val decomposition = findCover(graph.steps[edge]!!)
@@ -28,33 +30,19 @@ class Decomposition(private val state: Boolean = true, private val coroutines: B
         val valuesToCover = graph.steps[edge]!!.count { it == state }
         val trivialPeriods = decomposition.count { it.second == graph.steps[edge]!!.size }
 
-        Logger.info(
-            "Found decomposition with ${String.format("%5d", decomposition.size)} periods, " +
+        Logger.info("Found decomposition with ${String.format("%5d", decomposition.size)} periods, " +
                     "covered ${String.format("%5d", valuesToCover)} values, " +
                     "used ${String.format("%3d", ((trivialPeriods.toFloat() / decomposition.size) * 100).toInt())}% trivial periods."
         )
     }
 
 
-    fun findCover(array: BooleanArray): Set<Pair<Int, Int>> {
+    private fun findCover(array: BooleanArray): Set<Pair<Int, Int>> {
         val periods = cleanMultiplesOfIntervals(if (coroutines) getPeriodsCO(array) else getPeriods(array), clean)
         var cover = BooleanArray(array.size) { !state }
         val appliedPeriods = mutableSetOf<Pair<Int, Int>>()
 
         when (mode) {
-            CompositionMode.SIMPLE -> {
-                periods.forEach { period ->
-                    cover = applyPeriodOnlyIfChangesOccur(cover, period, appliedPeriods)
-
-                    if (array.contentEquals(cover)) {
-                        return appliedPeriods
-                    }
-                }
-            }
-            CompositionMode.GREEDY -> {
-
-            }
-
             CompositionMode.ALL -> {
                 periods.forEach { period ->
                     if (period.second == array.size) {
@@ -72,6 +60,35 @@ class Decomposition(private val state: Boolean = true, private val coroutines: B
                     }
                 }
             }
+
+            CompositionMode.SIMPLE -> {
+                periods.forEach { period ->
+                    cover = applyPeriodOnlyIfChangesOccur(cover, period, appliedPeriods)
+
+                    if (array.contentEquals(cover)) {
+                        return appliedPeriods
+                    }
+                }
+            }
+
+            CompositionMode.GREEDY -> {
+                do {
+                    var maxDiff = 0
+                    var bestPeriod = Pair(-1, -1)
+                    periods.forEach { period ->
+                        val newCover = cover.copyOf()
+                        applyPeriod(newCover, period)
+                        val diff = countDifferences(cover, newCover)
+                        if (diff > maxDiff) {
+                            bestPeriod = period
+                            maxDiff = diff
+                        }
+                    }
+                    applyPeriod(cover, bestPeriod)
+                    appliedPeriods.add(bestPeriod)
+                } while (!array.contentEquals(cover))
+                return appliedPeriods
+            }
         }
 
         if (array.contentEquals(cover)) {
@@ -81,6 +98,14 @@ class Decomposition(private val state: Boolean = true, private val coroutines: B
         var coverage = cover.count { it == state }.toDouble() / array.count { it == state }
         if (coverage.isNaN()) coverage = 0.0
         throw NoCoverFoundException("with coverage of $coverage")
+    }
+
+    private fun countDifferences(cover: BooleanArray, newCover: BooleanArray): Int {
+        var count = 0
+        for (i in cover.indices) {
+            if (cover[i] != newCover[i]) count += 1
+        }
+        return count
     }
 
     private fun cleanMultiplesOfIntervals(periods: List<Pair<Int, Int>>, clean: Boolean): List<Pair<Int, Int>> {
@@ -123,7 +148,7 @@ class Decomposition(private val state: Boolean = true, private val coroutines: B
                     periods.add(Pair(index % factor, factor))
                 }
             }
-        }git 
+        }
         return periods.toList()
     }
 
