@@ -1,7 +1,7 @@
 \documentclass{wissdoc}
 % Autor: Roland Bless 1996-2009, bless <at> kit.edu
 % ----------------------------------------------------------------
-% Hauptdokument
+% Diplomarbeit - Hauptdokument
 % ----------------------------------------------------------------
 %%
 %% $Id: thesis.tex 65 2012-05-10 10:32:11Z bless $
@@ -18,6 +18,45 @@
 % ------------------------------------------------------------------
 % Weitere packages: (Dokumentation dazu durch "latex <package>.dtx")
 \usepackage[numbers,sort&compress]{natbib}
+\usepackage{hyperref}
+\usepackage{amsfonts}
+\usepackage{csquotes}
+\usepackage[english]{babel}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{arrows.meta}
+\usepackage{wrapfig}
+\usepackage{pgfplots}
+\usepackage{readarray}
+\usepackage{changes}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\mathtoolsset{showonlyrefs}  
+\usepackage{float}
+\restylefloat{table}
+\usepackage{environ}
+\makeatletter
+\newsavebox{\measure@tikzpicture}
+\NewEnviron{scaletikzpicturetowidth}[1]{%
+	\def\tikz@width{#1}%
+	\def\tikzscale{1}\begin{lrbox}{\measure@tikzpicture}%
+		\BODY
+	\end{lrbox}%
+	\pgfmathparse{#1/\wd\measure@tikzpicture}%
+	\edef\tikzscale{\pgfmathresult}%
+	\BODY
+}
+\makeatother
+
+
+
+\tikzset{
+	treenode/.style = {align=center, inner sep=0pt, text centered,
+		font=\sffamily},
+	arn_n/.style = {treenode, circle, white, font=\sffamily\bfseries, draw=black,
+		fill=black, text width=1.5em},% arbre rouge noir, noeud noir
+}
+
 % \usepackage{varioref}
 % \usepackage{verbatim}
 % \usepackage{float}    %z.B. \floatstyle{ruled}\restylefloat{figure}
@@ -33,7 +72,7 @@
 %% Informationen für die PDF-Datei
 \hypersetup{
  pdfauthor={Sven Fiergolla},
- pdftitle={Not set}
+ pdftitle={Improvements on RLE by preprocessing}
  pdfsubject={Not set},
  pdfkeywords={Not set}
 }
@@ -47,6 +86,8 @@
 \newcommand{\blankpage}{% Leerseite ohne Seitennummer, nächste Seite rechts
  \clearpage{\pagestyle{empty}\cleardoublepage}
 }
+
+
 
 %% Einstellungen für das gesamte Dokument
 
@@ -73,7 +114,7 @@
 \pagenumbering{roman}
 \ifnotdraft{
  \include{src/titelseite}
- %\blankpage % Leerseite auf Titelrückseite
+ \blankpage % Leerseite auf Titelrückseite
  \include{src/abstract}
 }
 %
@@ -84,6 +125,7 @@
 \ifnotdraft{
 {\parskip 0pt\tableofcontents} % toc bitte einzeilig
 %\blankpage
+
 \listoffigures
 %\blankpage
 \listoftables
@@ -98,13 +140,13 @@
 
 \mainmatter
 \pagenumbering{arabic}
-\include{src/einleitung}  % Einleitung
-\include{src/grundlagen}  % Grundlagen
-\include{src/analyse}     % Analyse
-\include{src/entwurf}     % Entwurf
-\include{src/implemen}    % Implementierung
-\include{src/eval}        % Evaluation
-\include{src/fazit}   	  % Diskussion und Ausblick
+\include{src/introduction}  % Einleitung
+\include{src/preliminaries}  % Grundlagen
+%\include{src/analyse}     % Analyse
+%\include{src/entwurf}     % Entwurf
+%\include{src/implemen}    % Implementierung
+%\include{src/eval}        % Evaluation
+%\include{src/fazit}   	  % Diskussion und Ausblick
 
 %% ++++++++++++++++++++++++++++++++++++++++++
 %% Anhang
@@ -124,12 +166,13 @@
 \phantomsection
 \addcontentsline{toc}{chapter}{\bibname}
 %%
-\nocite{*} % nur angeben, wenn auch nicht im Text zitierte Quellen 
+%%\nocite{*} % nur angeben, wenn auch nicht im Text zitierte Quellen 
            % erscheinen sollen
-\bibliographystyle{itmabbrv} % mit abgekürzten Vornamen der Autoren
-%\bibliographystyle{gerplain} % abbrvnat unsrtnat
+%\bibliographystyle{itmabbrv} % mit abgekürzten Vornamen der Autoren
+\bibliographystyle{cpc} % abbrvnat unsrtnat
 % spezielle Zitierstile: Labels mit vier Buchstaben und Jahreszahl
 %\bibliographystyle{itmalpha}  % ausgeschriebene Vornamen der Autoren
+
 \bibliography{thesis}
 
 %% ++++++++++++++++++++++++++++++++++++++++++

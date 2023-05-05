@@ -38,3 +38,6 @@ target/*
 *.toc
 *.cls
 thesis/*.pdf
+*.loc
+*.out
+*.soc
