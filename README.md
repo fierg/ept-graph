@@ -15,12 +15,13 @@ Arguments:
     input -> input (Network id in range (0..61) { Int }
 Options: 
     --state, -s [false] -> State to substitute in decomposition 
-    --check, -ch [false] -> Check array for changes every time, before a period is applied 
     --coroutines, -co [false] -> Use Coroutines for period computation. (Use with check) 
     --clean, -cl [false] -> Clean up periods of multiples 
+    --mode, -m -> Mode of composing the periods [ALL,SIMPLE,GREEDY] { Value should be one of [greedy, simple, all] }
     --debug, -d [false] -> Turn on debug mode 
     --quiet, -q [false] -> Turn on quiet mode 
     --help, -h -> Usage info 
+
 ```
 ##### Example
 ```shell
