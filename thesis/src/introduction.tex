@@ -11,44 +11,50 @@ There is a growing interest in EPGs due to their potential applications in vario
 %% ==============================
 \label{ch:Introduction:sec:Problem statement}
 
-\begin{minipage}[t]{0.49\textwidth}
-\begin{tikzpicture}[every edge quotes/.style = {auto, font=\footnotesize, sloped}]
-	\begin{scope}[every node/.style={circle,fill}]
-		\node (A) at (0,0) {};
-		\node (B) at (0,2) {};
-		\node (C) at (2,0) {};
-		\node (D) at (2,2) {};
-		\node (E) at (1,3) {};
-	\end{scope}
-	
-	\draw (A) edge["101\dots"] (B)
-	(B) edge["100\dots"] (C)
-	(D) edge["001\dots"] (C)
-	(A) edge["000\dots"] (C)
-	(D) edge["111\dots"] (E)
-	(B) edge["011\dots"] (D)
-	(B) edge["101\dots"] (E);	
-\end{tikzpicture}
-\end{minipage}
-\begin{minipage}[t]{0.49\textwidth}
-\begin{tikzpicture}[every edge quotes/.style = {auto, font=\footnotesize, sloped}]
-	\begin{scope}[every node/.style={circle,fill}]
-		\node (A) at (0,0) {};
-		\node (B) at (0,2) {};
-		\node (C) at (2,0) {};
-		\node (D) at (2,2) {};
-		\node (E) at (1,3) {};
-	\end{scope}
-	
-	\draw (A) edge["101"] (B)
-	(B) edge["100"] (C)
-	(D) edge["0010"] (C)
-	(A) edge["0"] (C)
-	(D) edge["110"] (E)
-	(B) edge["01111"] (D)
-	(B) edge["10"] (E);
-\end{tikzpicture}
-\end{minipage}
+\begin{figure}[h]
+	\begin{minipage}[t]{0.49\textwidth}
+		\centering
+		\begin{tikzpicture}[every edge quotes/.style = {auto, font=\footnotesize, sloped}]
+			\begin{scope}[every node/.style={circle,fill}]
+				\node (A) at (0,0) {};
+				\node (B) at (0,2) {};
+				\node (C) at (2,0) {};
+				\node (D) at (2,2) {};
+				\node (E) at (1,3) {};
+			\end{scope}
+			
+			\draw (A) edge["101\dots"] (B)
+			(B) edge["100\dots"] (C)
+			(D) edge["001\dots"] (C)
+			(A) edge["000\dots"] (C)
+			(D) edge["111\dots"] (E)
+			(B) edge["011\dots"] (D)
+			(B) edge["101\dots"] (E);	
+		\end{tikzpicture}
+	\end{minipage}
+	\begin{minipage}[t]{0.49\textwidth}
+		\centering
+		\begin{tikzpicture}[every edge quotes/.style = {auto, font=\footnotesize, sloped}]
+			\begin{scope}[every node/.style={circle,fill}]
+				\node (A) at (0,0) {};
+				\node (B) at (0,2) {};
+				\node (C) at (2,0) {};
+				\node (D) at (2,2) {};
+				\node (E) at (1,3) {};
+			\end{scope}
+			
+			\draw (A) edge["101"] (B)
+			(B) edge["100"] (C)
+			(D) edge["0010"] (C)
+			(A) edge["0"] (C)
+			(D) edge["110"] (E)
+			(B) edge["01111"] (D)
+			(B) edge["10"] (E);
+		\end{tikzpicture}
+	\end{minipage}
+\caption{TODO}
+\end{figure}
+
 
 
 
