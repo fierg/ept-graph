@@ -7,6 +7,7 @@ import io.github.fierg.model.CompositionMode
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.default
+import kotlin.system.exitProcess
 
 
 fun main(args: Array<String>) {
@@ -25,12 +26,18 @@ fun main(args: Array<String>) {
 
     parser.parse(args = args)
     state = !state
+
     if (debug) {
         Logger.setLogLevelToDebug()
     }
 
     if (quiet) {
         Logger.setLogLevelToQuiet()
+    }
+
+    if(mode == null){
+        Logger.error("Mode not provided! Exiting.")
+        exitProcess(1)
     }
 
     val f2fGraph = FileReader().getF2FNetwork(input)
