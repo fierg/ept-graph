@@ -29,10 +29,10 @@ Options:
 
 ### .env File config
 
-All Configuration of options can be handled via the .enf file in the projects root. In this case only the network id has to be provided:
+All Configuration of options can be handled via the .enf file in the projects root. In this case only the network id has to be provided as argument.
 
 
-##### Example
+### Example
 ```shell
 java -jar target/ept-graph-1.0-SNAPSHOT-jar-with-dependencies.jar -env 0
 ```
