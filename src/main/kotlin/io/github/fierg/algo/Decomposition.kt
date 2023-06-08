@@ -1,6 +1,7 @@
 package io.github.fierg.algo
 
 import io.github.fierg.exceptions.NoCoverFoundException
+import io.github.fierg.extensions.contentEqualsWithDelta
 import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
@@ -51,19 +52,13 @@ class Decomposition(
         when (mode) {
             CompositionMode.ALL -> {
                 periods.forEach { period ->
-                    if (period.second == array.size) {
-                        if (cover[period.first] != state) {
-                            applyPeriod(cover, period)
-                            appliedPeriods.add(period)
-                        }
-                    } else {
-                        applyPeriod(cover, period)
-                        appliedPeriods.add(period)
-                    }
+                    applyPeriod(cover, period)
+                    appliedPeriods.add(period)
 
-                    if (array.contentEquals(cover)) {
-                        return appliedPeriods
-                    }
+                    if (applyDeltaWindow) {
+                        if (array.contentEqualsWithDelta(cover, deltaWindowAlgo)) return appliedPeriods
+                    } else
+                        if (array.contentEquals(cover)) return appliedPeriods
                 }
             }
 
@@ -71,9 +66,10 @@ class Decomposition(
                 periods.forEach { period ->
                     cover = applyPeriodOnlyIfChangesOccur(cover, period, appliedPeriods)
 
-                    if (array.contentEquals(cover)) {
-                        return appliedPeriods
-                    }
+                    if (applyDeltaWindow) {
+                        if (array.contentEqualsWithDelta(cover, deltaWindowAlgo)) return appliedPeriods
+                    } else
+                        if (array.contentEquals(cover)) return appliedPeriods
                 }
             }
 
@@ -186,7 +182,8 @@ class Decomposition(
         var pos = (index + factor) % array.size
         while (pos != index) {
             if (applyDeltaWindow) {
-                if (valueOfDeltaWindow(array, deltaWindowAlgo, index, state)) return false
+                //FIXME: Delta window too aggressive, finding too good periods...
+                if (arrayValueOfDeltaWindow(array, deltaWindowAlgo, index, state)) return false
             } else
                 if (array[pos] != state) return false
             pos = (pos + factor) % array.size
@@ -194,7 +191,7 @@ class Decomposition(
         return true
     }
 
-    private fun valueOfDeltaWindow(input: BooleanArray, width: Int, index: Int, state: Boolean): Boolean {
+    private fun arrayValueOfDeltaWindow(input: BooleanArray, width: Int, index: Int, state: Boolean): Boolean {
         val start = 0.coerceAtLeast(index - width)
         val end = (input.size - 1).coerceAtMost(index + width)
 

@@ -17,9 +17,9 @@ fun main(args: Array<String>) {
 
     val parser = ArgParser("EPT Graph Reader")
 
-    val dotenv by parser.option(ArgType.Boolean, shortName = "env", description = "Use config from .env file").default(false)
-    var input by parser.option(ArgType.Int, description = "input (Network id in range (0..61)").default(0)
-    var state by parser.option(ArgType.Boolean, description = "State to substitute in decomposition", shortName = "s").default(false)
+    val dotenv by parser.option(ArgType.Boolean, shortName = "env", description = "Use config from .env file (Recommended usage due to amount of args)").default(false)
+    val input by parser.argument(ArgType.Int, description = "input (Network id in range (0..61)")
+    var state by parser.option(ArgType.Boolean, description = "Invert state to substitute in decomposition (if set, decomposition will replace 0s instead of 1s)", shortName = "s").default(false)
     var coroutines by parser.option(ArgType.Boolean, description = "Use Coroutines for period computation. (Use with check)", shortName = "co").default(false)
     var clean by parser.option(ArgType.Boolean, description = "Clean up periods of multiples", shortName = "cl").default(false)
     var mode by parser.option(ArgType.Choice<CompositionMode>(), shortName = "m", description = "Mode of composing the periods [ALL,SIMPLE,GREEDY]")
@@ -38,7 +38,6 @@ fun main(args: Array<String>) {
             systemProperties = true
         }
         Logger.info("Parsing arg from .env file:\n${env.entries().filter { envEntry -> ENV.values().map { envVar -> envVar.toString() }.contains(envEntry.key) }.map { "${it.key}:${it.value}\n" }}")
-        input = env["INPUT"].toInt()
         state = env["STATE"] == "true"
         coroutines = env["COROUTINES"] == "true"
         clean = env["CLEAN"] == "true"
