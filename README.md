@@ -1,4 +1,4 @@
-# ept-graph
+# ept-graph - Edge Periodic Graphs from Temporal Graphs
 Collection of resources regarding the space efficient data structures edge periodic temporal graphs.
 
 
@@ -8,8 +8,7 @@ mvn clean install
 ```
 
 ### Run with f2f graph
-
-```shell
+```
 Value for argument input should be always provided in command line.
 Usage: EPT Graph Reader options_list
 Arguments: 
