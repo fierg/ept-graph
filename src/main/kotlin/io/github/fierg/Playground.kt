@@ -12,9 +12,9 @@ fun main(){
     val number = 24
     println("Factors of ${number} are ${number.factorsSequence().toList()}")
 
-    val periods = Decomposition().findCover(array)
+    val periods = Decomposition(deltaWindowAlgo = 0).findCover(array)
     periods
 
-    Decomposition().findCover(BooleanArray(16))
+    Decomposition(deltaWindowAlgo = 0).findCover(BooleanArray(16))
 
 }

@@ -53,6 +53,13 @@
             <type>pom</type>
         </dependency>
 
+        <!-- https://github.com/cdimascio/dotenv-kotlin  -->
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>dotenv-kotlin</artifactId>
+            <version>6.4.1</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

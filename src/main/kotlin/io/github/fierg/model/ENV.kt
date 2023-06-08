@@ -6,6 +6,8 @@ enum class ENV {
     CLEAN,
     COROUTINES,
     MODE,
+    DELTA_WINDOW_PREPROCESSING,
+    DELTA_WINDOW_ALGO,
     DEBUG,
-    QUIET
+    QUIET,
 }

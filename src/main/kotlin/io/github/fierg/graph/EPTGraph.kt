@@ -4,7 +4,7 @@ import io.github.fierg.model.SelfAwareEdge
 import org.jgrapht.graph.DefaultDirectedGraph
 import org.jgrapht.graph.builder.GraphBuilder
 
-class EPTGraph(val nodes: List<Int>, val edges: Collection<SelfAwareEdge>, val steps: Map<SelfAwareEdge, BooleanArray>, val nodeLabels: List<String>?) {
+class EPTGraph(val nodes: List<Int>, val edges: Collection<SelfAwareEdge>, val steps: MutableMap<SelfAwareEdge, BooleanArray>, val nodeLabels: List<String>?) {
 
     fun getGraphAtStep(step: Int): DefaultDirectedGraph<Int, SelfAwareEdge>? {
         val graph = GraphBuilder<Int, SelfAwareEdge, DefaultDirectedGraph<Int, SelfAwareEdge>>(DefaultDirectedGraph(SelfAwareEdge::class.java))

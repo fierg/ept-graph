@@ -8,7 +8,7 @@ import io.github.fierg.model.CompositionMode
 import io.github.fierg.model.SelfAwareEdge
 import kotlinx.coroutines.*
 
-class Decomposition(private val state: Boolean = true, private val coroutines: Boolean = false, private val clean: Boolean = false, private val mode: CompositionMode = CompositionMode.ALL) {
+class Decomposition(private val state: Boolean = true, private val coroutines: Boolean = false, private val clean: Boolean = false, private val mode: CompositionMode = CompositionMode.ALL, deltaWindowAlgo: Int) {
 
     fun findComposite(graph: EPTGraph) {
         Logger.info("Looking for $state values while decomposing.")

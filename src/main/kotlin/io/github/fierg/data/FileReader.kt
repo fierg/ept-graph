@@ -55,7 +55,7 @@ class FileReader {
             } else {
                 it.key to array.copyOfRange(0, period)
             }
-        }.toMap()
+        }.toMap().toMutableMap()
         return EPTGraph(nodes = (0..people).toList(), edges, shortenedSteps, labels)
     }
 

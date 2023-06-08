@@ -24,6 +24,9 @@ fun main(args: Array<String>) {
     var mode by parser.option(ArgType.Choice<CompositionMode>(), shortName = "m", description = "Mode of composing the periods [ALL,SIMPLE,GREEDY]")
     var debug by parser.option(ArgType.Boolean, shortName = "d", description = "Turn on debug mode").default(false)
     var quiet by parser.option(ArgType.Boolean, shortName = "q", description = "Turn on quiet mode").default(false)
+    var deltaWindowPreprocessing by parser.option(ArgType.Int, description = "Delta window in preprocessing of the label").default(0)
+    var deltaWindowAlgo by parser.option(ArgType.Int, description = "Delta window during decomposing").default(0)
+
 
     parser.parse(args = args)
     if (dotenv) {
@@ -33,7 +36,7 @@ fun main(args: Array<String>) {
             ignoreIfMissing = true
             systemProperties = true
         }
-        Logger.info("Parsing arg from .env file:\n${env.entries().filter { envEntry -> ENV.values().map { envVar -> envVar.toString() }.contains(envEntry.key) }.map { "${it.key}:${it.value}\n"}}")
+        Logger.info("Parsing arg from .env file:\n${env.entries().filter { envEntry -> ENV.values().map { envVar -> envVar.toString() }.contains(envEntry.key) }.map { "${it.key}:${it.value}\n" }}")
         input = env["INPUT"].toInt()
         state = env["STATE"] == "true"
         coroutines = env["COROUTINES"] == "true"
@@ -47,6 +50,8 @@ fun main(args: Array<String>) {
                 CompositionMode.ALL
             }
         }
+        deltaWindowPreprocessing = env["DELTA_WINDOW_PREPROCESSING"].toInt()
+        deltaWindowAlgo = env["DELTA_WINDOW_ALGO"].toInt()
         debug = env["DEBUG"] == "true"
         quiet = env["QUIET"] == "true"
     }
@@ -68,6 +73,9 @@ fun main(args: Array<String>) {
     }
 
     val f2fGraph = FileReader().getF2FNetwork(input)
-    Decomposition(state, coroutines, clean, mode!!).findComposite(f2fGraph)
+    if (deltaWindowPreprocessing > 0)
+
+
+    Decomposition(state, coroutines, clean, mode!!, deltaWindowAlgo).findComposite(f2fGraph)
 
 }
