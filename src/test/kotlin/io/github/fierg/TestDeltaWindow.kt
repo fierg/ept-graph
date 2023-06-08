@@ -45,7 +45,7 @@ class TestDeltaWindow {
         val array2 = booleanArrayOf(false, true, true, false, false, true)
         val width = 1
 
-        val isEqual = array1.contentEqualsWithDelta(array2, width)
+        val isEqual = array1.contentEqualsWithDelta(array2, width, true)
 
         println("Array 1: " + array1.contentToString())
         println("Array 2: " + array2.contentToString())
@@ -59,7 +59,7 @@ class TestDeltaWindow {
         val array2 = booleanArrayOf(false, true, true, false, false, false)
         val width = 1
 
-        val isEqual = array1.contentEqualsWithDelta(array2, width)
+        val isEqual = array1.contentEqualsWithDelta(array2, width, true)
 
         println("Array 1: " + array1.contentToString())
         println("Array 2: " + array2.contentToString())

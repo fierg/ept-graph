@@ -10,7 +10,10 @@ import io.github.fierg.model.SelfAwareEdge
 import kotlinx.coroutines.*
 
 class Decomposition(
-    private val state: Boolean = true, private val coroutines: Boolean = false, private val clean: Boolean = false, private val mode: CompositionMode = CompositionMode.ALL,
+    private val state: Boolean = true,
+    private val coroutines: Boolean = false,
+    private val clean: Boolean = false,
+    private val mode: CompositionMode = CompositionMode.ALL,
     private val deltaWindowAlgo: Int
 ) {
 
@@ -56,7 +59,7 @@ class Decomposition(
                     appliedPeriods.add(period)
 
                     if (applyDeltaWindow) {
-                        if (array.contentEqualsWithDelta(cover, deltaWindowAlgo)) return appliedPeriods
+                        if (array.contentEqualsWithDelta(cover, deltaWindowAlgo, state)) return appliedPeriods
                     } else
                         if (array.contentEquals(cover)) return appliedPeriods
                 }
@@ -67,7 +70,7 @@ class Decomposition(
                     cover = applyPeriodOnlyIfChangesOccur(cover, period, appliedPeriods)
 
                     if (applyDeltaWindow) {
-                        if (array.contentEqualsWithDelta(cover, deltaWindowAlgo)) return appliedPeriods
+                        if (array.contentEqualsWithDelta(cover, deltaWindowAlgo, state)) return appliedPeriods
                     } else
                         if (array.contentEquals(cover)) return appliedPeriods
                 }

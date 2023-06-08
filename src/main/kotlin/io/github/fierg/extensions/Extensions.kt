@@ -15,7 +15,7 @@ fun Int.factorsSequence(): Sequence<Int> {
 
 fun Double.format(digits: Int = 5) = "%.${digits}f".format(this)
 
-fun BooleanArray.contentEqualsWithDelta(other: BooleanArray, width: Int):Boolean {
+fun BooleanArray.contentEqualsWithDelta(other: BooleanArray, width: Int, state: Boolean): Boolean {
     if (this.size != other.size) {
         return false // Arrays must have the same length
     }
@@ -27,7 +27,13 @@ fun BooleanArray.contentEqualsWithDelta(other: BooleanArray, width: Int):Boolean
 
         // Check for a match within the delta window
         for (j in start..end) {
-            if (this[i] == other[j]) {
+            //FIXME: somewhat of a workaround... still to aggressive
+            if (this[i] == state) {
+                if (this[i] == other[j]) {
+                    foundMatch = true
+                    break
+                }
+            } else {
                 foundMatch = true
                 break
             }
