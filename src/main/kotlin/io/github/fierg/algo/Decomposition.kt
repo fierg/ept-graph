@@ -14,7 +14,7 @@ class Decomposition(
     private val coroutines: Boolean = false,
     private val clean: Boolean = false,
     private val mode: CompositionMode = CompositionMode.ALL,
-    private val deltaWindowAlgo: Int
+    private val deltaWindowAlgo: Int = 0
 ) {
 
     private val applyDeltaWindow = deltaWindowAlgo > 0
@@ -35,7 +35,7 @@ class Decomposition(
         }
     }
 
-    private fun analyze(graph: EPTGraph, edge: SelfAwareEdge, decomposition: Set<Pair<Int, Int>>) {
+    fun analyze(graph: EPTGraph, edge: SelfAwareEdge, decomposition: Set<Pair<Int, Int>>) {
         val valuesToCover = graph.steps[edge]!!.count { it == state }
         val trivialPeriods = decomposition.count { it.second == graph.steps[edge]!!.size }
 
