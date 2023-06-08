@@ -8,23 +8,50 @@ import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.default
 import kotlin.system.exitProcess
+import io.github.cdimascio.dotenv.dotenv
+import io.github.fierg.model.ENV
 
 
 fun main(args: Array<String>) {
 
     val parser = ArgParser("EPT Graph Reader")
 
-    val input by parser.argument(ArgType.Int, description = "input (Network id in range (0..61)")
+    val dotenv by parser.option(ArgType.Boolean, shortName = "env", description = "Use config from .env file").default(false)
+    var input by parser.option(ArgType.Int, description = "input (Network id in range (0..61)").default(0)
     var state by parser.option(ArgType.Boolean, description = "State to substitute in decomposition", shortName = "s").default(false)
-    val coroutines by parser.option(ArgType.Boolean, description = "Use Coroutines for period computation. (Use with check)", shortName = "co").default(false)
-    val clean by parser.option(ArgType.Boolean, description = "Clean up periods of multiples", shortName = "cl").default(false)
-
-    val mode by parser.option(ArgType.Choice<CompositionMode>(), shortName = "m", description = "Mode of composing the periods [ALL,SIMPLE,GREEDY]")
-
-    val debug by parser.option(ArgType.Boolean, shortName = "d", description = "Turn on debug mode").default(false)
-    val quiet by parser.option(ArgType.Boolean, shortName = "q", description = "Turn on quiet mode").default(false)
+    var coroutines by parser.option(ArgType.Boolean, description = "Use Coroutines for period computation. (Use with check)", shortName = "co").default(false)
+    var clean by parser.option(ArgType.Boolean, description = "Clean up periods of multiples", shortName = "cl").default(false)
+    var mode by parser.option(ArgType.Choice<CompositionMode>(), shortName = "m", description = "Mode of composing the periods [ALL,SIMPLE,GREEDY]")
+    var debug by parser.option(ArgType.Boolean, shortName = "d", description = "Turn on debug mode").default(false)
+    var quiet by parser.option(ArgType.Boolean, shortName = "q", description = "Turn on quiet mode").default(false)
 
     parser.parse(args = args)
+    if (dotenv) {
+        val env = dotenv {
+            directory = "./"
+            ignoreIfMalformed = true
+            ignoreIfMissing = true
+            systemProperties = true
+        }
+        Logger.info("Parsing arg from .env file:\n${env.entries().filter { envEntry -> ENV.values().map { envVar -> envVar.toString() }.contains(envEntry.key) }.map { "${it.key}:${it.value}\n"}}")
+        input = env["INPUT"].toInt()
+        state = env["STATE"] == "true"
+        coroutines = env["COROUTINES"] == "true"
+        clean = env["CLEAN"] == "true"
+        mode = when (env["MODE"]) {
+            "ALL" -> CompositionMode.ALL
+            "SIMPLE" -> CompositionMode.SIMPLE
+            "GREEDY" -> CompositionMode.GREEDY
+            else -> {
+                Logger.error("Composition Mode missing! Running with ALL")
+                CompositionMode.ALL
+            }
+        }
+        debug = env["DEBUG"] == "true"
+        quiet = env["QUIET"] == "true"
+    }
+
+
     state = !state
 
     if (debug) {
@@ -35,12 +62,12 @@ fun main(args: Array<String>) {
         Logger.setLogLevelToQuiet()
     }
 
-    if(mode == null){
+    if (mode == null) {
         Logger.error("Mode not provided! Exiting.")
         exitProcess(1)
     }
 
     val f2fGraph = FileReader().getF2FNetwork(input)
-    Decomposition(state, coroutines,clean, mode!!).findComposite(f2fGraph)
+    Decomposition(state, coroutines, clean, mode!!).findComposite(f2fGraph)
 
 }
