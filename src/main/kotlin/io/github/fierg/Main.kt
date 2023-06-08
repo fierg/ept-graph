@@ -9,6 +9,7 @@ import kotlinx.cli.ArgType
 import kotlinx.cli.default
 import kotlin.system.exitProcess
 import io.github.cdimascio.dotenv.dotenv
+import io.github.fierg.algo.Preprocessing
 import io.github.fierg.model.ENV
 
 
@@ -74,7 +75,7 @@ fun main(args: Array<String>) {
 
     val f2fGraph = FileReader().getF2FNetwork(input)
     if (deltaWindowPreprocessing > 0)
-
+        Preprocessing.applyDeltaWindow(f2fGraph, deltaWindowPreprocessing)
 
     Decomposition(state, coroutines, clean, mode!!, deltaWindowAlgo).findComposite(f2fGraph)
 

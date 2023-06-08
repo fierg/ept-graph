@@ -8,7 +8,12 @@ import io.github.fierg.model.CompositionMode
 import io.github.fierg.model.SelfAwareEdge
 import kotlinx.coroutines.*
 
-class Decomposition(private val state: Boolean = true, private val coroutines: Boolean = false, private val clean: Boolean = false, private val mode: CompositionMode = CompositionMode.ALL, deltaWindowAlgo: Int) {
+class Decomposition(
+    private val state: Boolean = true, private val coroutines: Boolean = false, private val clean: Boolean = false, private val mode: CompositionMode = CompositionMode.ALL,
+    private val deltaWindowAlgo: Int
+) {
+
+    private val applyDeltaWindow = deltaWindowAlgo > 0
 
     fun findComposite(graph: EPTGraph) {
         Logger.info("Looking for $state values while decomposing.")
@@ -30,7 +35,8 @@ class Decomposition(private val state: Boolean = true, private val coroutines: B
         val valuesToCover = graph.steps[edge]!!.count { it == state }
         val trivialPeriods = decomposition.count { it.second == graph.steps[edge]!!.size }
 
-        Logger.info("Found decomposition with ${String.format("%5d", decomposition.size)} periods, " +
+        Logger.info(
+            "Found decomposition with ${String.format("%5d", decomposition.size)} periods, " +
                     "covered ${String.format("%5d", valuesToCover)} values, " +
                     "used ${String.format("%3d", ((trivialPeriods.toFloat() / decomposition.size) * 100).toInt())}% trivial periods."
         )
@@ -179,9 +185,23 @@ class Decomposition(private val state: Boolean = true, private val coroutines: B
     private fun isPeriodic(array: BooleanArray, index: Int, factor: Int): Boolean {
         var pos = (index + factor) % array.size
         while (pos != index) {
-            if (array[pos] != state) return false
+            if (applyDeltaWindow) {
+                if (valueOfDeltaWindow(array, deltaWindowAlgo, index, state)) return false
+            } else
+                if (array[pos] != state) return false
             pos = (pos + factor) % array.size
         }
+        return true
+    }
+
+    private fun valueOfDeltaWindow(input: BooleanArray, width: Int, index: Int, state: Boolean): Boolean {
+        val start = 0.coerceAtLeast(index - width)
+        val end = (input.size - 1).coerceAtMost(index + width)
+
+        for (i in start..end) {
+            if (input[i] == state) return false
+        }
+
         return true
     }
 }
