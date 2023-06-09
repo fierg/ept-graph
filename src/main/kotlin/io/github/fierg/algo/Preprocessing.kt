@@ -6,7 +6,7 @@ import io.github.fierg.logger.Logger
 
 class Preprocessing {
     companion object {
-        fun applyDeltaWindow(input: BooleanArray, width: Int): BooleanArray {
+        fun applyDeltaWindow(input: BooleanArray, width: Int, state: Boolean): BooleanArray {
             val length = input.size
             val output = BooleanArray(length)
 
@@ -17,8 +17,8 @@ class Preprocessing {
 
                 // Apply the delta window function
                 for (j in start..end) {
-                    if (input[j]) {
-                        output[i] = true
+                    if (input[j] == state) {
+                        output[i] = state
                         break
                     }
                 }
@@ -26,10 +26,10 @@ class Preprocessing {
             return output
         }
 
-        fun applyDeltaWindow(input: EPTGraph, width: Int) {
+        fun applyDeltaWindow(input: EPTGraph, width: Int, state: Boolean) {
             Logger.info("Applying Delta window as preprocessing with width of $width.")
             input.steps.forEach { (t, u) ->
-                input.steps[t] = applyDeltaWindow(u, width)
+                input.steps[t] = applyDeltaWindow(u, width, state)
             }
         }
     }

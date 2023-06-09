@@ -74,7 +74,7 @@ fun main(args: Array<String>) {
 
     val f2fGraph = FileReader().getF2FNetwork(input)
     if (deltaWindowPreprocessing > 0)
-        Preprocessing.applyDeltaWindow(f2fGraph, deltaWindowPreprocessing)
+        Preprocessing.applyDeltaWindow(f2fGraph, deltaWindowPreprocessing, state)
 
     Decomposition(state, coroutines, clean, mode!!, deltaWindowAlgo).findComposite(f2fGraph)
 
