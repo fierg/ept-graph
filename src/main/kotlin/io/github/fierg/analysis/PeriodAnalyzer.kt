@@ -1,7 +1,6 @@
 package io.github.fierg.analysis
 
 import jetbrains.datalore.plot.PlotSvgExport
-import jetbrains.letsPlot.export.ggsave
 import jetbrains.letsPlot.geom.geomPoint
 import jetbrains.letsPlot.intern.Plot
 import jetbrains.letsPlot.intern.toSpec
@@ -31,7 +30,7 @@ class PeriodAnalyzer {
             return letsPlot(data) + geomPoint(data) { x = "factor"; y = "occurrence" }
         }
 
-        fun openInBrowser(content: String) {
+        private fun openInBrowser(content: String) {
             val dir = File(System.getProperty("user.dir"), "plots")
             dir.mkdir()
             val file = File(dir.canonicalPath, "temp-plot.html")

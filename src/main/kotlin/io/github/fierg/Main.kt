@@ -23,6 +23,7 @@ fun main(args: Array<String>) {
     var coroutines by parser.option(ArgType.Boolean, description = "Use Coroutines for period computation. (Use with check)", shortName = "co").default(false)
     var clean by parser.option(ArgType.Boolean, description = "Clean up periods of multiples", shortName = "cl").default(false)
     var mode by parser.option(ArgType.Choice<CompositionMode>(), shortName = "m", description = "Mode of composing the periods [ALL,SIMPLE,GREEDY]")
+    var skipSingleStepEdges by parser.option(ArgType.Boolean, shortName = "skipSingle", description = "Skip single time step label edges").default(false)
     var debug by parser.option(ArgType.Boolean, shortName = "d", description = "Turn on debug mode").default(false)
     var quiet by parser.option(ArgType.Boolean, shortName = "q", description = "Turn on quiet mode").default(false)
     var deltaWindowPreprocessing by parser.option(ArgType.Int, description = "Delta window in preprocessing of the label").default(0)
@@ -41,6 +42,8 @@ fun main(args: Array<String>) {
         state = env["STATE"] == "true"
         coroutines = env["COROUTINES"] == "true"
         clean = env["CLEAN"] == "true"
+        skipSingleStepEdges = env["SKIP_SINGLE_STEP_EDGES"] == "true"
+
         mode = when (env["MODE"]) {
             "ALL" -> CompositionMode.ALL
             "SIMPLE" -> CompositionMode.SIMPLE
@@ -76,6 +79,6 @@ fun main(args: Array<String>) {
     if (deltaWindowPreprocessing > 0)
         Preprocessing.applyDeltaWindow(f2fGraph, deltaWindowPreprocessing, state)
 
-    Decomposition(state, coroutines, clean, mode!!, deltaWindowAlgo).findComposite(f2fGraph)
+    Decomposition(state, coroutines, clean, mode!!, deltaWindowAlgo, skipSingleStepEdges).findComposite(f2fGraph)
 
 }
