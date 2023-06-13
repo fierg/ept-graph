@@ -12,7 +12,7 @@ class TestAnalyzer {
     fun testAnalyzer(){
         val f2fGraph = FileReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposition(mode = CompositionMode.SIMPLE, clean = true, coroutines = true, state = false, deltaWindowAlgo = 0)
+        val decomposition = Decomposition(state = false, coroutines = true, clean = true, mode = CompositionMode.SIMPLE, deltaWindowAlgo = 0)
         val periods = decomposition.findCover(f2fGraph.steps[edge]!!)
         decomposition.analyze(f2fGraph, edge, periods)
 

@@ -14,7 +14,8 @@ class Decomposition(
     private val coroutines: Boolean = false,
     private val clean: Boolean = false,
     private val mode: CompositionMode = CompositionMode.ALL,
-    private val deltaWindowAlgo: Int = 0
+    private val deltaWindowAlgo: Int = 0,
+    private val skipSingleStepEdges: Boolean = false
 ) {
 
     private val applyDeltaWindow = deltaWindowAlgo > 0
@@ -27,8 +28,10 @@ class Decomposition(
 
         graph.edges.forEach { edge ->
             try {
-                val decomposition = findCover(graph.steps[edge]!!)
-                analyze(graph, edge, decomposition)
+                if (!(!skipSingleStepEdges && graph.steps[edge]!!.size > 1))  {
+                    val decomposition = findCover(graph.steps[edge]!!)
+                    analyze(graph, edge, decomposition)
+                }
             } catch (e: NoCoverFoundException) {
                 Logger.error("${e.javaClass.simpleName} ${e.message} (edge length ${graph.steps[edge]!!.size})")
             }
