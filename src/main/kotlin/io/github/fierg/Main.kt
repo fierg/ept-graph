@@ -1,6 +1,6 @@
 package io.github.fierg
 
-import io.github.fierg.algo.Decomposition
+import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.FileReader
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.CompositionMode
@@ -9,7 +9,7 @@ import kotlinx.cli.ArgType
 import kotlinx.cli.default
 import kotlin.system.exitProcess
 import io.github.cdimascio.dotenv.dotenv
-import io.github.fierg.algo.Preprocessing
+import io.github.fierg.algo.Preprocessor
 import io.github.fierg.model.ENV
 
 
@@ -77,8 +77,8 @@ fun main(args: Array<String>) {
 
     val f2fGraph = FileReader().getF2FNetwork(input)
     if (deltaWindowPreprocessing > 0)
-        Preprocessing.applyDeltaWindow(f2fGraph, deltaWindowPreprocessing, state)
+        Preprocessor.applyDeltaWindow(f2fGraph, deltaWindowPreprocessing, state)
 
-    Decomposition(state, coroutines, clean, mode!!, deltaWindowAlgo, skipSingleStepEdges).findComposite(f2fGraph)
+    Decomposer(state, coroutines, clean, mode!!, deltaWindowAlgo, skipSingleStepEdges).findComposite(f2fGraph)
 
 }

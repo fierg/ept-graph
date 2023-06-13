@@ -1,6 +1,6 @@
 package io.github.fierg
 
-import io.github.fierg.algo.Decomposition
+import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.FileReader
 import io.github.fierg.model.CompositionMode
 import org.junit.Test
@@ -11,7 +11,7 @@ class TestDecomposition {
     fun testDecomposition(){
         val f2fGraph = FileReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposition(state = false, coroutines = true, clean = true, mode = CompositionMode.SIMPLE)
+        val decomposition = Decomposer(state = false, coroutines = true, clean = true, mode = CompositionMode.SIMPLE)
         val periods = decomposition.findCover(f2fGraph.steps[edge]!!)
         decomposition.analyze(f2fGraph, edge, periods)
 

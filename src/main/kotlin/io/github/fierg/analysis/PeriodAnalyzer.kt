@@ -11,7 +11,19 @@ import java.io.File
 
 class PeriodAnalyzer {
     companion object {
-        fun analyzePeriods(periods: Collection<Pair<Int, Int>>) : Plot {
+        fun analyzeGraph(decomposition: Collection<Collection<Pair<Int, Int>>>): Plot {
+            val factorMap = mutableMapOf<Int, Int>()
+
+            decomposition.forEach { periods ->
+                periods.forEach { period ->
+                    factorMap[period.second] = if (factorMap[period.second] == null) 1 else factorMap[period.second]!! + 1
+                }
+            }
+
+            return createPlot(factorMap)
+        }
+
+        fun analyzePeriods(periods: Collection<Pair<Int, Int>>): Plot {
             val factorMap = mutableMapOf<Int, Int>()
 
             periods.forEach { period ->

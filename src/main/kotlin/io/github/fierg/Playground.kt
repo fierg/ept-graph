@@ -1,6 +1,6 @@
 package io.github.fierg
 
-import io.github.fierg.algo.Decomposition
+import io.github.fierg.algo.Decomposer
 import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.periodic.Periodic
 
@@ -12,9 +12,9 @@ fun main(){
     val number = 24
     println("Factors of $number are ${number.factorsSequence().toList()}")
 
-    val periods = Decomposition().findCover(array)
+    val periods = Decomposer().findCover(array)
     periods
 
-    Decomposition().findCover(BooleanArray(16))
+    Decomposer().findCover(BooleanArray(16))
 
 }
