@@ -10,7 +10,7 @@ fun main(){
     println("period is $period")
 
     val number = 24
-    println("Factors of ${number} are ${number.factorsSequence().toList()}")
+    println("Factors of $number are ${number.factorsSequence().toList()}")
 
     val periods = Decomposition().findCover(array)
     periods
