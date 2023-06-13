@@ -12,10 +12,11 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.version>1.6.0</kotlin.version>
+        <kotlin.version>1.8.22</kotlin.version>
         <kotlin.code.style>official</kotlin.code.style>
-        <junit.version>4.13.1</junit.version>
+        <junit.version>4.13.2</junit.version>
         <main.class>io.github.fierg.MainKt</main.class>
+        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
     </properties>
 
     <dependencies>
@@ -49,7 +50,7 @@
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-core</artifactId>
-            <version>1.6.4</version>
+            <version>1.7.1</version>
             <type>pom</type>
         </dependency>
 
@@ -60,6 +61,12 @@
             <version>6.4.1</version>
         </dependency>
 
+        <!-- https://github.com/JetBrains/lets-plot-kotlin#in-jvm-js -->
+        <dependency>
+            <groupId>org.jetbrains.lets-plot</groupId>
+            <artifactId>lets-plot-kotlin-jvm</artifactId>
+            <version>3.2.0</version>
+        </dependency>
 
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -126,5 +133,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
