@@ -9,7 +9,7 @@ import io.github.fierg.model.CompositionMode
 import io.github.fierg.model.SelfAwareEdge
 import kotlinx.coroutines.*
 
-class Decomposition(
+class Decomposer(
     private val state: Boolean = true,
     private val coroutines: Boolean = false,
     private val clean: Boolean = false,
@@ -20,22 +20,27 @@ class Decomposition(
 
     private val applyDeltaWindow = deltaWindowAlgo > 0
 
-    fun findComposite(graph: EPTGraph) {
+    fun findComposite(graph: EPTGraph): MutableSet<Set<Pair<Int, Int>>> {
         Logger.info("Looking for $state values while decomposing.")
         if (coroutines) Logger.info("Using coroutines to compute periods.")
         if (clean) Logger.info("Cleaning up multiples/duplicates before applying the periods.")
         Logger.info("Choosing periods in $mode mode.")
 
+        val decomposition = mutableSetOf<Set<Pair<Int,Int>>>()
+
         graph.edges.forEach { edge ->
             try {
-                if (!(!skipSingleStepEdges && graph.steps[edge]!!.size > 1))  {
-                    val decomposition = findCover(graph.steps[edge]!!)
-                    analyze(graph, edge, decomposition)
+                if (! (skipSingleStepEdges && graph.steps[edge]!!.size <= 1)) {
+                    val edgeDecomposition = findCover(graph.steps[edge]!!)
+                    decomposition.add(edgeDecomposition)
+                    analyze(graph, edge, edgeDecomposition)
                 }
             } catch (e: NoCoverFoundException) {
                 Logger.error("${e.javaClass.simpleName} ${e.message} (edge length ${graph.steps[edge]!!.size})")
             }
         }
+
+        return decomposition
     }
 
     fun analyze(graph: EPTGraph, edge: SelfAwareEdge, decomposition: Set<Pair<Int, Int>>) {
@@ -102,7 +107,6 @@ class Decomposition(
         if (array.contentEquals(cover)) {
             return appliedPeriods
         }
-
         var coverage = cover.count { it == state }.toDouble() / array.count { it == state }
         if (coverage.isNaN()) coverage = 0.0
         throw NoCoverFoundException("with coverage of $coverage")
