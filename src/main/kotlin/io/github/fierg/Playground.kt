@@ -2,9 +2,12 @@ package io.github.fierg
 
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.analysis.PeriodAnalyzer
+import io.github.fierg.data.DotEnvParser
 import io.github.fierg.data.FileReader
 import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.model.CompositionMode
+import io.github.fierg.model.Options
+import io.github.fierg.model.PlotType
 import io.github.fierg.periodic.Periodic
 
 fun main(){
@@ -16,7 +19,6 @@ fun main(){
     println("Factors of $number are ${number.factorsSequence().toList()}")
 
     val periods = Decomposer().findCover(array)
-    periods
 
     Decomposer().findCover(BooleanArray(16))
 
@@ -25,7 +27,12 @@ fun main(){
     val decompositionResult = decomposition.findComposite(f2fGraph)
 
 
-    val plot = PeriodAnalyzer.analyzeGraph(decompositionResult)
-    PeriodAnalyzer.showPlot(PeriodAnalyzer.createPlot(plot))
+    val options = Options.emptyOptions()
+    options.dotenv = true
+    DotEnvParser.readDotEnv(options)
+    options.state = !options.state
+    PeriodAnalyzer.analyzeAllGraphs(Decomposer(options), PlotType.GEOM_HIST)
 
+    val plot = PeriodAnalyzer.analyzeGraph(decompositionResult)
+    PeriodAnalyzer.showPlot(PeriodAnalyzer.createPlot(plot,))
 }

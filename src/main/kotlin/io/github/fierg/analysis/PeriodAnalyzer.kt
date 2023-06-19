@@ -3,9 +3,9 @@ package io.github.fierg.analysis
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.FileReader
 import io.github.fierg.logger.Logger
-import io.github.fierg.model.CompositionMode
 import io.github.fierg.model.PlotType
 import jetbrains.datalore.plot.PlotSvgExport
+import jetbrains.letsPlot.export.ggsave
 import jetbrains.letsPlot.geom.geomHistogram
 import jetbrains.letsPlot.geom.geomPoint
 import jetbrains.letsPlot.intern.Plot
@@ -18,7 +18,7 @@ import java.io.File
 class PeriodAnalyzer {
 
     companion object {
-        fun analyzeGraph(decomposition: Collection<Collection<Pair<Int, Int>>>): MutableMap<Int,Int> {
+        fun analyzeGraph(decomposition: Collection<Collection<Pair<Int, Int>>>): MutableMap<Int, Int> {
             val factorMap = mutableMapOf<Int, Int>()
 
             decomposition.forEach { periods ->
@@ -42,14 +42,14 @@ class PeriodAnalyzer {
 
         fun createPlot(result: Map<Int, Int>, type: PlotType = PlotType.GEOM_POINT): Plot {
             val data = mapOf<String, Any>(
-                "occurrence" to result.toSortedMap().values.toList(),
-                "factor" to result.toSortedMap().keys.toList()
+                "factor" to result.toSortedMap().keys.toList(),
+                "occurrence" to result.toSortedMap().values.toList()
             )
             Logger.info("PLOT DATA: $data")
 
-            return when(type){
-                PlotType.GEOM_POINT -> letsPlot(data) + geomPoint(data) { x = "factor"; y = "occurrence" }
-                PlotType.GEOM_HIST -> letsPlot(data) + geomHistogram(data) { x = "factor"; y = "occurrence" }
+            return when (type) {
+                PlotType.GEOM_POINT -> letsPlot(data) + geomPoint(size = 2.0) { x = "factor"; y = "occurrence" }
+                PlotType.GEOM_HIST -> letsPlot(data) + geomHistogram { x = "factor"; y = "occurrence" }
             }
         }
 
@@ -63,12 +63,7 @@ class PeriodAnalyzer {
         }
 
         fun saveToFile(filename: String, plot: Plot) {
-            val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
-            val dir = File(System.getProperty("user.dir"), "plots")
-            dir.mkdir()
-            val file = File(dir.canonicalPath, filename)
-            file.createNewFile()
-            file.writeText(content)
+            ggsave(plot, filename, path = "./plots")
         }
 
         fun showPlot(plot: Plot) {
@@ -76,14 +71,18 @@ class PeriodAnalyzer {
             openInBrowser(content)
         }
 
-        fun analyzeAllGraphs() {
-            val f2fGraph = FileReader().getF2FNetwork(4)
-            val decomposition = Decomposer()
-            val decompositionResult = decomposition.findComposite(f2fGraph)
+        fun analyzeAllGraphs(decomposer: Decomposer, type: PlotType = PlotType.GEOM_HIST) {
+            val factors = mutableMapOf<Int,Int>()
+            for (i in 0..61) {
+                val f2fGraph = FileReader().getF2FNetwork(i)
+                val decompositionResult = decomposer.findComposite(f2fGraph)
 
-
-            val plot = PeriodAnalyzer.analyzeGraph(decompositionResult)
-            PeriodAnalyzer.saveToFile("test-graph-plot.html", PeriodAnalyzer.createPlot(plot))
+                val newFactors = analyzeGraph(decompositionResult)
+                newFactors.forEach { (factor, occurrence) ->
+                    factors[factor] = if (factors[factor] == null) occurrence else factors[factor]!! + occurrence
+                }
+            }
+            saveToFile("test-all-graphs-plot.png", createPlot(factors, type))
         }
     }
 }

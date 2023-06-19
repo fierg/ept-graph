@@ -2,8 +2,11 @@ package io.github.fierg
 
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.analysis.PeriodAnalyzer
+import io.github.fierg.data.DotEnvParser
 import io.github.fierg.data.FileReader
 import io.github.fierg.model.CompositionMode
+import io.github.fierg.model.Options
+import io.github.fierg.model.PlotType
 import org.junit.Ignore
 import org.junit.Test
 
@@ -18,7 +21,7 @@ class TestAnalyzer {
         decomposition.analyze(f2fGraph, edge, periods)
 
         val plot = PeriodAnalyzer.analyzePeriods(periods)
-        PeriodAnalyzer.saveToFile("test-edge-plot.html", PeriodAnalyzer.createPlot(plot))
+        PeriodAnalyzer.saveToFile("test-edge-plot.png", PeriodAnalyzer.createPlot(plot))
     }
 
     @Test
@@ -29,24 +32,17 @@ class TestAnalyzer {
 
 
         val plot = PeriodAnalyzer.analyzeGraph(decompositionResult)
-        PeriodAnalyzer.saveToFile("test-graph-plot.html", PeriodAnalyzer.createPlot(plot))
+        PeriodAnalyzer.saveToFile("test-graph-plot.png", PeriodAnalyzer.createPlot(plot))
     }
 
 
     @Test
     @Ignore
     fun testAnalyzerAllGraphs(){
-        val decomposition = Decomposer(state = false, coroutines = true, clean = true, mode = CompositionMode.SIMPLE, deltaWindowAlgo = 0, skipSingleStepEdges = true)
-        val factors = mutableMapOf<Int,Int>()
-        for (i in 0..61) {
-            val f2fGraph = FileReader().getF2FNetwork(i)
-            val decompositionResult = decomposition.findComposite(f2fGraph)
-
-            val newFactors = PeriodAnalyzer.analyzeGraph(decompositionResult)
-            newFactors.forEach { (factor, occurrence) ->
-                factors[factor] = if (factors[factor] == null) occurrence else factors[factor]!! + occurrence
-            }
-            PeriodAnalyzer.saveToFile("test-all-graphs-plot.html", PeriodAnalyzer.createPlot(factors))
-        }
+        val options = Options.emptyOptions()
+        options.dotenv = true
+        DotEnvParser.readDotEnv(options)
+        options.state = !options.state
+        PeriodAnalyzer.analyzeAllGraphs(Decomposer(options), PlotType.GEOM_HIST)
     }
 }
