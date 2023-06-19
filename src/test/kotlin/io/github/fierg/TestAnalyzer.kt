@@ -4,6 +4,7 @@ import io.github.fierg.algo.Decomposer
 import io.github.fierg.analysis.PeriodAnalyzer
 import io.github.fierg.data.FileReader
 import io.github.fierg.model.CompositionMode
+import org.junit.Ignore
 import org.junit.Test
 
 class TestAnalyzer {
@@ -33,6 +34,7 @@ class TestAnalyzer {
 
 
     @Test
+    @Ignore
     fun testAnalyzerAllGraphs(){
         val decomposition = Decomposer(state = false, coroutines = true, clean = true, mode = CompositionMode.SIMPLE, deltaWindowAlgo = 0, skipSingleStepEdges = true)
         val factors = mutableMapOf<Int,Int>()

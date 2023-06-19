@@ -14,10 +14,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.version>1.8.22</kotlin.version>
         <kotlin.code.style>official</kotlin.code.style>
+        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
         <slf4j.version>2.0.7</slf4j.version>
         <junit.version>4.13.2</junit.version>
         <main.class>io.github.fierg.MainKt</main.class>
-        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
     </properties>
 
     <dependencies>
@@ -147,6 +147,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
