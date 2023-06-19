@@ -15,6 +15,7 @@
         <kotlin.version>1.8.22</kotlin.version>
         <kotlin.code.style>official</kotlin.code.style>
         <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
+        <letsPlot.version>3.2.0</letsPlot.version>
         <slf4j.version>2.0.7</slf4j.version>
         <junit.version>4.13.2</junit.version>
         <main.class>io.github.fierg.MainKt</main.class>
@@ -66,8 +67,17 @@
         <dependency>
             <groupId>org.jetbrains.lets-plot</groupId>
             <artifactId>lets-plot-kotlin-jvm</artifactId>
-            <version>3.2.0</version>
+            <version>${letsPlot.version}</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.jetbrains.lets-plot/lets-plot-image-export
+        Setting version to higher than 2.1 causes ClassDefNotFound Error when trying to save to png-->
+        <dependency>
+            <groupId>org.jetbrains.lets-plot</groupId>
+            <artifactId>lets-plot-image-export</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+
 
         <!-- https://mvnrepository.com/artifact/org.slf4j -->
         <dependency>

@@ -12,4 +12,20 @@ data class Options(
     var quiet: Boolean,
     var deltaWindowPreprocessing: Int,
     var deltaWindowAlgo: Int
-)
+){
+    companion object{
+        fun emptyOptions(): Options {
+            return Options(false,0,
+                state = false,
+                coroutines = false,
+                clean = false,
+                mode = CompositionMode.ALL,
+                skipSingleStepEdges = false,
+                debug = false,
+                quiet = false,
+                deltaWindowPreprocessing = 0,
+                deltaWindowAlgo = 0
+            )
+        }
+    }
+}
