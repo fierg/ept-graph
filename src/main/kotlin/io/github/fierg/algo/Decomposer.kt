@@ -6,6 +6,7 @@ import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.CompositionMode
+import io.github.fierg.model.Options
 import io.github.fierg.model.SelfAwareEdge
 import kotlinx.coroutines.*
 
@@ -17,6 +18,7 @@ class Decomposer(
     private val deltaWindowAlgo: Int = 0,
     private val skipSingleStepEdges: Boolean = false
 ) {
+    constructor(options: Options) : this(options.state, options.coroutines, options.clean, options.mode!!, options.deltaWindowAlgo, options.skipSingleStepEdges)
 
     private val applyDeltaWindow = deltaWindowAlgo > 0
 

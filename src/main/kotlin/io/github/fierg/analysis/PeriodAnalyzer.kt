@@ -1,6 +1,9 @@
 package io.github.fierg.analysis
 
+import io.github.fierg.algo.Decomposer
+import io.github.fierg.data.FileReader
 import io.github.fierg.logger.Logger
+import io.github.fierg.model.CompositionMode
 import io.github.fierg.model.PlotType
 import jetbrains.datalore.plot.PlotSvgExport
 import jetbrains.letsPlot.geom.geomHistogram
@@ -71,6 +74,16 @@ class PeriodAnalyzer {
         fun showPlot(plot: Plot) {
             val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
             openInBrowser(content)
+        }
+
+        fun analyzeAllGraphs() {
+            val f2fGraph = FileReader().getF2FNetwork(4)
+            val decomposition = Decomposer()
+            val decompositionResult = decomposition.findComposite(f2fGraph)
+
+
+            val plot = PeriodAnalyzer.analyzeGraph(decompositionResult)
+            PeriodAnalyzer.saveToFile("test-graph-plot.html", PeriodAnalyzer.createPlot(plot))
         }
     }
 }
