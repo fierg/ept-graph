@@ -11,10 +11,9 @@ import java.io.File
 import java.nio.charset.Charset
 
 class FileReader {
-    private val logger = Logger
 
     fun readSimpleGraph(file: String): DefaultDirectedGraph<Int, LabeledEdge> {
-        logger.info("Reading graph from file $file ...")
+        Logger.info("Reading graph from file $file ...")
         val regex = Regex("(\\d+) (\\d+) (\\d+)")
         val graph = GraphBuilder<Int, LabeledEdge, DefaultDirectedGraph<Int, LabeledEdge>>(DefaultDirectedGraph(LabeledEdge::class.java))
         val nodes = mutableSetOf<Int>()
@@ -30,17 +29,17 @@ class FileReader {
                 nodes.add(target)
                 edges++
             } else {
-                logger.error("Unexpected line: $line")
+                Logger.error("Unexpected line: $line")
             }
 
         }
-        logger.info("Done. Read graph with ${nodes.size} nodes and $edges edges.")
+        Logger.info("Done. Read graph with ${nodes.size} nodes and $edges edges.")
         return graph.build()
     }
 
     fun getF2FNetwork(id: Int): EPTGraph {
         if (id > 61) throw IllegalArgumentException("ID needs to be in range [0,61]")
-        logger.info("Reading network$id from file data/f2f/network/network$id.csv")
+        Logger.info("Reading network$id from file data/f2f/network/network$id.csv")
         val networkList = File("data/f2f/network_list.csv")
         val people = networkList.readLines()[id + 1].split(",")[1].toInt()
         val edges = mutableListOf<SelfAwareEdge>()
@@ -60,7 +59,7 @@ class FileReader {
     }
 
     private fun readF2FFile(id: Int, people: Int, steps: MutableMap<SelfAwareEdge, MutableList<Boolean>>, edges: MutableList<SelfAwareEdge>): List<String> {
-        logger.debug("Expecting $people people in network (${people + 1} nodes) and ${people * (people + 1)} edges.")
+        Logger.debug("Expecting $people people in network (${people + 1} nodes) and ${people * (people + 1)} edges.")
 
         for (i in 0 until (people * (people + 1))) {
             val edge = SelfAwareEdge((i / (people + 1)) + 1, i % (people + 1))
@@ -80,13 +79,13 @@ class FileReader {
                         when (s) {
                             "0" -> steps[edges[token - 1]]!!.add(false)
                             "1" -> steps[edges[token - 1]]!!.add(true)
-                            else -> logger.error("unexpected token in line $index at token $token:\n$line")
+                            else -> Logger.error("unexpected token in line $index at token $token:\n$line")
                         }
                     }
                 }
             }
         }
-        logger.info("EPT Graph has ${steps[edges.first()]!!.size - 1} time steps.")
+        Logger.info("EPT Graph has ${steps[edges.first()]!!.size - 1} time steps.")
         return labels
     }
 }
