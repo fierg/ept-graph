@@ -41,3 +41,8 @@ thesis/*.pdf
 *.loc
 *.out
 *.soc
+
+
+#Plots
+
+plots/
