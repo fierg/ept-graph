@@ -7,7 +7,6 @@ import io.github.fierg.data.FileReader
 import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.model.CompositionMode
 import io.github.fierg.model.Options
-import io.github.fierg.model.PlotType
 import io.github.fierg.periodic.Periodic
 
 fun main(){
@@ -31,7 +30,7 @@ fun main(){
     options.dotenv = true
     DotEnvParser.readDotEnv(options)
     options.state = !options.state
-    PeriodAnalyzer.analyzeAllGraphs(Decomposer(options), PlotType.GEOM_HIST)
+    PeriodAnalyzer.analyzeAllGraphs(Decomposer(options))
 
     val plot = PeriodAnalyzer.analyzeGraph(decompositionResult)
     PeriodAnalyzer.showPlot(PeriodAnalyzer.createPlot(plot,))

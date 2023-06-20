@@ -26,13 +26,13 @@ class TestAnalyzer {
 
     @Test
     fun testAnalyzerGraph(){
-        val f2fGraph = FileReader().getF2FNetwork(4)
+        val f2fGraph = FileReader().getF2FNetwork(6)
         val decomposition = Decomposer(state = false, coroutines = true, clean = true, mode = CompositionMode.SIMPLE, deltaWindowAlgo = 0, skipSingleStepEdges = true)
         val decompositionResult = decomposition.findComposite(f2fGraph)
 
 
         val plot = PeriodAnalyzer.analyzeGraph(decompositionResult)
-        PeriodAnalyzer.saveToFile("test-graph-plot.png", PeriodAnalyzer.createPlot(plot))
+        PeriodAnalyzer.saveToFile("test-graph-plot.png", PeriodAnalyzer.createPlot(plot, PlotType.GEOM_HIST))
     }
 
 
@@ -43,6 +43,8 @@ class TestAnalyzer {
         options.dotenv = true
         DotEnvParser.readDotEnv(options)
         options.state = !options.state
-        PeriodAnalyzer.analyzeAllGraphs(Decomposer(options), PlotType.GEOM_HIST)
+        val factors = PeriodAnalyzer.analyzeAllGraphs(Decomposer(options))
+        PeriodAnalyzer.saveToFile("test-all-graphs-plot1.png", PeriodAnalyzer.createPlot(factors, PlotType.GEOM_HIST))
+        PeriodAnalyzer.saveToFile("test-all-graphs-plot2.png", PeriodAnalyzer.createPlot(factors, PlotType.GEOM_POINT))
     }
 }

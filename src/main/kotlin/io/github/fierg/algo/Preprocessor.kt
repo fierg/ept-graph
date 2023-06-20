@@ -13,10 +13,9 @@ class Preprocessor {
             // Iterate over the input array
             for (i in 0 until length) {
                 val start = 0.coerceAtLeast(i - width)
-                val end = (length - 1).coerceAtMost(i + width)
 
                 // Apply the delta window function
-                for (j in start..end) {
+                for (j in start..i) {
                     if (input[j] == state) {
                         output[i] = state
                         break

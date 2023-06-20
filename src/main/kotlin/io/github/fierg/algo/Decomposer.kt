@@ -3,6 +3,7 @@ package io.github.fierg.algo
 import io.github.fierg.exceptions.NoCoverFoundException
 import io.github.fierg.extensions.contentEqualsWithDelta
 import io.github.fierg.extensions.factorsSequence
+import io.github.fierg.extensions.valueOfDeltaWindow
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.CompositionMode
@@ -194,23 +195,11 @@ class Decomposer(
         var pos = (index + factor) % array.size
         while (pos != index) {
             if (applyDeltaWindow) {
-                //FIXME: Delta window too aggressive, finding too good periods...
-                if (arrayValueOfDeltaWindow(array, deltaWindowAlgo, index, state)) return false
+                if (array.valueOfDeltaWindow(deltaWindowAlgo, index, state)) return false
             } else
                 if (array[pos] != state) return false
             pos = (pos + factor) % array.size
         }
-        return true
-    }
-
-    private fun arrayValueOfDeltaWindow(input: BooleanArray, width: Int, index: Int, state: Boolean): Boolean {
-        val start = 0.coerceAtLeast(index - width)
-        val end = (input.size - 1).coerceAtMost(index + width)
-
-        for (i in start..end) {
-            if (input[i] == state) return false
-        }
-
         return true
     }
 }
