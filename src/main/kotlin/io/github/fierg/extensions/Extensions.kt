@@ -54,3 +54,7 @@ fun BooleanArray.valueOfDeltaWindow(width: Int, index: Int, state: Boolean): Boo
 
     return !state
 }
+
+fun <K, V> Map<K, V>.reversed() = HashMap<V, K>().also { newMap ->
+    entries.forEach { newMap[it.value] = it.key }
+}

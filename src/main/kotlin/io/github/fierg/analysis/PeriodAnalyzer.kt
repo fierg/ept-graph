@@ -2,6 +2,7 @@ package io.github.fierg.analysis
 
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.FileReader
+import io.github.fierg.extensions.reversed
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.EvaluationResult
 import io.github.fierg.model.PlotType
@@ -35,6 +36,7 @@ class PeriodAnalyzer {
             2049..5000 to 4,
             5001..Int.MAX_VALUE to 5
         )
+        private val rlm = lengthMapping.reversed()
         private val blankTheme = theme(axisLine = elementBlank(), axis = elementBlank(), panelGrid = elementBlank())
 
         fun analyzeGraph(decomposition: Collection<Collection<Triple<Int, Int, Int>>>): MutableMap<Int, Int> {
@@ -78,7 +80,7 @@ class PeriodAnalyzer {
             )
 
             val mappedData = mapOf<String, MutableList<Any>>(
-                "group" to mutableListOf("ideal", "very short", "short", " 3-5x multiple", "2-3x multiple", "outlier"),
+                "group" to mutableListOf("ideal (up to ${rlm[0]!!.last})", "very short (up to ${rlm[1]!!.last})", "short (up to ${rlm[2]!!.last})", " 3-5x multiple (up to ${rlm[3]!!.last})", "2-3x multiple (up to ${rlm[4]!!.last})", "outlier"),
                 "covered values" to mutableListOf(0, 0, 0, 0, 0, 0)
             )
 
@@ -91,7 +93,7 @@ class PeriodAnalyzer {
 
             return letsPlot(mappedData) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
                     blankTheme +
-                    geomPie(stat = Stat.identity, hole = 0.3, tooltips = tooltipsNone, size = 25)
+                    geomPie(stat = Stat.identity, hole = 0.3, tooltips = tooltipsNone, size = 25, stroke = 1.0, labels=layer_labels(['..proppct..']).format('..proppct..', '{.1f}%'))
                     { slice = "covered values"; fill = "group" } +
                     scaleFillBrewer(palette = "Set1")
         }
