@@ -25,9 +25,9 @@ import java.io.File
 
 class PeriodAnalyzer {
     companion object {
-        val DEFAULT_WIDTH = 600
-        val DEFAULT_HEIGHT = 375
-        val lengthMapping = mapOf(
+        private const val DEFAULT_WIDTH = 600
+        private const val DEFAULT_HEIGHT = 375
+        private val lengthMapping = mapOf(
             0..16 to 0, // 2^0 to 2^4
             17..128 to 1, // 2^4 + 1 to 2^7
             129..1024 to 2,
@@ -35,6 +35,7 @@ class PeriodAnalyzer {
             2049..5000 to 4,
             5001..Int.MAX_VALUE to 5
         )
+        private val blankTheme = theme(axisLine = elementBlank(), axis = elementBlank(), panelGrid = elementBlank())
 
         fun analyzeGraph(decomposition: Collection<Collection<Triple<Int, Int, Int>>>): MutableMap<Int, Int> {
             val factorMap = mutableMapOf<Int, Int>()
@@ -89,7 +90,7 @@ class PeriodAnalyzer {
             Logger.info("PLOT DATA: $mappedData")
 
             return letsPlot(mappedData) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
-                    theme(axisLine = elementBlank(), axis = elementBlank(), panelGrid = elementBlank()) +
+                    blankTheme +
                     geomPie(stat = Stat.identity, hole = 0.3, tooltips = tooltipsNone, size = 25)
                     { slice = "covered values"; fill = "group" } +
                     scaleFillBrewer(palette = "Set1")
