@@ -23,17 +23,17 @@ class Decomposer(
 
     private val applyDeltaWindow = deltaWindowAlgo > 0
 
-    fun findComposite(graph: EPTGraph): MutableSet<Set<Pair<Int, Int>>> {
+    fun findComposite(graph: EPTGraph): Set<Set<Triple<Int, Int, Int>>> {
         Logger.info("Looking for $state values while decomposing.")
         if (coroutines) Logger.info("Using coroutines to compute periods.")
         if (clean) Logger.info("Cleaning up multiples/duplicates before applying the periods.")
         Logger.info("Choosing periods in $mode mode.")
 
-        val decomposition = mutableSetOf<Set<Pair<Int,Int>>>()
+        val decomposition = mutableSetOf<Set<Triple<Int, Int, Int>>>()
 
         graph.edges.forEach { edge ->
             try {
-                if (! (skipSingleStepEdges && graph.steps[edge]!!.size <= 1)) {
+                if (!(skipSingleStepEdges && graph.steps[edge]!!.size <= 1)) {
                     val edgeDecomposition = findCover(graph.steps[edge]!!)
                     decomposition.add(edgeDecomposition)
                     analyze(graph, edge, edgeDecomposition)
@@ -46,7 +46,7 @@ class Decomposer(
         return decomposition
     }
 
-    fun analyze(graph: EPTGraph, edge: SelfAwareEdge, decomposition: Set<Pair<Int, Int>>) {
+    fun analyze(graph: EPTGraph, edge: SelfAwareEdge, decomposition: Set<Triple<Int, Int, Int>>) {
         val valuesToCover = graph.steps[edge]!!.count { it == state }
         val trivialPeriods = decomposition.count { it.second == graph.steps[edge]!!.size }
 
@@ -58,16 +58,16 @@ class Decomposer(
     }
 
 
-    fun findCover(array: BooleanArray): Set<Pair<Int, Int>> {
+    fun findCover(array: BooleanArray): Set<Triple<Int, Int, Int>> {
         val periods = cleanMultiplesOfIntervals(if (coroutines) getPeriodsCO(array) else getPeriods(array), clean)
         var cover = BooleanArray(array.size) { !state }
-        val appliedPeriods = mutableSetOf<Pair<Int, Int>>()
+        val appliedPeriods = mutableSetOf<Triple<Int, Int, Int>>()
 
         when (mode) {
             CompositionMode.ALL -> {
                 periods.forEach { period ->
-                    applyPeriod(cover, period)
-                    appliedPeriods.add(period)
+                    val changesMade = applyPeriod(cover, period)
+                    appliedPeriods.add(Triple(period.first, period.second, changesMade))
 
                     if (applyDeltaWindow) {
                         if (array.contentEqualsWithDelta(cover, deltaWindowAlgo, state)) return appliedPeriods
@@ -100,8 +100,8 @@ class Decomposer(
                             maxDiff = diff
                         }
                     }
-                    applyPeriod(cover, bestPeriod)
-                    appliedPeriods.add(bestPeriod)
+                    val changesMade = applyPeriod(cover, bestPeriod)
+                    appliedPeriods.add(Triple(bestPeriod.first, bestPeriod.second, changesMade))
                 } while (!array.contentEquals(cover))
                 return appliedPeriods
             }
@@ -136,23 +136,28 @@ class Decomposer(
             periods
     }
 
-    private fun applyPeriodOnlyIfChangesOccur(cover: BooleanArray, period: Pair<Int, Int>, appliedPeriods: MutableSet<Pair<Int, Int>>): BooleanArray {
+    private fun applyPeriodOnlyIfChangesOccur(cover: BooleanArray, period: Pair<Int, Int>, appliedPeriods: MutableSet<Triple<Int, Int, Int>>): BooleanArray {
         val newCover = cover.copyInto(BooleanArray(cover.size))
-        applyPeriod(newCover, period)
+        val changesMade = applyPeriod(newCover, period)
         return if (cover.contentEquals(newCover))
             cover
         else {
-            appliedPeriods.add(period)
+            appliedPeriods.add(Triple(period.first, period.second, changesMade))
             newCover
         }
     }
 
-    private fun applyPeriod(cover: BooleanArray, period: Pair<Int, Int>) {
+    private fun applyPeriod(cover: BooleanArray, period: Pair<Int, Int>): Int {
         var position = period.first
+        var changesMadeByPeriod = 0
         do {
-            cover[position] = state
+            if (cover[position] != state) {
+                cover[position] = state
+                changesMadeByPeriod++
+            }
             position = (position + period.second) % cover.size
         } while (position != period.first)
+        return changesMadeByPeriod
     }
 
     private fun getPeriods(array: BooleanArray): List<Pair<Int, Int>> {

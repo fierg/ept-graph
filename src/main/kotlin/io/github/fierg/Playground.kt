@@ -33,5 +33,5 @@ fun main(){
     PeriodAnalyzer.analyzeAllGraphs(Decomposer(options))
 
     val plot = PeriodAnalyzer.analyzeGraph(decompositionResult)
-    PeriodAnalyzer.showPlot(PeriodAnalyzer.createPlot(plot,))
+    PeriodAnalyzer.showPlotInBrowser(PeriodAnalyzer.createPlotFromOccurrences(plot,))
 }

@@ -67,7 +67,7 @@
         <dependency>
             <groupId>org.jetbrains.lets-plot</groupId>
             <artifactId>lets-plot-kotlin-jvm</artifactId>
-            <version>${letsPlot.version}</version>
+            <version>4.2.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.jetbrains.lets-plot/lets-plot-image-export

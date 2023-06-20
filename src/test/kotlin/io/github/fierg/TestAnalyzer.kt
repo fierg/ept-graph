@@ -21,7 +21,7 @@ class TestAnalyzer {
         decomposition.analyze(f2fGraph, edge, periods)
 
         val plot = PeriodAnalyzer.analyzePeriods(periods)
-        PeriodAnalyzer.saveToFile("test-edge-plot.png", PeriodAnalyzer.createPlot(plot))
+        PeriodAnalyzer.savePlotToFile("test-edge-plot.png", PeriodAnalyzer.createPlotFromOccurrences(plot))
     }
 
     @Test
@@ -32,19 +32,21 @@ class TestAnalyzer {
 
 
         val plot = PeriodAnalyzer.analyzeGraph(decompositionResult)
-        PeriodAnalyzer.saveToFile("test-graph-plot.png", PeriodAnalyzer.createPlot(plot, PlotType.GEOM_HIST))
+        PeriodAnalyzer.savePlotToFile("test-graph-plot.png", PeriodAnalyzer.createPlotFromOccurrences(plot, PlotType.GEOM_HIST))
     }
 
 
     @Test
-    @Ignore
+    @Ignore //Ignored in default test suit because of long run time of around 2-3 minutes
     fun testAnalyzerAllGraphs(){
         val options = Options.emptyOptions()
         options.dotenv = true
         DotEnvParser.readDotEnv(options)
         options.state = !options.state
-        val factors = PeriodAnalyzer.analyzeAllGraphs(Decomposer(options))
-        PeriodAnalyzer.saveToFile("test-all-graphs-plot1.png", PeriodAnalyzer.createPlot(factors, PlotType.GEOM_HIST))
-        PeriodAnalyzer.saveToFile("test-all-graphs-plot2.png", PeriodAnalyzer.createPlot(factors, PlotType.GEOM_POINT))
+        val evalResult = PeriodAnalyzer.analyzeAllGraphs(Decomposer(options))
+        PeriodAnalyzer.savePlotToFile("test-all-graphs-plot1.png", PeriodAnalyzer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_HIST))
+        PeriodAnalyzer.savePlotToFile("test-all-graphs-plot2.png", PeriodAnalyzer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_POINT))
+        PeriodAnalyzer.savePlotToFile("test-all-covered-values.png", PeriodAnalyzer.createPieChartOfOccurrences(evalResult))
+
     }
 }
