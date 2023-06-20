@@ -77,7 +77,7 @@ class PeriodAnalyzer {
             )
 
             val mappedData = mapOf<String, MutableList<Any>>(
-                "group" to mutableListOf("ideal", "very short", "short", "multiple", "single multiple", "outlier"),
+                "group" to mutableListOf("ideal", "very short", "short", " 3-5x multiple", "2-3x multiple", "outlier"),
                 "covered values" to mutableListOf(0, 0, 0, 0, 0, 0)
             )
 
@@ -89,7 +89,8 @@ class PeriodAnalyzer {
             Logger.info("PLOT DATA: $mappedData")
 
             return letsPlot(mappedData) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
-                    geomPie(stat = Stat.identity, hole = 0.3, tooltips = tooltipsNone)
+                    theme(axisLine = elementBlank(), axis = elementBlank(), panelGrid = elementBlank()) +
+                    geomPie(stat = Stat.identity, hole = 0.3, tooltips = tooltipsNone, size = 25)
                     { slice = "covered values"; fill = "group" } +
                     scaleFillBrewer(palette = "Set1")
         }
