@@ -60,7 +60,7 @@ class Decomposer(
 
     fun findCover(array: BooleanArray): Set<Triple<Int, Int, Int>> {
         val periods = cleanMultiplesOfIntervals(if (coroutines) getPeriodsCO(array) else getPeriods(array), clean)
-        var cover = BooleanArray(array.size) { !state }
+        val cover = BooleanArray(array.size) { !state }
         val appliedPeriods = mutableSetOf<Triple<Int, Int, Int>>()
 
         when (mode) {
@@ -78,7 +78,8 @@ class Decomposer(
 
             CompositionMode.SIMPLE -> {
                 periods.forEach { period ->
-                    cover = applyPeriodOnlyIfChangesOccur(cover, period, appliedPeriods)
+                    val changesMade = applyPeriod(cover, period)
+                    if (changesMade > 0)  appliedPeriods.add(Triple(period.first, period.second, changesMade))
 
                     if (applyDeltaWindow) {
                         if (array.contentEqualsWithDelta(cover, deltaWindowAlgo, state)) return appliedPeriods
@@ -93,8 +94,7 @@ class Decomposer(
                     var bestPeriod = Pair(-1, -1)
                     periods.forEach { period ->
                         val newCover = cover.copyOf()
-                        applyPeriod(newCover, period)
-                        val diff = countDifferences(cover, newCover)
+                        val diff = applyPeriod(newCover, period)
                         if (diff > maxDiff) {
                             bestPeriod = period
                             maxDiff = diff
@@ -134,17 +134,6 @@ class Decomposer(
             cleanPeriods
         } else
             periods
-    }
-
-    private fun applyPeriodOnlyIfChangesOccur(cover: BooleanArray, period: Pair<Int, Int>, appliedPeriods: MutableSet<Triple<Int, Int, Int>>): BooleanArray {
-        val newCover = cover.copyInto(BooleanArray(cover.size))
-        val changesMade = applyPeriod(newCover, period)
-        return if (cover.contentEquals(newCover))
-            cover
-        else {
-            appliedPeriods.add(Triple(period.first, period.second, changesMade))
-            newCover
-        }
     }
 
     private fun applyPeriod(cover: BooleanArray, period: Pair<Int, Int>): Int {
