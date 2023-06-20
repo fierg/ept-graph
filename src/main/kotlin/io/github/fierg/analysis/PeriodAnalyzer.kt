@@ -11,15 +11,31 @@ import org.jetbrains.letsPlot.export.ggsave
 import org.jetbrains.letsPlot.geom.geomHistogram
 import org.jetbrains.letsPlot.geom.geomPie
 import org.jetbrains.letsPlot.geom.geomPoint
+import org.jetbrains.letsPlot.ggsize
 import org.jetbrains.letsPlot.intern.Plot
 import org.jetbrains.letsPlot.intern.toSpec
 import org.jetbrains.letsPlot.letsPlot
+import org.jetbrains.letsPlot.scale.scaleFillBrewer
+import org.jetbrains.letsPlot.themes.elementBlank
+import org.jetbrains.letsPlot.themes.theme
+import org.jetbrains.letsPlot.tooltips.tooltipsNone
 import java.awt.Desktop
 import java.io.File
 
 
 class PeriodAnalyzer {
     companion object {
+        val DEFAULT_WIDTH = 600
+        val DEFAULT_HEIGHT = 375
+        val lengthMapping = mapOf(
+            0..16 to 0, // 2^0 to 2^4
+            17..128 to 1, // 2^4 + 1 to 2^7
+            129..1024 to 2,
+            1025..2048 to 3,
+            2049..5000 to 4,
+            5001..Int.MAX_VALUE to 5
+        )
+
         fun analyzeGraph(decomposition: Collection<Collection<Triple<Int, Int, Int>>>): MutableMap<Int, Int> {
             val factorMap = mutableMapOf<Int, Int>()
             decomposition.forEach { periods ->
@@ -43,28 +59,39 @@ class PeriodAnalyzer {
 
         fun createPlotFromOccurrences(result: Map<Int, Int>, type: PlotType = PlotType.GEOM_POINT): Plot {
             val data = mapOf<String, Any>(
-                "factor" to result.toSortedMap().keys.toList(),
+                "period Length" to result.toSortedMap().keys.toList(),
                 "occurrence" to result.toSortedMap().values.toList()
             )
             Logger.info("PLOT DATA: $data")
 
             return when (type) {
-                PlotType.GEOM_POINT -> letsPlot(data) + geomPoint(size = 2.0) { x = "Period Length"; y = "occurrence" }
-                PlotType.GEOM_HIST -> letsPlot(data) + geomHistogram { x = "Period Length"; y = "occurrence" }
+                PlotType.GEOM_POINT -> letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + geomPoint(size = 2.0) { x = "period Length"; y = "occurrence" }
+                PlotType.GEOM_HIST -> letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + geomHistogram { x = "period Length"; y = "occurrence" }
             }
         }
 
         fun createPieChartOfOccurrences(result: EvaluationResult): Plot {
-            val data = mapOf<String, Any>(
+            val data = mapOf<String, List<Int>>(
                 "period length" to result.covers.toSortedMap().keys.toList(),
                 "covered values" to result.covers.toSortedMap().values.toList()
             )
 
-            Logger.info("PLOT DATA: $data")
+            val mappedData = mapOf<String, MutableList<Any>>(
+                "group" to mutableListOf("ideal", "very short", "short", "multiple", "single multiple", "outlier"),
+                "covered values" to mutableListOf(0, 0, 0, 0, 0, 0)
+            )
 
-            return letsPlot(data) +
-                    geomPie(stat = Stat.identity, stroke = 1, strokeColor = "white", hole = 0.5)
-                    { slice = "value"; fill = "name" }
+            data["period length"]!!.forEachIndexed { i, length ->
+                val index = lengthMapping.filter { it.key.contains(length) }.values.first()
+                mappedData["covered values"]!![index] = mappedData["covered values"]!![index] as Int + data["covered values"]!![i]
+            }
+
+            Logger.info("PLOT DATA: $mappedData")
+
+            return letsPlot(mappedData) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+                    geomPie(stat = Stat.identity, hole = 0.3, tooltips = tooltipsNone)
+                    { slice = "covered values"; fill = "group" } +
+                    scaleFillBrewer(palette = "Set1")
         }
 
         private fun openPlotInBrowser(content: String) {

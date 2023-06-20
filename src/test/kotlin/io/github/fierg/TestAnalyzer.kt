@@ -47,6 +47,5 @@ class TestAnalyzer {
         PeriodAnalyzer.savePlotToFile("test-all-graphs-plot1.png", PeriodAnalyzer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_HIST))
         PeriodAnalyzer.savePlotToFile("test-all-graphs-plot2.png", PeriodAnalyzer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_POINT))
         PeriodAnalyzer.savePlotToFile("test-all-covered-values.png", PeriodAnalyzer.createPieChartOfOccurrences(evalResult))
-
     }
 }
