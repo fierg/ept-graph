@@ -20,14 +20,12 @@ fun BooleanArray.contentEqualsWithDelta(other: BooleanArray, width: Int, state: 
         return false // Arrays must have the same length
     }
     // Iterate over the arrays
-    for (i in 0 until this.size) {
+    for (i in indices) {
         val start = 0.coerceAtLeast(i - width)
-        val end = (this.size - 1).coerceAtMost(i + width)
         var foundMatch = false
 
         // Check for a match within the delta window
-        for (j in start..end) {
-            //FIXME: somewhat of a workaround... still to aggressive
+        for (j in start..i) {
             if (this[i] == state) {
                 if (this[i] == other[j]) {
                     foundMatch = true
@@ -38,9 +36,21 @@ fun BooleanArray.contentEqualsWithDelta(other: BooleanArray, width: Int, state: 
                 break
             }
         }
+        // No match within the delta window
         if (!foundMatch) {
-            return false // No match within the delta window
+            return false
         }
     }
-    return true // Arrays are equal within the delta window
+    // Arrays are equal within the delta window
+    return true
+}
+
+fun BooleanArray.valueOfDeltaWindow(width: Int, index: Int, state: Boolean): Boolean {
+    val end = (this.size - 1).coerceAtMost(index + width)
+
+    for (i in index..end) {
+        if (this[i] == state) return state
+    }
+
+    return !state
 }

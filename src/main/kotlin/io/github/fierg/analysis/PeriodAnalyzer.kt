@@ -71,7 +71,7 @@ class PeriodAnalyzer {
             openInBrowser(content)
         }
 
-        fun analyzeAllGraphs(decomposer: Decomposer, type: PlotType = PlotType.GEOM_HIST) {
+        fun analyzeAllGraphs(decomposer: Decomposer): MutableMap<Int, Int> {
             val factors = mutableMapOf<Int,Int>()
             for (i in 0..61) {
                 val f2fGraph = FileReader().getF2FNetwork(i)
@@ -82,7 +82,7 @@ class PeriodAnalyzer {
                     factors[factor] = if (factors[factor] == null) occurrence else factors[factor]!! + occurrence
                 }
             }
-            saveToFile("test-all-graphs-plot.png", createPlot(factors, type))
+            return factors
         }
     }
 }
