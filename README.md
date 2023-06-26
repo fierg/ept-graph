@@ -28,7 +28,7 @@ Options:
 
 ### .env File config
 
-All Configuration of options can be handled via the .enf file in the projects root. In this case only the network id has to be provided as argument.
+All Configuration of options can be handled via the `.env` file in the projects root. In this case only the network id has to be provided as argument.
 
 
 ### Example
