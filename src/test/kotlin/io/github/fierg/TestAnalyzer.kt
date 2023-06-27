@@ -1,7 +1,7 @@
 package io.github.fierg
 
 import io.github.fierg.algo.Decomposer
-import io.github.fierg.analysis.PeriodAnalyzer
+import io.github.fierg.analysis.Visualizer
 import io.github.fierg.data.DotEnvParser
 import io.github.fierg.data.FileReader
 import io.github.fierg.model.CompositionMode
@@ -20,8 +20,8 @@ class TestAnalyzer {
         val periods = decomposition.findCover(f2fGraph.steps[edge]!!)
         decomposition.analyze(f2fGraph, edge, periods)
 
-        val plot = PeriodAnalyzer.analyzePeriods(periods)
-        PeriodAnalyzer.savePlotToFile("test-edge-plot.png", PeriodAnalyzer.createPlotFromOccurrences(plot))
+        val plot = Visualizer.analyzePeriods(periods)
+        Visualizer.savePlotToFile("test-edge-plot.png", Visualizer.createPlotFromOccurrences(plot))
     }
 
     @Test
@@ -31,8 +31,8 @@ class TestAnalyzer {
         val decompositionResult = decomposition.findComposite(f2fGraph)
 
 
-        val plot = PeriodAnalyzer.analyzeGraph(decompositionResult)
-        PeriodAnalyzer.savePlotToFile("test-graph-plot.png", PeriodAnalyzer.createPlotFromOccurrences(plot, PlotType.GEOM_HIST))
+        val plot = Visualizer.analyzeGraph(decompositionResult)
+        Visualizer.savePlotToFile("test-graph-plot.png", Visualizer.createPlotFromOccurrences(plot, PlotType.GEOM_HIST))
     }
 
 
@@ -43,9 +43,9 @@ class TestAnalyzer {
         options.dotenv = true
         DotEnvParser.readDotEnv(options)
         options.state = !options.state
-        val evalResult = PeriodAnalyzer.analyzeAllGraphs(Decomposer(options))
-        PeriodAnalyzer.savePlotToFile("test-all-graphs-plot1.png", PeriodAnalyzer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_HIST))
-        PeriodAnalyzer.savePlotToFile("test-all-graphs-plot2.png", PeriodAnalyzer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_POINT))
-        PeriodAnalyzer.savePlotToFile("test-all-covered-values.png", PeriodAnalyzer.createPieChartOfOccurrences(evalResult))
+        val evalResult = Visualizer.analyzeAllGraphs(Decomposer(options))
+        Visualizer.savePlotToFile("test-all-graphs-plot1.png", Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_HIST))
+        Visualizer.savePlotToFile("test-all-graphs-plot2.png", Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_POINT))
+        Visualizer.savePlotToFile("test-all-covered-values.png", Visualizer.createPieChartOfOccurrences(evalResult))
     }
 }

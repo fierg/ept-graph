@@ -150,7 +150,7 @@ class Decomposer(
     }
 
     private fun getPeriods(array: BooleanArray): List<Pair<Int, Int>> {
-        val periods = mutableSetOf<Pair<Int, Int>>()
+        val periods = mutableListOf<Pair<Int, Int>>()
         for (factor in array.size.factorsSequence()) {
             for (index in 0 until factor) {
                 if (array[index] == state && isPeriodic(array, index, factor)) {
@@ -158,7 +158,7 @@ class Decomposer(
                 }
             }
         }
-        return periods.toList()
+        return periods
     }
 
     private fun getPeriodsCO(array: BooleanArray): List<Pair<Int, Int>> {

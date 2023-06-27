@@ -1,14 +1,16 @@
 package io.github.fierg
 
-import io.github.fierg.analysis.PeriodAnalyzer
+import io.github.fierg.analysis.Visualizer
 import io.github.fierg.model.Defaults.Companion.DEFAULT_HEIGHT
 import io.github.fierg.model.Defaults.Companion.DEFAULT_WIDTH
 import io.github.fierg.model.Defaults.Companion.blankTheme
-import jetbrains.letsPlot.Geom
+import io.github.fierg.model.PlotType
 import org.jetbrains.letsPlot.Stat
 import org.jetbrains.letsPlot.annotations.layerLabels
 import org.jetbrains.letsPlot.asDiscrete
+import org.jetbrains.letsPlot.geom.geomHistogram
 import org.jetbrains.letsPlot.geom.geomPie
+import org.jetbrains.letsPlot.geom.geomPoint
 import org.jetbrains.letsPlot.ggsize
 import org.jetbrains.letsPlot.letsPlot
 import org.jetbrains.letsPlot.scale.scaleFillBrewer
@@ -32,7 +34,7 @@ class TestCharts {
                     labels = layerLabels("..proppct..").format("..proppct..", "{.1f}").size(15)
                 ) { fill = asDiscrete("value"); weight = "value" }
 
-        PeriodAnalyzer.savePlotToFile("test-pie-chart.png", plot, "test")
+        Visualizer.savePlotToFile("test-pie-chart.png", plot, "test-plots")
     }
 
     @Test
@@ -44,7 +46,7 @@ class TestCharts {
                     labels = layerLabels("..proppct..").format("..proppct..", "{.1f}").size(15)
                 ) { fill = asDiscrete("name"); weight = "value" }
 
-        PeriodAnalyzer.savePlotToFile("test-pie-chart-real-world-data.png", plot, "test")
+        Visualizer.savePlotToFile("test-pie-chart-real-world-data.png", plot, "test-plots")
     }
 
     @Test
@@ -55,7 +57,41 @@ class TestCharts {
                 { slice = "value"; fill = "name" } +
                 scaleFillBrewer(palette = "Set1")
 
-        PeriodAnalyzer.savePlotToFile("test-pie-chart-old.png", plot, "test")
+        Visualizer.savePlotToFile("test-pie-chart-old.png", plot, "test-plots")
+    }
+
+    @Test
+    fun testPieChartPPCT(){
+        val plot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+                blankTheme +
+                geomPie(hole = 0.2, size = 20, stroke = 1.0, tooltips = tooltipsNone,
+                    labels = layerLabels("..proppct..").format("..proppct..", "{.1f}%").size(15))
+                { fill = "name"; weight = "value"; slice = "value" } +
+                scaleFillBrewer(palette = "Set1")
+
+        Visualizer.savePlotToFile("test-pie-chart-PPCT.png", plot, "test-plots")
+    }
+
+    @Test
+    fun testPieChartPPCT2(){
+        val plot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+                blankTheme +
+                geomPie(size = 20, stroke = 1.0, tooltips = tooltipsNone, showLegend = false,
+                    labels = layerLabels().line("@name").line("(@{..prop..})").format("..prop..", ".0%").size(10))
+                { fill = "name"; weight = "value"; slice = "value" } +
+                scaleFillBrewer(palette = "Set1")
+
+        Visualizer.savePlotToFile("test-pie-chart-PPCT2.png", plot, "test-plots")
+    }
+
+
+    @Test
+    fun testHistogramChart(){
+        val plot1 = letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + geomPoint(size = 2.0) { x = "name"; y = "value" }
+        val plot2 = letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + geomHistogram { x = "name"; y = "value" }
+
+        Visualizer.savePlotToFile("test-geom-point.png", plot1, "test-plots")
+        Visualizer.savePlotToFile("test-histo.png", plot2, "test-plots")
 
     }
 }
