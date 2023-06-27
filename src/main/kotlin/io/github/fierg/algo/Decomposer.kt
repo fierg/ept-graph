@@ -12,7 +12,7 @@ import io.github.fierg.model.SelfAwareEdge
 import kotlinx.coroutines.*
 
 class Decomposer(
-    private val state: Boolean = true,
+    state: Boolean = true,
     private val coroutines: Boolean = false,
     private val clean: Boolean = false,
     private val mode: CompositionMode = CompositionMode.ALL,
@@ -22,9 +22,10 @@ class Decomposer(
     constructor(options: Options) : this(options.state, options.coroutines, options.clean, options.mode!!, options.deltaWindowAlgo, options.skipSingleStepEdges)
 
     private val applyDeltaWindow = deltaWindowAlgo > 0
+    private val stateToReplace = !state
 
     fun findComposite(graph: EPTGraph): Set<Set<Triple<Int, Int, Int>>> {
-        Logger.info("Looking for $state values while decomposing.")
+        Logger.info("Looking for $stateToReplace values while decomposing.")
         if (coroutines) Logger.info("Using coroutines to compute periods.")
         if (clean) Logger.info("Cleaning up multiples/duplicates before applying the periods.")
         Logger.info("Choosing periods in $mode mode.")
@@ -47,7 +48,7 @@ class Decomposer(
     }
 
     fun analyze(graph: EPTGraph, edge: SelfAwareEdge, decomposition: Set<Triple<Int, Int, Int>>) {
-        val valuesToCover = graph.steps[edge]!!.count { it == state }
+        val valuesToCover = graph.steps[edge]!!.count { it == stateToReplace }
         val trivialPeriods = decomposition.count { it.second == graph.steps[edge]!!.size }
 
         Logger.info(
@@ -60,7 +61,7 @@ class Decomposer(
 
     fun findCover(array: BooleanArray): Set<Triple<Int, Int, Int>> {
         val periods = cleanMultiplesOfIntervals(if (coroutines) getPeriodsCO(array) else getPeriods(array), clean)
-        val cover = BooleanArray(array.size) { !state }
+        val cover = BooleanArray(array.size) { !stateToReplace }
         val appliedPeriods = mutableSetOf<Triple<Int, Int, Int>>()
 
         when (mode) {
@@ -70,7 +71,7 @@ class Decomposer(
                     appliedPeriods.add(Triple(period.first, period.second, changesMade))
 
                     if (applyDeltaWindow) {
-                        if (array.contentEqualsWithDelta(cover, deltaWindowAlgo, state)) return appliedPeriods
+                        if (array.contentEqualsWithDelta(cover, deltaWindowAlgo, stateToReplace)) return appliedPeriods
                     } else
                         if (array.contentEquals(cover)) return appliedPeriods
                 }
@@ -82,7 +83,7 @@ class Decomposer(
                     if (changesMade > 0)  appliedPeriods.add(Triple(period.first, period.second, changesMade))
 
                     if (applyDeltaWindow) {
-                        if (array.contentEqualsWithDelta(cover, deltaWindowAlgo, state)) return appliedPeriods
+                        if (array.contentEqualsWithDelta(cover, deltaWindowAlgo, stateToReplace)) return appliedPeriods
                     } else
                         if (array.contentEquals(cover)) return appliedPeriods
                 }
@@ -110,7 +111,7 @@ class Decomposer(
         if (array.contentEquals(cover)) {
             return appliedPeriods
         }
-        var coverage = cover.count { it == state }.toDouble() / array.count { it == state }
+        var coverage = cover.count { it == stateToReplace }.toDouble() / array.count { it == stateToReplace }
         if (coverage.isNaN()) coverage = 0.0
         throw NoCoverFoundException("with coverage of $coverage")
     }
@@ -140,8 +141,8 @@ class Decomposer(
         var position = period.first
         var changesMadeByPeriod = 0
         do {
-            if (cover[position] != state) {
-                cover[position] = state
+            if (cover[position] != stateToReplace) {
+                cover[position] = stateToReplace
                 changesMadeByPeriod++
             }
             position = (position + period.second) % cover.size
@@ -153,7 +154,7 @@ class Decomposer(
         val periods = mutableListOf<Pair<Int, Int>>()
         for (factor in array.size.factorsSequence()) {
             for (index in 0 until factor) {
-                if (array[index] == state && isPeriodic(array, index, factor)) {
+                if (array[index] == stateToReplace && isPeriodic(array, index, factor)) {
                     periods.add(Pair(index % factor, factor))
                 }
             }
@@ -178,7 +179,7 @@ class Decomposer(
     private fun computeAsync(array: BooleanArray, factor: Int): Deferred<List<Pair<Int, Int>>> = GlobalScope.async {
         val periods = mutableListOf<Pair<Int, Int>>()
         for (index in 0 until factor) {
-            if (array[index] == state && isPeriodic(array, index, factor)) {
+            if (array[index] == stateToReplace && isPeriodic(array, index, factor)) {
                 periods.add(Pair(index % factor, factor))
             }
         }
@@ -189,9 +190,9 @@ class Decomposer(
         var pos = (index + factor) % array.size
         while (pos != index) {
             if (applyDeltaWindow) {
-                if (array.valueOfDeltaWindow(deltaWindowAlgo, index, state)) return false
+                if (array.valueOfDeltaWindow(deltaWindowAlgo, index, stateToReplace)) return false
             } else
-                if (array[pos] != state) return false
+                if (array[pos] != stateToReplace) return false
             pos = (pos + factor) % array.size
         }
         return true

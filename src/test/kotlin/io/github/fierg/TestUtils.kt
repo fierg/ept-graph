@@ -30,7 +30,7 @@ class TestUtils {
     @Test
     fun testUtils3() {
         val array = arrayOf(true, false, false, true, true, false).toBooleanArray()
-        val periods = Decomposer(mode = CompositionMode.SIMPLE).findCover(array)
+        val periods = Decomposer(mode = CompositionMode.SIMPLE, state = false).findCover(array)
         val expectedPeriods = mutableSetOf(Triple(0, 3, 2), Triple(4, 6, 1))
 
         assert(periods == expectedPeriods)
@@ -38,7 +38,7 @@ class TestUtils {
 
     @Test
     fun testUtils4() {
-        val cover = Decomposer(state = false).findCover(BooleanArray(16))
+        val cover = Decomposer(mode = CompositionMode.SIMPLE, state = true).findCover(BooleanArray(16))
         assert(cover.contains(Triple(0, 1, 16)))
     }
 }

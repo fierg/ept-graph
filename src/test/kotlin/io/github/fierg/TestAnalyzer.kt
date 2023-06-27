@@ -16,36 +16,33 @@ class TestAnalyzer {
     fun testAnalyzerEdge(){
         val f2fGraph = FileReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposer(state = false, coroutines = true, clean = true, mode = CompositionMode.SIMPLE, deltaWindowAlgo = 0)
+        val decomposition = Decomposer(state = true, coroutines = true, clean = true, mode = CompositionMode.SIMPLE, deltaWindowAlgo = 0)
         val periods = decomposition.findCover(f2fGraph.steps[edge]!!)
         decomposition.analyze(f2fGraph, edge, periods)
 
         val plot = Visualizer.analyzePeriods(periods)
-        Visualizer.savePlotToFile("test-edge-plot.png", Visualizer.createPlotFromOccurrences(plot))
+        Visualizer.savePlotToFile("test-edge-plot.png", Visualizer.createPlotFromOccurrences(plot, PlotType.GEOM_POINT, "Periods of Network 0 edge 6"))
     }
 
     @Test
     fun testAnalyzerGraph(){
         val f2fGraph = FileReader().getF2FNetwork(6)
-        val decomposition = Decomposer(state = false, coroutines = true, clean = true, mode = CompositionMode.SIMPLE, deltaWindowAlgo = 0, skipSingleStepEdges = true)
+        val decomposition = Decomposer(state = true, coroutines = true, clean = true, mode = CompositionMode.SIMPLE, deltaWindowAlgo = 0, skipSingleStepEdges = true)
         val decompositionResult = decomposition.findComposite(f2fGraph)
 
 
         val plot = Visualizer.analyzeGraph(decompositionResult)
-        Visualizer.savePlotToFile("test-graph-plot.png", Visualizer.createPlotFromOccurrences(plot, PlotType.GEOM_HIST))
+        Visualizer.savePlotToFile("test-graph-plot.png", Visualizer.createPlotFromOccurrences(plot, PlotType.GEOM_BAR, "Periods of Network 6"))
     }
 
 
     @Test
     @Ignore //Ignored in default test suit because of long run time of around 2-3 minutes
     fun testAnalyzerAllGraphs(){
-        val options = Options.emptyOptions()
-        options.dotenv = true
-        DotEnvParser.readDotEnv(options)
-        options.state = !options.state
+        val options = DotEnvParser.readDotEnv()
         val evalResult = Visualizer.analyzeAllGraphs(Decomposer(options))
-        Visualizer.savePlotToFile("test-all-graphs-plot1.png", Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_HIST))
-        Visualizer.savePlotToFile("test-all-graphs-plot2.png", Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_POINT))
-        Visualizer.savePlotToFile("test-all-covered-values.png", Visualizer.createPieChartOfOccurrences(evalResult))
+        Visualizer.savePlotToFile("all-graphs-bar-char.png", Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_BAR, "All Periods of all Graphs"))
+        Visualizer.savePlotToFile("all-graphs-point-plot.png", Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_POINT, "All Periods of all Graphs"))
+        Visualizer.savePlotToFile("all-covered-values-pie-chart.png", Visualizer.createPieChartOfOccurrences(evalResult))
     }
 }

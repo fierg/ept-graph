@@ -8,10 +8,21 @@ import org.junit.Test
 class TestDecomposition {
 
     @Test
-    fun testDecomposition(){
+    fun testDecomposition1(){
         val f2fGraph = FileReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
         val decomposition = Decomposer(state = false, coroutines = true, clean = true, mode = CompositionMode.SIMPLE)
+        val periods = decomposition.findCover(f2fGraph.steps[edge]!!)
+        decomposition.analyze(f2fGraph, edge, periods)
+
+        val trivialPeriods = periods.count { it.second == f2fGraph.steps[edge]!!.size }
+        assert(trivialPeriods <= 3)
+    }
+    @Test
+    fun testDecomposition2(){
+        val f2fGraph = FileReader().getF2FNetwork(0)
+        val edge = f2fGraph.edges.elementAt(6)
+        val decomposition = Decomposer(state = true, coroutines = true, clean = true, mode = CompositionMode.SIMPLE)
         val periods = decomposition.findCover(f2fGraph.steps[edge]!!)
         decomposition.analyze(f2fGraph, edge, periods)
 
