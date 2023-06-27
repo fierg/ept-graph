@@ -6,7 +6,7 @@ import java.util.logging.LogManager
 import java.util.logging.Logger
 
 object Logger {
-    var LOGGER: Logger? = null
+    private var LOGGER: Logger? = null
 
     init {
         try {

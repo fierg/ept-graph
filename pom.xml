@@ -77,7 +77,6 @@
             <version>2.0.1</version>
         </dependency>
 
-
         <!-- https://mvnrepository.com/artifact/org.jetbrains.lets-plot/lets-plot-image-export
         Setting version to higher than 2.1 causes ClassDefNotFound Error when trying to save to png-->
         <dependency>

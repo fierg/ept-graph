@@ -7,9 +7,10 @@ import io.github.fierg.data.FileReader
 import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.model.CompositionMode
 import io.github.fierg.model.Options
+import io.github.fierg.model.PlotType
 import io.github.fierg.periodic.Periodic
 
-fun main(){
+fun main1(){
     val array = arrayOf(true,false,false,true,true,false).toBooleanArray()
     val period = Periodic().findShortestPeriod(array)
     println("period is $period")
@@ -29,9 +30,16 @@ fun main(){
     val options = Options.emptyOptions()
     options.dotenv = true
     DotEnvParser.readDotEnv(options)
-    options.state = !options.state
     Visualizer.analyzeAllGraphs(Decomposer(options))
 
     val plot = Visualizer.analyzeGraph(decompositionResult)
-    Visualizer.showPlotInBrowser(Visualizer.createPlotFromOccurrences(plot,))
+    Visualizer.showPlotAsFile(Visualizer.createPlotFromOccurrences(plot))
+
+
+
+}
+
+fun main(){
+    val evalResult = Visualizer.analyzeAllGraphs(Decomposer(DotEnvParser.readDotEnv()), upTo = 1)
+    Visualizer.showPlotAsFile(Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_BAR, "All Periods of all Graphs"))
 }

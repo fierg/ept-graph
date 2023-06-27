@@ -8,7 +8,7 @@ import io.github.fierg.model.Options
 
 class DotEnvParser {
     companion object{
-        fun readDotEnv(options:Options){
+        fun readDotEnv(options:Options = Options.emptyOptions()): Options {
             val env = dotenv {
                 directory = "./"
                 ignoreIfMalformed = true
@@ -34,6 +34,7 @@ class DotEnvParser {
             options.deltaWindowAlgo = env["DELTA_WINDOW_ALGO"].toInt()
             options.debug = env["DEBUG"] == "true"
             options.quiet = env["QUIET"] == "true"
+            return options
         }
     }
 }

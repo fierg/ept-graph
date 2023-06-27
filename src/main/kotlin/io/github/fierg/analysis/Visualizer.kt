@@ -11,16 +11,19 @@ import io.github.fierg.model.EvaluationResult
 import io.github.fierg.model.PlotType
 import io.github.fierg.model.Style
 import jetbrains.datalore.plot.PlotSvgExport
+import org.jetbrains.letsPlot.Stat
 import org.jetbrains.letsPlot.annotations.layerLabels
 import org.jetbrains.letsPlot.export.ggsave
-import org.jetbrains.letsPlot.geom.geomHistogram
+import org.jetbrains.letsPlot.geom.geomBar
 import org.jetbrains.letsPlot.geom.geomPie
 import org.jetbrains.letsPlot.geom.geomPoint
 import org.jetbrains.letsPlot.ggsize
 import org.jetbrains.letsPlot.intern.Plot
 import org.jetbrains.letsPlot.intern.toSpec
+import org.jetbrains.letsPlot.label.ggtitle
 import org.jetbrains.letsPlot.letsPlot
 import org.jetbrains.letsPlot.scale.scaleFillBrewer
+import org.jetbrains.letsPlot.scale.scaleFillManual
 import org.jetbrains.letsPlot.tooltips.tooltipsNone
 import java.awt.Desktop
 import java.io.File
@@ -61,7 +64,7 @@ class Visualizer {
             return factorMap
         }
 
-        fun createPlotFromOccurrences(result: Map<Int, Int>, type: PlotType = PlotType.GEOM_POINT): Plot {
+        fun createPlotFromOccurrences(result: Map<Int, Int>, type: PlotType = PlotType.GEOM_POINT, title: String = ""): Plot {
             val sortedResult = result.toSortedMap()
             val data = mapOf<String, Any>(
                 "period Length" to sortedResult.keys.toList(),
@@ -70,8 +73,8 @@ class Visualizer {
             Logger.debug("PLOT DATA: $data")
 
             return when (type) {
-                PlotType.GEOM_POINT -> letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + geomPoint(size = 2.0) { x = "period Length"; y = "occurrence" }
-                PlotType.GEOM_HIST -> letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + geomHistogram { x = "period Length"; y = "occurrence" }
+                PlotType.GEOM_POINT -> letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle(title) + geomPoint(size = 2.0) { x = "period Length"; y = "occurrence" }
+                PlotType.GEOM_BAR -> letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle(title) + geomBar(stat = Stat.identity) { x = "period Length"; y = "occurrence" }
             }
         }
 
@@ -98,12 +101,12 @@ class Visualizer {
                 val index = lengthMapping.filter { it.key.contains(length) }.values.first()
                 mappedData["values"]!![index] = mappedData["values"]!![index] as Int + data["covered values"]!![index]
             }
-
+            val colors = listOf("#ff9999","#66b3ff","#99ff99","#ffcc99")
             Logger.debug("PLOT DATA: $mappedData")
 
             return when (style) {
                 Style.PERCENT_AND_NAME -> {
-                    letsPlot(mappedData) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+                    letsPlot(mappedData) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +  ggtitle("Values covered by periods") +
                             blankTheme +
                             geomPie(size = 20, stroke = 1.0, tooltips = tooltipsNone, showLegend = false,
                                 labels = layerLabels().line("@name").line("(@{..prop..})").format("..prop..", ".0%").size(10))
@@ -111,7 +114,7 @@ class Visualizer {
                             scaleFillBrewer(palette = "Set1")
                 }
                 Style.PERCENT -> {
-                    letsPlot(mappedData) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+                    letsPlot(mappedData) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +   ggtitle("Values covered by periods") +
                             blankTheme +
                             geomPie(hole = 0.2, size = 20, stroke = 1.0, tooltips = tooltipsNone,
                                 labels = layerLabels("..proppct..").format("..proppct..", "{.1f}%").size(15))
@@ -121,7 +124,7 @@ class Visualizer {
             }
         }
 
-        private fun openPlotInBrowser(content: String) {
+        private fun openPlotAsFile(content: String) {
             val dir = File(System.getProperty("user.dir"), "plots")
             dir.mkdir()
             val file = File(dir.canonicalPath, "temp-plot.html")
@@ -134,15 +137,15 @@ class Visualizer {
             ggsave(plot, filename, path = path)
         }
 
-        fun showPlotInBrowser(plot: Plot) {
+        fun showPlotAsFile(plot: Plot) {
             val content = PlotSvgExport.buildSvgImageFromRawSpecs(plot.toSpec())
-            openPlotInBrowser(content)
+            openPlotAsFile(content)
         }
 
-        fun analyzeAllGraphs(decomposer: Decomposer): EvaluationResult {
+        fun analyzeAllGraphs(decomposer: Decomposer, upTo: Int = 61): EvaluationResult {
             val factors = mutableMapOf<Int, Int>()
             val covers = mutableMapOf<Int, Int>()
-            for (i in 0..1) {
+            for (i in 0..upTo) {
                 val f2fGraph = FileReader().getF2FNetwork(i)
                 val decompositionResult = decomposer.findComposite(f2fGraph)
                 val newFactors = analyzeGraph(decompositionResult)

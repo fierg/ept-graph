@@ -20,8 +20,6 @@ fun main(args: Array<String>) {
         exitProcess(1)
     }
 
-    options.state = !options.state
-
     if (options.debug) {
         Logger.setLogLevelToDebug()
     }

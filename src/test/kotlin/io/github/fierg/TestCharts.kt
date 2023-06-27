@@ -12,8 +12,10 @@ import org.jetbrains.letsPlot.geom.geomHistogram
 import org.jetbrains.letsPlot.geom.geomPie
 import org.jetbrains.letsPlot.geom.geomPoint
 import org.jetbrains.letsPlot.ggsize
+import org.jetbrains.letsPlot.label.ggtitle
 import org.jetbrains.letsPlot.letsPlot
 import org.jetbrains.letsPlot.scale.scaleFillBrewer
+import org.jetbrains.letsPlot.scale.scaleFillManual
 import org.jetbrains.letsPlot.tooltips.tooltipsNone
 import org.junit.Test
 
@@ -27,7 +29,7 @@ class TestCharts {
 
     @Test
     fun testPieChart() {
-        val plot = letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+        val plot = letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Pie Chart") +
                 blankTheme +
                 geomPie(
                     size = 15, hole = 0.2,
@@ -39,7 +41,7 @@ class TestCharts {
 
     @Test
     fun testPieChart2() {
-        val plot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+        val plot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Pie Chart") +
                 blankTheme +
                 geomPie(
                     size = 25, hole = 0.3,
@@ -51,7 +53,7 @@ class TestCharts {
 
     @Test
     fun testPieChart3(){
-        val plot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+        val plot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Pie Chart") +
                 blankTheme +
                 geomPie(stat = Stat.identity, hole = 0.3, tooltips = tooltipsNone, size = 25)
                 { slice = "value"; fill = "name" } +
@@ -62,7 +64,7 @@ class TestCharts {
 
     @Test
     fun testPieChartPPCT(){
-        val plot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+        val plot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Pie Chart") +
                 blankTheme +
                 geomPie(hole = 0.2, size = 20, stroke = 1.0, tooltips = tooltipsNone,
                     labels = layerLabels("..proppct..").format("..proppct..", "{.1f}%").size(15))
@@ -74,12 +76,13 @@ class TestCharts {
 
     @Test
     fun testPieChartPPCT2(){
-        val plot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+        val plot = letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Pie Chart") +
                 blankTheme +
+                scaleFillManual(values = listOf("#999999", "#E69F00", "#56B4E9","#999999", "#E69F00", "#56B4E9"), limits = listOf(1,2,3,4,5,6),
+                    labels = data2["name"]!! as List<String>)
                 geomPie(size = 20, stroke = 1.0, tooltips = tooltipsNone, showLegend = false,
                     labels = layerLabels().line("@name").line("(@{..prop..})").format("..prop..", ".0%").size(10))
-                { fill = "name"; weight = "value"; slice = "value" } +
-                scaleFillBrewer(palette = "Set1")
+                { fill = "name"; weight = "value"; slice = "value" }
 
         Visualizer.savePlotToFile("test-pie-chart-PPCT2.png", plot, "test-plots")
     }
@@ -87,8 +90,8 @@ class TestCharts {
 
     @Test
     fun testHistogramChart(){
-        val plot1 = letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + geomPoint(size = 2.0) { x = "name"; y = "value" }
-        val plot2 = letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + geomHistogram { x = "name"; y = "value" }
+        val plot1 = letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Point Chart") + geomPoint(size = 2.0) { x = "name"; y = "value" }
+        val plot2 = letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Histogram Chart") + geomHistogram { x = "name"; y = "value" }
 
         Visualizer.savePlotToFile("test-geom-point.png", plot1, "test-plots")
         Visualizer.savePlotToFile("test-histo.png", plot2, "test-plots")
