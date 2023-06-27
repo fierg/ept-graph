@@ -9,10 +9,9 @@ import io.github.fierg.model.Defaults.Companion.DEFAULT_WIDTH
 import io.github.fierg.model.Defaults.Companion.blankTheme
 import io.github.fierg.model.EvaluationResult
 import io.github.fierg.model.PlotType
+import io.github.fierg.model.Style
 import jetbrains.datalore.plot.PlotSvgExport
-import org.jetbrains.letsPlot.Stat
 import org.jetbrains.letsPlot.annotations.layerLabels
-import org.jetbrains.letsPlot.asDiscrete
 import org.jetbrains.letsPlot.export.ggsave
 import org.jetbrains.letsPlot.geom.geomHistogram
 import org.jetbrains.letsPlot.geom.geomPie
@@ -25,14 +24,15 @@ import org.jetbrains.letsPlot.scale.scaleFillBrewer
 import org.jetbrains.letsPlot.tooltips.tooltipsNone
 import java.awt.Desktop
 import java.io.File
-import java.nio.file.Path
 
 
-class PeriodAnalyzer {
+class Visualizer {
+
     companion object {
+        val style = Style.PERCENT
 
         private val lengthMapping = mapOf(
-            0..16 to 0, // 2^0 to 2^4
+            0..16 to 0, // 2^1 to 2^4
             17..128 to 1, // 2^4 + 1 to 2^7
             129..1024 to 2,
             1025..2048 to 3,
@@ -48,7 +48,6 @@ class PeriodAnalyzer {
                     factorMap[period.second] = if (factorMap[period.second] == null) 1 else factorMap[period.second]!! + 1
                 }
             }
-
             return factorMap
         }
 
@@ -63,11 +62,12 @@ class PeriodAnalyzer {
         }
 
         fun createPlotFromOccurrences(result: Map<Int, Int>, type: PlotType = PlotType.GEOM_POINT): Plot {
+            val sortedResult = result.toSortedMap()
             val data = mapOf<String, Any>(
-                "period Length" to result.toSortedMap().keys.toList(),
-                "occurrence" to result.toSortedMap().values.toList()
+                "period Length" to sortedResult.keys.toList(),
+                "occurrence" to sortedResult.values.toList()
             )
-            Logger.info("PLOT DATA: $data")
+            Logger.debug("PLOT DATA: $data")
 
             return when (type) {
                 PlotType.GEOM_POINT -> letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + geomPoint(size = 2.0) { x = "period Length"; y = "occurrence" }
@@ -76,9 +76,10 @@ class PeriodAnalyzer {
         }
 
         fun createPieChartOfOccurrences(result: EvaluationResult): Plot {
+            val sortedMap = result.covers.toSortedMap()
             val data = mapOf<String, List<Int>>(
-                "period length" to result.covers.toSortedMap().keys.toList(),
-                "covered values" to result.covers.toSortedMap().values.toList()
+                "period length" to sortedMap.keys.toList(),
+                "covered values" to sortedMap.values.toList()
             )
 
             val mappedData = mapOf<String, MutableList<Any>>(
@@ -93,21 +94,31 @@ class PeriodAnalyzer {
                 "values" to mutableListOf(0, 0, 0, 0, 0, 0)
             )
 
-            data["period length"]!!.forEachIndexed { i, length ->
+            data["period length"]!!.forEach { length ->
                 val index = lengthMapping.filter { it.key.contains(length) }.values.first()
                 mappedData["values"]!![index] = mappedData["values"]!![index] as Int + data["covered values"]!![index]
             }
 
-            Logger.info("PLOT DATA: $mappedData")
+            Logger.debug("PLOT DATA: $mappedData")
 
-            return letsPlot(mappedData) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
-                    blankTheme +
-                    geomPie(
-                        hole = 0.2, size = 25, stroke = 1.0, tooltips = tooltipsNone,
-                        labels = layerLabels("..proppct..").format("..proppct..", "{.1f}").size(15)
-                    )
-                    { fill = asDiscrete("name"); weight = "values"; slice = "values" } +
-                    scaleFillBrewer(palette = "Set1")
+            return when (style) {
+                Style.PERCENT_AND_NAME -> {
+                    letsPlot(mappedData) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+                            blankTheme +
+                            geomPie(size = 20, stroke = 1.0, tooltips = tooltipsNone, showLegend = false,
+                                labels = layerLabels().line("@name").line("(@{..prop..})").format("..prop..", ".0%").size(10))
+                            { fill = "name"; weight = "values"; slice = "values" } +
+                            scaleFillBrewer(palette = "Set1")
+                }
+                Style.PERCENT -> {
+                    letsPlot(mappedData) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+                            blankTheme +
+                            geomPie(hole = 0.2, size = 20, stroke = 1.0, tooltips = tooltipsNone,
+                                labels = layerLabels("..proppct..").format("..proppct..", "{.1f}%").size(15))
+                            { fill = "name"; weight = "values"; slice = "values" } +
+                            scaleFillBrewer(palette = "Set1")
+                }
+            }
         }
 
         private fun openPlotInBrowser(content: String) {
@@ -131,7 +142,7 @@ class PeriodAnalyzer {
         fun analyzeAllGraphs(decomposer: Decomposer): EvaluationResult {
             val factors = mutableMapOf<Int, Int>()
             val covers = mutableMapOf<Int, Int>()
-            for (i in 0..2) {
+            for (i in 0..1) {
                 val f2fGraph = FileReader().getF2FNetwork(i)
                 val decompositionResult = decomposer.findComposite(f2fGraph)
                 val newFactors = analyzeGraph(decompositionResult)

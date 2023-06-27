@@ -1,7 +1,7 @@
 package io.github.fierg
 
 import io.github.fierg.algo.Decomposer
-import io.github.fierg.analysis.PeriodAnalyzer
+import io.github.fierg.analysis.Visualizer
 import io.github.fierg.data.DotEnvParser
 import io.github.fierg.data.FileReader
 import io.github.fierg.extensions.factorsSequence
@@ -30,8 +30,8 @@ fun main(){
     options.dotenv = true
     DotEnvParser.readDotEnv(options)
     options.state = !options.state
-    PeriodAnalyzer.analyzeAllGraphs(Decomposer(options))
+    Visualizer.analyzeAllGraphs(Decomposer(options))
 
-    val plot = PeriodAnalyzer.analyzeGraph(decompositionResult)
-    PeriodAnalyzer.showPlotInBrowser(PeriodAnalyzer.createPlotFromOccurrences(plot,))
+    val plot = Visualizer.analyzeGraph(decompositionResult)
+    Visualizer.showPlotInBrowser(Visualizer.createPlotFromOccurrences(plot,))
 }
