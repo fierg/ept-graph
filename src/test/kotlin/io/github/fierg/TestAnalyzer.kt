@@ -40,7 +40,7 @@ class TestAnalyzer {
     @Ignore //Ignored in default test suit because of long run time of around 2-3 minutes
     fun testAnalyzerAllGraphs(){
         val options = DotEnvParser.readDotEnv()
-        val evalResult = Visualizer.analyzeAllGraphs(Decomposer(options))
+        val evalResult = Visualizer.analyzeAllGraphs(Decomposer(options),1)
         Visualizer.savePlotToFile("all-graphs-bar-char.png", Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_BAR, "All Periods of all Graphs"))
         Visualizer.savePlotToFile("all-graphs-point-plot.png", Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_POINT, "All Periods of all Graphs"))
         Visualizer.savePlotToFile("all-covered-values-pie-chart.png", Visualizer.createPieChartOfOccurrences(evalResult))
