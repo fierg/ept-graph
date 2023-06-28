@@ -9,6 +9,11 @@ import io.github.fierg.model.CompositionMode
 import io.github.fierg.model.Options
 import io.github.fierg.model.PlotType
 import io.github.fierg.periodic.Periodic
+import org.jetbrains.letsPlot.geom.geomPie
+import org.jetbrains.letsPlot.letsPlot
+import org.jetbrains.letsPlot.scale.scaleFillManual
+import org.jetbrains.letsPlot.tooltips.tooltipsNone
+import org.jetbrains.letsPlot.export.ggsave
 
 fun main1(){
     val array = arrayOf(true,false,false,true,true,false).toBooleanArray()

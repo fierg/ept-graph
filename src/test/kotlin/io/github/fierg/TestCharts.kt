@@ -8,6 +8,7 @@ import io.github.fierg.model.PlotType
 import org.jetbrains.letsPlot.Stat
 import org.jetbrains.letsPlot.annotations.layerLabels
 import org.jetbrains.letsPlot.asDiscrete
+import org.jetbrains.letsPlot.export.ggsave
 import org.jetbrains.letsPlot.geom.geomHistogram
 import org.jetbrains.letsPlot.geom.geomPie
 import org.jetbrains.letsPlot.geom.geomPoint
@@ -76,15 +77,15 @@ class TestCharts {
 
     @Test
     fun testPieChartPPCT2(){
-        val plot = letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Pie Chart") +
+        val plot = letsPlot(data2) + scaleFillManual(values = listOf("#61BAFF", "#04FF00", "#91FF00","#d4FF00", "#FF9500", "#FF0000")) +
+                ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Pie Chart") +
                 blankTheme +
-                scaleFillManual(values = listOf("#999999", "#E69F00", "#56B4E9","#999999", "#E69F00", "#56B4E9"), limits = listOf(1,2,3,4,5,6),
-                    labels = data2["name"]!! as List<String>)
                 geomPie(size = 20, stroke = 1.0, tooltips = tooltipsNone, showLegend = false,
                     labels = layerLabels().line("@name").line("(@{..prop..})").format("..prop..", ".0%").size(10))
-                { fill = "name"; weight = "value"; slice = "value" }
+                { fill = "name"; weight = "value"; slice = "value"}
 
-        Visualizer.savePlotToFile("test-pie-chart-PPCT2.png", plot, "test-plots")
+        ggsave(plot, "plot.png")
+        Visualizer.savePlotToFile("test.png", plot, "test-plots")
     }
 
 
