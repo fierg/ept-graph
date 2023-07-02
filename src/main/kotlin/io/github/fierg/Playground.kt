@@ -3,17 +3,12 @@ package io.github.fierg
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.analysis.Visualizer
 import io.github.fierg.data.DotEnvParser
-import io.github.fierg.data.FileReader
+import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.model.CompositionMode
 import io.github.fierg.model.Options
 import io.github.fierg.model.PlotType
 import io.github.fierg.periodic.Periodic
-import org.jetbrains.letsPlot.geom.geomPie
-import org.jetbrains.letsPlot.letsPlot
-import org.jetbrains.letsPlot.scale.scaleFillManual
-import org.jetbrains.letsPlot.tooltips.tooltipsNone
-import org.jetbrains.letsPlot.export.ggsave
 
 fun main1(){
     val array = arrayOf(true,false,false,true,true,false).toBooleanArray()
@@ -27,7 +22,7 @@ fun main1(){
 
     Decomposer().findCover(BooleanArray(16))
 
-    val f2fGraph = FileReader().getF2FNetwork(4)
+    val f2fGraph = F2FReader().getF2FNetwork(4)
     val decomposition = Decomposer(state = false, coroutines = true, clean = true, mode = CompositionMode.SIMPLE, deltaWindowAlgo = 0, skipSingleStepEdges = true)
     val decompositionResult = decomposition.findComposite(f2fGraph)
 

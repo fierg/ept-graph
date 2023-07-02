@@ -10,7 +10,7 @@ import org.jgrapht.graph.builder.GraphBuilder
 import java.io.File
 import java.nio.charset.Charset
 
-class FileReader {
+class F2FReader {
 
     fun readSimpleGraph(file: String): DefaultDirectedGraph<Int, LabeledEdge> {
         Logger.info("Reading graph from file $file ...")

@@ -3,7 +3,7 @@ package io.github.fierg
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.algo.Preprocessor
 import io.github.fierg.data.DotEnvParser
-import io.github.fierg.data.FileReader
+import io.github.fierg.data.F2FReader
 import io.github.fierg.logger.Logger
 import kotlin.system.exitProcess
 
@@ -27,7 +27,7 @@ fun main(args: Array<String>) {
         Logger.setLogLevelToQuiet()
     }
 
-    val f2fGraph = FileReader().getF2FNetwork(options.input)
+    val f2fGraph = F2FReader().getF2FNetwork(options.input)
     if (options.deltaWindowPreprocessing > 0)
         Preprocessor.applyDeltaWindow(f2fGraph, options.deltaWindowPreprocessing, options.state)
 

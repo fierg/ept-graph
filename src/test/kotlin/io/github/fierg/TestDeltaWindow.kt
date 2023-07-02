@@ -1,7 +1,7 @@
 package io.github.fierg
 
 import io.github.fierg.algo.Preprocessor
-import io.github.fierg.data.FileReader
+import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.contentEqualsWithDelta
 import io.github.fierg.extensions.valueOfDeltaWindow
 import org.junit.Test
@@ -38,7 +38,7 @@ class TestDeltaWindow {
     @Test
     fun testPreprocessingGraph() {
         val width = 2
-        val f2fGraph = FileReader().getF2FNetwork(0)
+        val f2fGraph = F2FReader().getF2FNetwork(0)
         Preprocessor.applyDeltaWindow(f2fGraph, width, state = true)
     }
 

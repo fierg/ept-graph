@@ -4,6 +4,7 @@ import io.github.fierg.algo.Decomposer
 import io.github.fierg.analysis.Visualizer
 import io.github.fierg.data.DotEnvParser
 import io.github.fierg.model.Defaults
+import io.github.fierg.model.Defaults.Companion.DEFAULT_HEIGHT
 import io.github.fierg.model.PlotType
 import org.jetbrains.letsPlot.GGBunch
 import org.jetbrains.letsPlot.scale.scaleXContinuous
@@ -18,19 +19,19 @@ class ChartGenerator {
     fun testAnalyzerAllGraphs(){
         val upTo = 61
         val options = DotEnvParser.readDotEnv()
-        var evalResult = Visualizer.analyzeAllGraphs(Decomposer(options),1)
+        var evalResult = Visualizer.analyzeAllGraphs(Decomposer(options),upTo)
         val barPlot1 = Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_BAR, "All Periods of all Graphs (state: ${!options.state}, mode: ${options.mode})")
         val geomPlot1 = Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_POINT, "All Periods of all Graphs (state: ${!options.state}, mode: ${options.mode})")
-        val piePlot1 = Visualizer.createPieChartOfOccurrences(evalResult, title = "Values covered by periods (state: ${!options.state}, mode: ${options.mode})", showLegend = false, width = 400)
+        val piePlot1 = Visualizer.createPieChartOfOccurrences(evalResult, title = "Values covered by periods (state: ${!options.state}, mode: ${options.mode})", showLegend = false)
         options.state = !options.state
-        evalResult = Visualizer.analyzeAllGraphs(Decomposer(options),1)
+        evalResult = Visualizer.analyzeAllGraphs(Decomposer(options),upTo)
         val barPlot2 = Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_BAR, "All Periods of all Graphs (state: ${!options.state}, mode: ${options.mode})")
         val geomPlot2 = Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_POINT, "All Periods of all Graphs (state: ${!options.state}, mode: ${options.mode})")
         val piePlot2 = Visualizer.createPieChartOfOccurrences(evalResult, title = "Values covered by periods (state: ${!options.state}, mode: ${options.mode})")
 
-        val combinedBar = GGBunch().addPlot(barPlot1, 0, 0).addPlot(barPlot2, 0, Defaults.DEFAULT_HEIGHT)
-        val combinedPoint = GGBunch().addPlot(geomPlot1, 0, 0).addPlot(geomPlot2, 0, Defaults.DEFAULT_HEIGHT)
-        val combinedPie = GGBunch().addPlot(piePlot1, 0, 0).addPlot(piePlot2, Defaults.DEFAULT_WIDTH, 0)
+        val combinedBar = GGBunch().addPlot(barPlot1, 0, 0).addPlot(barPlot2, 0, DEFAULT_HEIGHT)
+        val combinedPoint = GGBunch().addPlot(geomPlot1, 0, 0).addPlot(geomPlot2, 0, DEFAULT_HEIGHT)
+        val combinedPie = GGBunch().addPlot(piePlot1, 0, 0).addPlot(piePlot2, 0, DEFAULT_HEIGHT)
 
         Visualizer.savePlotToFile("all-graphs-bar-char-combined.png", combinedBar)
         Visualizer.savePlotToFile("all-graphs-point-plot-combined.png", combinedPoint)
