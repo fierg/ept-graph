@@ -12,6 +12,7 @@ import io.github.fierg.model.EvaluationResult
 import io.github.fierg.model.PlotType
 import io.github.fierg.model.Style
 import jetbrains.datalore.plot.PlotSvgExport
+import org.jetbrains.letsPlot.GGBunch
 import org.jetbrains.letsPlot.Stat
 import org.jetbrains.letsPlot.annotations.layerLabels
 import org.jetbrains.letsPlot.export.ggsave
@@ -76,7 +77,7 @@ class Visualizer {
             }
         }
 
-        fun createPieChartOfOccurrences(result: EvaluationResult, style: Style = defaultStyle): Plot {
+        fun createPieChartOfOccurrences(result: EvaluationResult, style: Style = defaultStyle, title: String = "Values covered by periods", showLegend: Boolean = true, width: Int = DEFAULT_WIDTH): Plot {
             val sortedMap = result.covers.toSortedMap()
             val data = mapOf<String, List<Int>>(
                 "period length" to sortedMap.keys.toList(),
@@ -103,13 +104,13 @@ class Visualizer {
             Logger.debug("PLOT DATA: $mappedData")
 
             return when (style) {
-                Style.PERCENT_AND_NAME -> letsPlot(mappedData) + defaultPieCharConfig + ggtitle("Values covered by periods") +
-                            geomPie(size = 20, stroke = 1.0, tooltips = tooltipsNone, showLegend = false,
+                Style.PERCENT_AND_NAME -> letsPlot(mappedData) + defaultPieCharConfig + ggtitle(title) + ggsize(width, DEFAULT_HEIGHT) +
+                            geomPie(size = 20, stroke = 1.0, tooltips = tooltipsNone, showLegend = showLegend,
                                 labels = layerLabels().line("@name").line("(@{..prop..})").format("..prop..", ".0%").size(15))
                             { fill = "name"; weight = "value"; slice = "value" }
 
-                Style.PERCENT -> letsPlot(mappedData) + defaultPieCharConfig + ggtitle("Values covered by periods") +
-                            geomPie(hole = 0.2, size = 20, stroke = 1.0, tooltips = tooltipsNone,
+                Style.PERCENT -> letsPlot(mappedData) + defaultPieCharConfig + ggtitle(title) + ggsize(width, DEFAULT_HEIGHT) +
+                            geomPie(hole = 0.2, size = 20, stroke = 1.0, tooltips = tooltipsNone, showLegend = showLegend,
                                 labels = layerLabels("..proppct..").format("..proppct..", "{.1f}%").size(15))
                             { fill = "name"; weight = "value"; slice = "value" }
 
@@ -126,6 +127,9 @@ class Visualizer {
         }
 
         fun savePlotToFile(filename: String, plot: Plot, path: String = "./plots") {
+            ggsave(plot, filename, path = path)
+        }
+        fun savePlotToFile(filename: String, plot: GGBunch, path: String = "./plots") {
             ggsave(plot, filename, path = path)
         }
 

@@ -21,7 +21,7 @@ class TestAnalyzer {
         decomposition.analyze(f2fGraph, edge, periods)
 
         val plot = Visualizer.analyzePeriods(periods)
-        Visualizer.savePlotToFile("test-edge-plot.png", Visualizer.createPlotFromOccurrences(plot, PlotType.GEOM_POINT, "Periods of Network 0 edge 6"))
+        Visualizer.savePlotToFile("test-edge-plot.png", Visualizer.createPlotFromOccurrences(plot, PlotType.GEOM_POINT, "Periods of Network 0 edge 6"),"./test-plots")
     }
 
     @Test
@@ -32,17 +32,16 @@ class TestAnalyzer {
 
 
         val plot = Visualizer.analyzeGraph(decompositionResult)
-        Visualizer.savePlotToFile("test-graph-plot.png", Visualizer.createPlotFromOccurrences(plot, PlotType.GEOM_BAR, "Periods of Network 6"))
+        Visualizer.savePlotToFile("test-graph-plot.png", Visualizer.createPlotFromOccurrences(plot, PlotType.GEOM_BAR, "Periods of Network 6"), "./test-plots")
     }
 
 
     @Test
-    @Ignore //Ignored in default test suit because of long run time of around 2-3 minutes
     fun testAnalyzerAllGraphs(){
         val options = DotEnvParser.readDotEnv()
         val evalResult = Visualizer.analyzeAllGraphs(Decomposer(options),1)
-        Visualizer.savePlotToFile("all-graphs-bar-char.png", Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_BAR, "All Periods of all Graphs"))
-        Visualizer.savePlotToFile("all-graphs-point-plot.png", Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_POINT, "All Periods of all Graphs"))
-        Visualizer.savePlotToFile("all-covered-values-pie-chart.png", Visualizer.createPieChartOfOccurrences(evalResult))
+        Visualizer.savePlotToFile("test-all-graphs-bar-char.png", Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_BAR, "All Periods of all Graphs"), "./test-plots")
+        Visualizer.savePlotToFile("test-all-graphs-point-plot.png", Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_POINT, "All Periods of all Graphs"), "./test-plots")
+        Visualizer.savePlotToFile("test-all-covered-values-pie-chart.png", Visualizer.createPieChartOfOccurrences(evalResult), "./test-plots")
     }
 }
