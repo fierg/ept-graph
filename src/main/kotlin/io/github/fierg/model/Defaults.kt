@@ -1,6 +1,5 @@
 package io.github.fierg.model
 
-import org.jetbrains.letsPlot.ggsize
 import org.jetbrains.letsPlot.scale.scaleFillManual
 import org.jetbrains.letsPlot.themes.elementBlank
 import org.jetbrains.letsPlot.themes.theme

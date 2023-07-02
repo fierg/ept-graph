@@ -3,18 +3,16 @@ package io.github.fierg
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.analysis.Visualizer
 import io.github.fierg.data.DotEnvParser
-import io.github.fierg.data.FileReader
+import io.github.fierg.data.F2FReader
 import io.github.fierg.model.CompositionMode
-import io.github.fierg.model.Options
 import io.github.fierg.model.PlotType
-import org.junit.Ignore
 import org.junit.Test
 
 class TestAnalyzer {
 
     @Test
     fun testAnalyzerEdge(){
-        val f2fGraph = FileReader().getF2FNetwork(0)
+        val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
         val decomposition = Decomposer(state = true, coroutines = true, clean = true, mode = CompositionMode.SIMPLE, deltaWindowAlgo = 0)
         val periods = decomposition.findCover(f2fGraph.steps[edge]!!)
@@ -26,7 +24,7 @@ class TestAnalyzer {
 
     @Test
     fun testAnalyzerGraph(){
-        val f2fGraph = FileReader().getF2FNetwork(6)
+        val f2fGraph = F2FReader().getF2FNetwork(6)
         val decomposition = Decomposer(state = true, coroutines = true, clean = true, mode = CompositionMode.SIMPLE, deltaWindowAlgo = 0, skipSingleStepEdges = true)
         val decompositionResult = decomposition.findComposite(f2fGraph)
 

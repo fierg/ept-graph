@@ -1,7 +1,7 @@
 package io.github.fierg.analysis
 
 import io.github.fierg.algo.Decomposer
-import io.github.fierg.data.FileReader
+import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.reversed
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.Defaults.Companion.DEFAULT_HEIGHT
@@ -142,7 +142,7 @@ class Visualizer {
             val factors = mutableMapOf<Int, Int>()
             val covers = mutableMapOf<Int, Int>()
             for (i in 0..upTo) {
-                val f2fGraph = FileReader().getF2FNetwork(i)
+                val f2fGraph = F2FReader().getF2FNetwork(i)
                 val decompositionResult = decomposer.findComposite(f2fGraph)
                 val newFactors = analyzeGraph(decompositionResult)
                 newFactors.forEach { (factor, occurrence) ->
