@@ -3,11 +3,9 @@ package io.github.fierg
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.analysis.Visualizer
 import io.github.fierg.data.DotEnvParser
-import io.github.fierg.model.Defaults
 import io.github.fierg.model.Defaults.Companion.DEFAULT_HEIGHT
 import io.github.fierg.model.PlotType
 import org.jetbrains.letsPlot.GGBunch
-import org.jetbrains.letsPlot.scale.scaleXContinuous
 import org.junit.Ignore
 import org.junit.Test
 
@@ -16,21 +14,21 @@ class ChartGenerator {
 
     @Test
     @Ignore //Ignored in default test suit because of long run time of around 2-3 minutes
-    fun testAnalyzerAllGraphs(){
+    fun testAnalyzerAllGraphs() {
         val upTo = 61
         val options = DotEnvParser.readDotEnv()
         options.state = !options.state
-        var evalResult = Visualizer.analyzeAllGraphs(Decomposer(options),upTo)
+        var evalResult = Visualizer.analyzeAllGraphs(Decomposer(options), upTo)
 
-        val barPlot1 = Visualizer.createPlotFromOccurrences(evalResult, PlotType.GEOM_BAR, options)
-        val geomPlot1 = Visualizer.createPlotFromOccurrences(evalResult, PlotType.GEOM_POINT, options)
+        val barPlot1 = Visualizer.createPlotFromOccurrences(evalResult, options, PlotType.GEOM_BAR)
+        val geomPlot1 = Visualizer.createPlotFromOccurrences(evalResult, options, PlotType.GEOM_POINT)
         val piePlot1 = Visualizer.createPieChartOfOccurrences(evalResult, options, showLegend = false)
 
         options.state = !options.state
-        evalResult = Visualizer.analyzeAllGraphs(Decomposer(options),upTo)
+        evalResult = Visualizer.analyzeAllGraphs(Decomposer(options), upTo)
 
-        val barPlot2 = Visualizer.createPlotFromOccurrences(evalResult, PlotType.GEOM_BAR, options)
-        val geomPlot2 = Visualizer.createPlotFromOccurrences(evalResult, PlotType.GEOM_POINT, options)
+        val barPlot2 = Visualizer.createPlotFromOccurrences(evalResult, options, PlotType.GEOM_BAR)
+        val geomPlot2 = Visualizer.createPlotFromOccurrences(evalResult, options, PlotType.GEOM_POINT)
         val piePlot2 = Visualizer.createPieChartOfOccurrences(evalResult, options)
 
         val combinedBar = GGBunch().addPlot(barPlot1, 0, 0).addPlot(barPlot2, 0, DEFAULT_HEIGHT)
