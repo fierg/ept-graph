@@ -33,13 +33,14 @@ fun main1(){
     Visualizer.analyzeAllGraphs(Decomposer(options))
 
     val plot = Visualizer.analyzeGraph(decompositionResult)
-    Visualizer.showPlotAsFile(Visualizer.createPlotFromOccurrences(plot))
+    Visualizer.showPlotAsFile(Visualizer.createPlotFromOccurrences(plot, options))
 
 
 
 }
 
 fun main(){
-    val evalResult = Visualizer.analyzeAllGraphs(Decomposer(DotEnvParser.readDotEnv()), upTo = 1)
-    Visualizer.showPlotAsFile(Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_BAR, "All Periods of all Graphs"))
+    val options = DotEnvParser.readDotEnv()
+    val evalResult = Visualizer.analyzeAllGraphs(Decomposer(options), upTo = 1)
+    Visualizer.showPlotAsFile(Visualizer.createPlotFromOccurrences(evalResult, options, PlotType.GEOM_BAR))
 }

@@ -44,34 +44,40 @@ class Visualizer {
         )
         private val rlm = lengthMapping.reversed()
 
-        fun analyzeGraph(decomposition: Collection<Collection<Triple<Int, Int, Int>>>): MutableMap<Int, Int> {
+        fun analyzeGraph(decomposition: Collection<Collection<Triple<Int, Int, Int>>>): EvaluationResult {
             val factorMap = mutableMapOf<Int, Int>()
+            var totalPeriods = 0
+            var totalValues = 0
             decomposition.forEach { periods ->
                 periods.forEach { period ->
                     factorMap[period.second] = if (factorMap[period.second] == null) 1 else factorMap[period.second]!! + 1
+                    totalPeriods++
+                    totalValues += period.third
                 }
             }
-            return factorMap
+            return EvaluationResult(factorMap, emptyMap(), totalValues, totalPeriods)
         }
 
-        fun analyzePeriods(periods: Collection<Triple<Int, Int, Int>>): MutableMap<Int, Int> {
+        fun analyzePeriods(periods: Collection<Triple<Int, Int, Int>>): EvaluationResult {
             val factorMap = mutableMapOf<Int, Int>()
 
             periods.forEach { period ->
                 factorMap[period.second] = if (factorMap[period.second] == null) 1 else factorMap[period.second]!! + 1
             }
 
-            return factorMap
+            return EvaluationResult(factorMap, emptyMap(), 0 ,0)
         }
 
-        fun createPlotFromOccurrences(result: EvaluationResult, type: PlotType = PlotType.GEOM_POINT, options: Options): Plot {
+        fun createPlotFromOccurrences(result: EvaluationResult, options: Options, type: PlotType = PlotType.GEOM_POINT, title: String = ""): Plot {
             val sortedResult = result.factors.toSortedMap()
             val data = mapOf<String, Any>(
                 "period Length" to sortedResult.keys.toList(),
                 "occurrence" to sortedResult.values.toList()
             )
             Logger.debug("PLOT DATA: $data")
-            val basePlot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("All Periods of all Graphs (state: ${!options.state}, mode: ${options.mode}) covered ${result.totalValues} values with ${result.totalPeriods} periods")
+            val basePlot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + if (title == "")
+                    ggtitle("All Periods of all Graphs (state: ${!options.state}, mode: ${options.mode}) covered ${result.totalValues} values with ${result.totalPeriods} periods")
+            else ggtitle(title)
 
             return when (type) {
                 PlotType.GEOM_POINT -> basePlot + geomPoint(size = 2.0) { x = "period Length"; y = "occurrence" }
@@ -148,7 +154,7 @@ class Visualizer {
                 val f2fGraph = F2FReader().getF2FNetwork(i)
                 val decompositionResult = decomposer.findComposite(f2fGraph)
                 val newFactors = analyzeGraph(decompositionResult)
-                newFactors.forEach { (factor, occurrence) ->
+                newFactors.factors.forEach { (factor, occurrence) ->
                     factors[factor] = if (factors[factor] == null) occurrence else factors[factor]!! + occurrence
                     totalPeriods++
                 }
