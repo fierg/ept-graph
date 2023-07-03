@@ -19,15 +19,19 @@ class ChartGenerator {
     fun testAnalyzerAllGraphs(){
         val upTo = 61
         val options = DotEnvParser.readDotEnv()
+        options.state = !options.state
         var evalResult = Visualizer.analyzeAllGraphs(Decomposer(options),upTo)
-        val barPlot1 = Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_BAR, "All Periods of all Graphs (state: ${!options.state}, mode: ${options.mode})")
-        val geomPlot1 = Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_POINT, "All Periods of all Graphs (state: ${!options.state}, mode: ${options.mode})")
-        val piePlot1 = Visualizer.createPieChartOfOccurrences(evalResult, title = "Values covered by periods (state: ${!options.state}, mode: ${options.mode})", showLegend = false)
+
+        val barPlot1 = Visualizer.createPlotFromOccurrences(evalResult, PlotType.GEOM_BAR, options)
+        val geomPlot1 = Visualizer.createPlotFromOccurrences(evalResult, PlotType.GEOM_POINT, options)
+        val piePlot1 = Visualizer.createPieChartOfOccurrences(evalResult, options, showLegend = false)
+
         options.state = !options.state
         evalResult = Visualizer.analyzeAllGraphs(Decomposer(options),upTo)
-        val barPlot2 = Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_BAR, "All Periods of all Graphs (state: ${!options.state}, mode: ${options.mode})")
-        val geomPlot2 = Visualizer.createPlotFromOccurrences(evalResult.factors, PlotType.GEOM_POINT, "All Periods of all Graphs (state: ${!options.state}, mode: ${options.mode})")
-        val piePlot2 = Visualizer.createPieChartOfOccurrences(evalResult, title = "Values covered by periods (state: ${!options.state}, mode: ${options.mode})")
+
+        val barPlot2 = Visualizer.createPlotFromOccurrences(evalResult, PlotType.GEOM_BAR, options)
+        val geomPlot2 = Visualizer.createPlotFromOccurrences(evalResult, PlotType.GEOM_POINT, options)
+        val piePlot2 = Visualizer.createPieChartOfOccurrences(evalResult, options)
 
         val combinedBar = GGBunch().addPlot(barPlot1, 0, 0).addPlot(barPlot2, 0, DEFAULT_HEIGHT)
         val combinedPoint = GGBunch().addPlot(geomPlot1, 0, 0).addPlot(geomPlot2, 0, DEFAULT_HEIGHT)
