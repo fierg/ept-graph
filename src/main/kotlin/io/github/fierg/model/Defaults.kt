@@ -11,6 +11,5 @@ class Defaults {
         val blankTheme = theme(axisLine = elementBlank(), axis = elementBlank(), panelGrid = elementBlank())
         val defaultPieCharConfig = scaleFillManual(values = listOf("#61BAFF", "#03FF07", "#ADF527","#d4FF00", "#FF9500", "#FF0000")) + blankTheme
         val defaultStyle = Style.PERCENT
-
     }
 }
