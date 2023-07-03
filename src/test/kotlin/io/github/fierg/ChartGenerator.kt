@@ -3,6 +3,7 @@ package io.github.fierg
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.analysis.Visualizer
 import io.github.fierg.data.DotEnvParser
+import io.github.fierg.logger.Logger
 import io.github.fierg.model.Defaults.Companion.DEFAULT_HEIGHT
 import io.github.fierg.model.PlotType
 import org.jetbrains.letsPlot.GGBunch
@@ -24,6 +25,8 @@ class ChartGenerator {
         val geomPlot1 = Visualizer.createPlotFromOccurrences(evalResult, options, PlotType.GEOM_POINT)
         val piePlot1 = Visualizer.createPieChartOfOccurrences(evalResult, options, showLegend = false)
 
+        Logger.info("In total, ${evalResult.totalValues} values have been covered with a total of ${evalResult.totalPeriods} periods.")
+
         options.state = !options.state
         evalResult = Visualizer.analyzeAllGraphs(Decomposer(options), upTo)
 
@@ -38,5 +41,7 @@ class ChartGenerator {
         Visualizer.savePlotToFile("all-graphs-bar-char-combined.png", combinedBar)
         Visualizer.savePlotToFile("all-graphs-point-plot-combined.png", combinedPoint)
         Visualizer.savePlotToFile("all-covered-values-pie-chart-combined.png", combinedPie)
+
+        Logger.info("In total, ${evalResult.totalValues} values have been covered with a total of ${evalResult.totalPeriods} periods.")
     }
 }

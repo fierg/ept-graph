@@ -156,7 +156,7 @@ class Visualizer {
                 val newFactors = analyzeGraph(decompositionResult)
                 newFactors.factors.forEach { (factor, occurrence) ->
                     factors[factor] = if (factors[factor] == null) occurrence else factors[factor]!! + occurrence
-                    totalPeriods++
+                    totalPeriods += occurrence
                 }
                 decompositionResult.forEach { periods ->
                     periods.forEach { (_, factor, coverage) ->
