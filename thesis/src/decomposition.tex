@@ -51,8 +51,30 @@ As our goal is to represent general dynamic networks and temporal graphs as EPGs
 
 \section{Decomposing the edge labels}
 
-Initially, we start with a temporal graph where all edge labels $\tau(e)$ have fixed length and there are no periods present. To find and analyze such periods in the given labels, the algorithm from \cite{DBLP:journals/corr/abs-2107-04683} is used. To apply the algorithm which is defined for automata, a label $ w \in \{0,1\}^*$ is interpreted as an unary automata with the either the $0s$ or the $1s$ representing final states $Q_f$. The algorithm from \cite{DBLP:journals/corr/abs-2107-04683} can be simplified due to the fact that we only represent unary automata and therefore only have a single transition from each state, basically forming a simple circle of all possible states. Using the fact that our alphabet is of size one, $|\Sigma| = 1$ we only need to follow a single transition and furthermore, we do not need to check each state separately, we only need to check multiples of the chosen period. This means that for a period length of $i$ we only have to check $i$ states on the circle being in the same state. We also only need to check factors of the length of the label $n$ since (evtl proof?) they cover all states and periods.
-The factors are tested one by one in an ascending manner, so that small periods will cover states first. This also implies that the larges possible period, which will only cover a single state, is considered a trivial period.
+Initially, we start with a temporal graph where all edge labels $\tau(e)$ have fixed length and there are no periods present. To find and analyze such periods in the given labels, the algorithm from \cite{DBLP:journals/corr/abs-2107-04683} is used and adapted to our problem. To apply the algorithm which is defined for automata, a label $ w \in \{0,1\}^*$ is interpreted as an unary automata. In the label either the $0s$ or the $1s$ symbols are used to represent final states $Q_f$. The algorithm from \cite{DBLP:journals/corr/abs-2107-04683} can be simplified due to the fact that we only represent unary automata and therefore only have a single transition from each state, basically forming a simple circle of all possible states. Using the fact that our alphabet is of size one, $|\Sigma| = 1$ we only need to follow a single transition and furthermore, we do not need to check each state separately, we only need to check multiples of the chosen period. This means that for a period length of $i$ we only have to check $i$ states on the circle being in the same state. We also only need to check up to factors of the length of the label $n$ since they cover all states and periods. The factors are tested one by one in an ascending manner, so that small periods will cover states first. This also implies that the larges possible period, which will only cover a single state, is considered a trivial period and covering a label with only trivial periods is always possible.
+
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{plots/all-graphs-bar-char-strue-mSIMPLE.png}
+	\caption{A subfigure}
+	\label{fig:sub1}
+\end{figure}
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{plots/all-graphs-bar-char-sfalse-mSIMPLE.png}
+	\caption{A subfigure}
+	\label{fig:sub1}
+\end{figure}
+
+
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{plots/all-covered-values-pie-chart-combined-ontop.png}
+	\caption{A subfigure}
+	\label{fig:sub2}
+\end{figure}
+
+
 
 \section{Combining periods into a periodic edge label}
 
