@@ -1,5 +1,4 @@
-% !TeX TXS-program:compile = txs:///pdflatex/[--shell-escape]
-\chapter{Decomposition of edge labels}
+\chapter{Analysis and design}
 \label{ch:Analysis}
 %% ==============================
 
@@ -49,39 +48,13 @@ As our goal is to represent general dynamic networks and temporal graphs as EPGs
 	\caption{TODO}
 \end{figure}
 
+To transform a temporal graph, a shortest possible string $w'$ which is equal to the original label at every time step $\forall t \geq 0, \tau(e)[t] = w'[t]$ has to be found.
+
 \section{Decomposing the edge labels into periods}
 
 Initially, we start with a temporal graph where all edge labels $\tau(e)$ have fixed length and there are no periods present. To find and analyze such periods in the given labels, the algorithm from \cite{DBLP:journals/corr/abs-2107-04683} is used and adapted to our problem. To apply the algorithm which is defined for automata, a label $ w \in \{0,1\}^*$ is interpreted as an unary automata. In the label either the $0s$ or the $1s$ symbols are used to represent final states $Q_f$. The algorithm from \cite{DBLP:journals/corr/abs-2107-04683} can be simplified due to the fact that we only represent unary automata and therefore only have a single transition from each state, basically forming a simple circle of all possible states. Using the fact that our alphabet is of size one, $|\Sigma| = 1$ we only need to follow a single transition and furthermore, we do not need to check each state separately, we only need to check multiples of the chosen period. This means that for a period length of $i$ we only have to check $i$ states on the circle being in the same state. We also only need to check up to factors of the length of the label $n$ since they cover all states and periods. The factors are tested one by one in an ascending manner, so that small periods will cover states first. This also implies that the larges possible period, which will only cover a single state, is considered a trivial period and covering a label with only trivial periods is always possible.
 
-\section{Empirical analysis of the decomposition}
 
-We are free to choose what states are substituted and used in the decomposition algorithm and further on, either the ones or the zeros from the label. Intuitively, there are less ones than zeroes in the original data, therefore less periods need to be found and less values to be mapped, which in turn should increase speed and effectiveness, therefore initially ones were substituted. For the empirical analysis of the decomposition, each edge of each graph of the collection is decomposed into periods and then the periods are collected until they align to give the original data. All the periods are evaluated and also visualized directly in code with the help of Lets-Plot\footnote{\url{https://lets-plot.org/}}.
-
-\begin{figure}[h]
-	\includegraphics[width=\linewidth]{charts/all-graphs-bar-char-strue-mSIMPLE.png}
-	\caption{A subfigure}
-	\label{fig:plot-all-periods-true-state}
-\end{figure}
-
-In total, 3,126,993 values have been covered with a total of 2,854,922 periods, so on average a single period only covered 1.095 values from the input label. This is also visible in the bar chart in figure \ref{fig:plot-all-periods-true-state}, where there are some smaller periods present with a period length around 2000 but the main bulk has a period length larger than 4000. Switching the state to substitute to false, increases the amount of states to represent but also the chances of finding shorter periods which cover more than one value on average.
-
-\begin{figure}[h]
-	\includegraphics[width=\linewidth]{charts/all-graphs-bar-char-sfalse-mSIMPLE.png}
-	\caption{A subfigure}
-	\label{fig:plot-all-periods-false-state}
-\end{figure}
-
-Looking at the evaluation of substituting zeroes in figure \ref{fig:plot-all-periods-false-state}, a mixed image is visible. The amount of values to cover as well as the amount of periods increased to 20,077,026 values and a total of 7,341,229 periods. This means an improvement to 2.73 values per period on average but also a 7x increased amount of periods.
-
-\begin{figure}[h]
-	\includegraphics[width=\linewidth]{charts/all-covered-values-pie-chart-combined-ontop.png}
-	\caption{A subfigure}
-	\label{fig:sub2}
-\end{figure}
-
-
-
-\newpage
 
 \section{Combining periods into a EPG label}
 
