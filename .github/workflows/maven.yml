@@ -31,3 +31,23 @@ jobs:
       run: mvn -B package --file pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
+
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v3
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v2
+        with:
+          working_directory: thesis
+          root_file: thesis.tex
+          #pre_compile: "tlmgr update --self && tlmgr update --all"
+          post_compile: "latexmk -c"
+        env:
+          TEXINPUTS: ".:./wissdoc.cls//:"
+      - name: Upload PDF file
+        uses: actions/upload-artifact@v3
+        with:
+          name: PDF
+          path: thesis/thesis.pdf
