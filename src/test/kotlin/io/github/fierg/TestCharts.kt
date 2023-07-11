@@ -1,13 +1,12 @@
 package io.github.fierg
 
 import io.github.fierg.analysis.Visualizer
-import io.github.fierg.model.style.Defaults.Companion.DEFAULT_HEIGHT
-import io.github.fierg.model.style.Defaults.Companion.DEFAULT_WIDTH
-import io.github.fierg.model.style.Defaults.Companion.blankTheme
+import io.github.fierg.model.style.DefaultPlotStyle.Companion.DEFAULT_HEIGHT
+import io.github.fierg.model.style.DefaultPlotStyle.Companion.DEFAULT_WIDTH
+import io.github.fierg.model.style.DefaultPlotStyle.Companion.blankTheme
 import org.jetbrains.letsPlot.Stat
 import org.jetbrains.letsPlot.annotations.layerLabels
 import org.jetbrains.letsPlot.asDiscrete
-import org.jetbrains.letsPlot.export.ggsave
 import org.jetbrains.letsPlot.geom.geomHistogram
 import org.jetbrains.letsPlot.geom.geomPie
 import org.jetbrains.letsPlot.geom.geomPoint

@@ -7,7 +7,7 @@ import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.model.options.Options
-import io.github.fierg.model.style.PlotType
+import io.github.fierg.model.style.PlotStyle
 import io.github.fierg.periodic.Periodic
 
 fun main1(){
@@ -42,5 +42,5 @@ fun main1(){
 fun main(){
     val options = DotEnvParser.readDotEnv()
     val evalResult = Visualizer.analyzeAllGraphs(Decomposer(options), upTo = 1)
-    Visualizer.showPlotAsFile(Visualizer.createPlotFromOccurrences(evalResult, options, PlotType.GEOM_BAR))
+    Visualizer.showPlotAsFile(Visualizer.createPlotFromOccurrences(evalResult, options, PlotStyle.GEOM_BAR))
 }

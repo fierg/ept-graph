@@ -6,7 +6,7 @@ import io.github.fierg.data.DotEnvParser
 import io.github.fierg.data.F2FReader
 import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.model.options.Options
-import io.github.fierg.model.style.PlotType
+import io.github.fierg.model.style.PlotStyle
 import org.junit.Test
 
 class TestAnalyzer {
@@ -30,7 +30,7 @@ class TestAnalyzer {
         decomposition.analyze(f2fGraph, edge, periods)
 
         val plot = Visualizer.analyzePeriods(periods)
-        Visualizer.savePlotToFile("test-edge-plot.png", Visualizer.createPlotFromOccurrences(plot, options, PlotType.GEOM_POINT, "Periods of Network 0 edge 6"),"./test-plots")
+        Visualizer.savePlotToFile("test-edge-plot.png", Visualizer.createPlotFromOccurrences(plot, options, PlotStyle.GEOM_POINT, "Periods of Network 0 edge 6"),"./test-plots")
     }
 
     @Test
@@ -41,7 +41,7 @@ class TestAnalyzer {
 
 
         val plot = Visualizer.analyzeGraph(decompositionResult)
-        Visualizer.savePlotToFile("test-graph-plot.png", Visualizer.createPlotFromOccurrences(plot, options, PlotType.GEOM_BAR, "Periods of Network 6"), "./test-plots")
+        Visualizer.savePlotToFile("test-graph-plot.png", Visualizer.createPlotFromOccurrences(plot, options, PlotStyle.GEOM_BAR, "Periods of Network 6"), "./test-plots")
     }
 
 
@@ -49,8 +49,8 @@ class TestAnalyzer {
     fun testAnalyzerAllGraphs(){
         val options = DotEnvParser.readDotEnv()
         val evalResult = Visualizer.analyzeAllGraphs(Decomposer(options),1)
-        Visualizer.savePlotToFile("test-all-graphs-bar-char.png", Visualizer.createPlotFromOccurrences(evalResult, options, PlotType.GEOM_BAR, "All Periods of all Graphs"), "./test-plots")
-        Visualizer.savePlotToFile("test-all-graphs-point-plot.png", Visualizer.createPlotFromOccurrences(evalResult, options, PlotType.GEOM_POINT, "All Periods of all Graphs"), "./test-plots")
+        Visualizer.savePlotToFile("test-all-graphs-bar-char.png", Visualizer.createPlotFromOccurrences(evalResult, options, PlotStyle.GEOM_BAR, "All Periods of all Graphs"), "./test-plots")
+        Visualizer.savePlotToFile("test-all-graphs-point-plot.png", Visualizer.createPlotFromOccurrences(evalResult, options, PlotStyle.GEOM_POINT, "All Periods of all Graphs"), "./test-plots")
         Visualizer.savePlotToFile("test-all-covered-values-pie-chart.png", Visualizer.createPieChartOfOccurrences(evalResult, options), "./test-plots")
     }
 }
