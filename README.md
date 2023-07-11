@@ -6,16 +6,7 @@ Collection of resources regarding the space efficient data structures edge perio
 - [Install gurobi](https://www.gurobi.com/documentation/9.5/remoteservices/linux_installation.html)
 
 
-Point `pom.xml` to local gurobi bindings:
-```
-<dependency>
-    <artifactId>gurobi</artifactId>
-    <groupId>solver</groupId>
-    <version>9.5.1</version>
-    <scope>system</scope>
-    <systemPath>/opt/gurobi/gurobi951/linux64/lib/gurobi.jar</systemPath>
-</dependency>
-```
+Point the path in `scripts/install_gurobi_local_maven.sh` to local gurobi bindings and run to install in local maven repo.
 
 
 ### Build

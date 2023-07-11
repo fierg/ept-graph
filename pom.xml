@@ -19,6 +19,7 @@
         <slf4j.version>2.0.7</slf4j.version>
         <junit.version>4.13.2</junit.version>
         <main.class>io.github.fierg.MainKt</main.class>
+        <gurobi.path>/opt/gurobi/gurobi951/linux64/lib/gurobi.jar</gurobi.path>
     </properties>
 
     <dependencies>
@@ -88,11 +89,9 @@
         <!-- The gurobi jar is only accessible if you have a valid license, no jar is hosted in the maven central repo.
          To use this, obtain a license and point systemPath to lib folder of the installation. -->
         <dependency>
-            <artifactId>gurobi</artifactId>
-            <groupId>solver</groupId>
+            <groupId>gurobi</groupId>
+            <artifactId>solver</artifactId>
             <version>9.5.1</version>
-            <scope>system</scope>
-            <systemPath>/opt/gurobi/gurobi951/linux64/lib/gurobi.jar</systemPath>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.slf4j -->

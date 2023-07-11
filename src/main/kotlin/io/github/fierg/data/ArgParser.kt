@@ -17,7 +17,7 @@ class ArgParser {
             val state by parser.option(ArgType.Boolean, description = "Invert state to substitute in decomposition (if set, decomposition will replace 0s instead of 1s)", shortName = "s").default(false)
             val coroutines by parser.option(ArgType.Boolean, description = "Use Coroutines for period computation. (Use with check)", shortName = "co").default(false)
             val clean by parser.option(ArgType.Boolean, description = "Clean up periods of multiples", shortName = "cl").default(false)
-            val mode by parser.option(ArgType.Choice<CompositionMode>(), shortName = "m", description = "Mode of composing the periods [ALL,SIMPLE,GREEDY]")
+            val mode by parser.option(ArgType.Choice<CompositionMode>(), shortName = "m", description = "Mode of composing the periods [ALL,SIMPLE,GREEDY,SET_COVER_ILP]")
             val skipSingleStepEdges by parser.option(ArgType.Boolean, shortName = "skipSingle", description = "Skip single time step label edges").default(false)
             val debug by parser.option(ArgType.Boolean, shortName = "d", description = "Turn on debug mode").default(false)
             val quiet by parser.option(ArgType.Boolean, shortName = "q", description = "Turn on quiet mode").default(false)

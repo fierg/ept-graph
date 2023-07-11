@@ -7,7 +7,6 @@ import io.github.fierg.model.options.Options
 import org.junit.Ignore
 import org.junit.Test
 
-@Ignore
 class TestILP {
 
     private val options = Options.emptyOptions()
