@@ -48,7 +48,7 @@ class SetCoverILP(private val state: Boolean) {
     fun solveSetCover(): Set<Set<Int>> {
         try {
             // Create empty environment , set options , and start
-            val env = GRBEnv("kra-ilp.log")
+            val env = GRBEnv("ilp.log")
             env.set(GRB.IntParam.LogToConsole, 0)
             env.start()
 
