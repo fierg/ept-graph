@@ -2,7 +2,7 @@ package io.github.fierg
 
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.extensions.factorsSequence
-import io.github.fierg.model.CompositionMode
+import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.periodic.Periodic
 import org.junit.Test
 

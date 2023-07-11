@@ -1,6 +1,6 @@
 package io.github.fierg.graph
 
-import io.github.fierg.model.SelfAwareEdge
+import io.github.fierg.model.graph.SelfAwareEdge
 import org.jgrapht.graph.DefaultDirectedGraph
 import org.jgrapht.graph.builder.GraphBuilder
 

@@ -1,4 +1,4 @@
-package io.github.fierg.model
+package io.github.fierg.model.options
 
 enum class CompositionMode {
     GREEDY,

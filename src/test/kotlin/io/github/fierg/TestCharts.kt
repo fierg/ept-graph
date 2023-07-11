@@ -1,10 +1,9 @@
 package io.github.fierg
 
 import io.github.fierg.analysis.Visualizer
-import io.github.fierg.model.Defaults.Companion.DEFAULT_HEIGHT
-import io.github.fierg.model.Defaults.Companion.DEFAULT_WIDTH
-import io.github.fierg.model.Defaults.Companion.blankTheme
-import io.github.fierg.model.PlotType
+import io.github.fierg.model.style.Defaults.Companion.DEFAULT_HEIGHT
+import io.github.fierg.model.style.Defaults.Companion.DEFAULT_WIDTH
+import io.github.fierg.model.style.Defaults.Companion.blankTheme
 import org.jetbrains.letsPlot.Stat
 import org.jetbrains.letsPlot.annotations.layerLabels
 import org.jetbrains.letsPlot.asDiscrete
@@ -84,7 +83,6 @@ class TestCharts {
                     labels = layerLabels().line("@name").line("(@{..prop..})").format("..prop..", ".0%").size(10))
                 { fill = "name"; weight = "value"; slice = "value"}
 
-        ggsave(plot, "plot.png")
         Visualizer.savePlotToFile("test.png", plot, "test-plots")
     }
 

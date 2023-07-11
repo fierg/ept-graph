@@ -1,4 +1,4 @@
-package io.github.fierg.model
+package io.github.fierg.model.style
 
 import org.jetbrains.letsPlot.scale.scaleFillManual
 import org.jetbrains.letsPlot.themes.elementBlank

@@ -1,7 +1,7 @@
 package io.github.fierg.data
 
-import io.github.fierg.model.CompositionMode
-import io.github.fierg.model.Options
+import io.github.fierg.model.options.CompositionMode
+import io.github.fierg.model.options.Options
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.default

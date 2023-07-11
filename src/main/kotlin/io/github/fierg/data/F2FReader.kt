@@ -2,8 +2,8 @@ package io.github.fierg.data
 
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
-import io.github.fierg.model.LabeledEdge
-import io.github.fierg.model.SelfAwareEdge
+import io.github.fierg.model.graph.LabeledEdge
+import io.github.fierg.model.graph.SelfAwareEdge
 import io.github.fierg.periodic.Periodic
 import org.jgrapht.graph.DefaultDirectedGraph
 import org.jgrapht.graph.builder.GraphBuilder

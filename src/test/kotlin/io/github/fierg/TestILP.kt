@@ -2,8 +2,8 @@ package io.github.fierg
 
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.F2FReader
-import io.github.fierg.model.CompositionMode
-import io.github.fierg.model.Options
+import io.github.fierg.model.options.CompositionMode
+import io.github.fierg.model.options.Options
 import org.junit.Ignore
 import org.junit.Test
 

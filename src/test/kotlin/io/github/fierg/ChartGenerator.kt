@@ -4,8 +4,8 @@ import io.github.fierg.algo.Decomposer
 import io.github.fierg.analysis.Visualizer
 import io.github.fierg.data.DotEnvParser
 import io.github.fierg.logger.Logger
-import io.github.fierg.model.Defaults.Companion.DEFAULT_HEIGHT
-import io.github.fierg.model.PlotType
+import io.github.fierg.model.style.Defaults.Companion.DEFAULT_HEIGHT
+import io.github.fierg.model.style.PlotType
 import org.jetbrains.letsPlot.GGBunch
 import org.junit.Ignore
 import org.junit.Test

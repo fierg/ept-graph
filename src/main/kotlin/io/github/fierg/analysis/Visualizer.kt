@@ -4,14 +4,14 @@ import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.reversed
 import io.github.fierg.logger.Logger
-import io.github.fierg.model.Defaults.Companion.DEFAULT_HEIGHT
-import io.github.fierg.model.Defaults.Companion.DEFAULT_WIDTH
-import io.github.fierg.model.Defaults.Companion.defaultPieCharConfig
-import io.github.fierg.model.Defaults.Companion.defaultStyle
-import io.github.fierg.model.EvaluationResult
-import io.github.fierg.model.Options
-import io.github.fierg.model.PlotType
-import io.github.fierg.model.PieChartStyle
+import io.github.fierg.model.style.Defaults.Companion.DEFAULT_HEIGHT
+import io.github.fierg.model.style.Defaults.Companion.DEFAULT_WIDTH
+import io.github.fierg.model.style.Defaults.Companion.defaultPieCharConfig
+import io.github.fierg.model.style.Defaults.Companion.defaultStyle
+import io.github.fierg.model.result.EvaluationResult
+import io.github.fierg.model.options.Options
+import io.github.fierg.model.style.PlotType
+import io.github.fierg.model.style.PieChartStyle
 import jetbrains.datalore.plot.PlotSvgExport
 import org.jetbrains.letsPlot.GGBunch
 import org.jetbrains.letsPlot.Stat
@@ -33,7 +33,6 @@ import java.io.File
 class Visualizer {
 
     companion object {
-
         private val lengthMapping = mapOf(
             0..16 to 0, // 2^1 to 2^4
             17..128 to 1, // 2^4 + 1 to 2^7
@@ -42,6 +41,7 @@ class Visualizer {
             2049..5000 to 4,
             5001..Int.MAX_VALUE to 5
         )
+
         private val rlm = lengthMapping.reversed()
 
         fun analyzeGraph(decomposition: Collection<Collection<Triple<Int, Int, Int>>>): EvaluationResult {

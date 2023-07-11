@@ -5,9 +5,9 @@ import io.github.fierg.analysis.Visualizer
 import io.github.fierg.data.DotEnvParser
 import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.factorsSequence
-import io.github.fierg.model.CompositionMode
-import io.github.fierg.model.Options
-import io.github.fierg.model.PlotType
+import io.github.fierg.model.options.CompositionMode
+import io.github.fierg.model.options.Options
+import io.github.fierg.model.style.PlotType
 import io.github.fierg.periodic.Periodic
 
 fun main1(){
