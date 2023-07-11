@@ -4,7 +4,7 @@ import org.jetbrains.letsPlot.scale.scaleFillManual
 import org.jetbrains.letsPlot.themes.elementBlank
 import org.jetbrains.letsPlot.themes.theme
 
-class Defaults {
+class DefaultPlotStyle {
     companion object {
         const val DEFAULT_WIDTH = 600
         const val DEFAULT_HEIGHT = 375

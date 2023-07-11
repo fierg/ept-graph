@@ -4,8 +4,8 @@ import io.github.fierg.algo.Decomposer
 import io.github.fierg.analysis.Visualizer
 import io.github.fierg.data.DotEnvParser
 import io.github.fierg.logger.Logger
-import io.github.fierg.model.style.Defaults.Companion.DEFAULT_HEIGHT
-import io.github.fierg.model.style.PlotType
+import io.github.fierg.model.style.DefaultPlotStyle.Companion.DEFAULT_HEIGHT
+import io.github.fierg.model.style.PlotStyle
 import org.jetbrains.letsPlot.GGBunch
 import org.junit.Ignore
 import org.junit.Test
@@ -21,8 +21,8 @@ class ChartGenerator {
         options.state = !options.state
         var evalResult = Visualizer.analyzeAllGraphs(Decomposer(options), upTo)
 
-        val barPlot1 = Visualizer.createPlotFromOccurrences(evalResult, options, PlotType.GEOM_BAR)
-        val geomPlot1 = Visualizer.createPlotFromOccurrences(evalResult, options, PlotType.GEOM_POINT)
+        val barPlot1 = Visualizer.createPlotFromOccurrences(evalResult, options, PlotStyle.GEOM_BAR)
+        val geomPlot1 = Visualizer.createPlotFromOccurrences(evalResult, options, PlotStyle.GEOM_POINT)
         val piePlot1 = Visualizer.createPieChartOfOccurrences(evalResult, options, showLegend = false)
 
         Logger.info("In total, ${evalResult.totalValues} values have been covered with a total of ${evalResult.totalPeriods} periods.")
@@ -30,8 +30,8 @@ class ChartGenerator {
         options.state = !options.state
         evalResult = Visualizer.analyzeAllGraphs(Decomposer(options), upTo)
 
-        val barPlot2 = Visualizer.createPlotFromOccurrences(evalResult, options, PlotType.GEOM_BAR)
-        val geomPlot2 = Visualizer.createPlotFromOccurrences(evalResult, options, PlotType.GEOM_POINT)
+        val barPlot2 = Visualizer.createPlotFromOccurrences(evalResult, options, PlotStyle.GEOM_BAR)
+        val geomPlot2 = Visualizer.createPlotFromOccurrences(evalResult, options, PlotStyle.GEOM_POINT)
         val piePlot2 = Visualizer.createPieChartOfOccurrences(evalResult, options)
 
         val combinedBar = GGBunch().addPlot(barPlot1, 0, 0).addPlot(barPlot2, 0, DEFAULT_HEIGHT)

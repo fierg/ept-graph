@@ -4,13 +4,13 @@ import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.reversed
 import io.github.fierg.logger.Logger
-import io.github.fierg.model.style.Defaults.Companion.DEFAULT_HEIGHT
-import io.github.fierg.model.style.Defaults.Companion.DEFAULT_WIDTH
-import io.github.fierg.model.style.Defaults.Companion.defaultPieCharConfig
-import io.github.fierg.model.style.Defaults.Companion.defaultStyle
+import io.github.fierg.model.style.DefaultPlotStyle.Companion.DEFAULT_HEIGHT
+import io.github.fierg.model.style.DefaultPlotStyle.Companion.DEFAULT_WIDTH
+import io.github.fierg.model.style.DefaultPlotStyle.Companion.defaultPieCharConfig
+import io.github.fierg.model.style.DefaultPlotStyle.Companion.defaultStyle
 import io.github.fierg.model.result.EvaluationResult
 import io.github.fierg.model.options.Options
-import io.github.fierg.model.style.PlotType
+import io.github.fierg.model.style.PlotStyle
 import io.github.fierg.model.style.PieChartStyle
 import jetbrains.datalore.plot.PlotSvgExport
 import org.jetbrains.letsPlot.GGBunch
@@ -68,7 +68,7 @@ class Visualizer {
             return EvaluationResult(factorMap, emptyMap(), 0 ,0)
         }
 
-        fun createPlotFromOccurrences(result: EvaluationResult, options: Options, type: PlotType = PlotType.GEOM_POINT, title: String = ""): Plot {
+        fun createPlotFromOccurrences(result: EvaluationResult, options: Options, type: PlotStyle = PlotStyle.GEOM_POINT, title: String = ""): Plot {
             val sortedResult = result.factors.toSortedMap()
             val data = mapOf<String, Any>(
                 "period Length" to sortedResult.keys.toList(),
@@ -80,8 +80,8 @@ class Visualizer {
             else ggtitle(title)
 
             return when (type) {
-                PlotType.GEOM_POINT -> basePlot + geomPoint(size = 2.0) { x = "period Length"; y = "occurrence" }
-                PlotType.GEOM_BAR -> basePlot + geomBar(stat = Stat.identity) { x = "period Length"; y = "occurrence" }
+                PlotStyle.GEOM_POINT -> basePlot + geomPoint(size = 2.0) { x = "period Length"; y = "occurrence" }
+                PlotStyle.GEOM_BAR -> basePlot + geomBar(stat = Stat.identity) { x = "period Length"; y = "occurrence" }
             }
         }
 

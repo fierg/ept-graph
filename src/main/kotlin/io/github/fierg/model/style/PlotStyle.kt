@@ -1,6 +1,6 @@
 package io.github.fierg.model.style
 
-enum class PlotType {
+enum class PlotStyle {
     GEOM_POINT,
     GEOM_BAR
 }
