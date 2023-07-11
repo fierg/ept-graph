@@ -1,9 +1,8 @@
 package io.github.fierg.periodic
 
-import io.github.fierg.model.MSResult
+import io.github.fierg.model.result.MSResult
 
 class Periodic {
-
     private fun isPrefix(str: BooleanArray, i: Int, k: Int): Boolean {
         var ii = i
         if (ii + k > str.size) return false
@@ -31,8 +30,6 @@ class Periodic {
         }
         return k
     }
-
-
 
     fun findPeriod(x: String): Int {
         var per = 1

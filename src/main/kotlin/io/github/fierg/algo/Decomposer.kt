@@ -6,9 +6,9 @@ import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.extensions.valueOfDeltaWindow
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
-import io.github.fierg.model.CompositionMode
-import io.github.fierg.model.Options
-import io.github.fierg.model.SelfAwareEdge
+import io.github.fierg.model.options.CompositionMode
+import io.github.fierg.model.options.Options
+import io.github.fierg.model.graph.SelfAwareEdge
 import kotlinx.coroutines.*
 
 class Decomposer(

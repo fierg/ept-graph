@@ -1,4 +1,4 @@
-package io.github.fierg.model
+package io.github.fierg.model.result
 
 data class EvaluationResult(
     val factors: Map<Int, Int>,

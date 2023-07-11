@@ -42,7 +42,7 @@ Options:
     --help, -h -> Usage info 
 ```
 
-### .env File config
+### .env config file
 
 All Configuration of options can be handled via the `.env` file in the projects root. In this case only the network id has to be provided as argument.
 

@@ -2,13 +2,13 @@ package io.github.fierg.data
 
 import io.github.cdimascio.dotenv.dotenv
 import io.github.fierg.logger.Logger
-import io.github.fierg.model.CompositionMode
-import io.github.fierg.model.ENV
-import io.github.fierg.model.Options
+import io.github.fierg.model.options.CompositionMode
+import io.github.fierg.model.options.ENV
+import io.github.fierg.model.options.Options
 
 class DotEnvParser {
     companion object{
-        fun readDotEnv(options:Options = Options.emptyOptions()): Options {
+        fun readDotEnv(options: Options = Options.emptyOptions()): Options {
             val env = dotenv {
                 directory = "./"
                 ignoreIfMalformed = true
