@@ -11,7 +11,7 @@ import io.github.fierg.model.Defaults.Companion.defaultStyle
 import io.github.fierg.model.EvaluationResult
 import io.github.fierg.model.Options
 import io.github.fierg.model.PlotType
-import io.github.fierg.model.Style
+import io.github.fierg.model.PieChartStyle
 import jetbrains.datalore.plot.PlotSvgExport
 import org.jetbrains.letsPlot.GGBunch
 import org.jetbrains.letsPlot.Stat
@@ -85,7 +85,7 @@ class Visualizer {
             }
         }
 
-        fun createPieChartOfOccurrences(result: EvaluationResult, options: Options, style: Style = defaultStyle, showLegend: Boolean = true, width: Int = DEFAULT_WIDTH): Plot {
+        fun createPieChartOfOccurrences(result: EvaluationResult, options: Options, style: PieChartStyle = defaultStyle, showLegend: Boolean = true, width: Int = DEFAULT_WIDTH): Plot {
             val sortedMap = result.covers.toSortedMap()
             val data = mapOf<String, List<Int>>(
                 "period length" to sortedMap.keys.toList(),
@@ -113,11 +113,11 @@ class Visualizer {
             val basePlot =  letsPlot(mappedData) + defaultPieCharConfig + ggtitle("Values covered by periods (state: ${!options.state}, mode: ${options.mode})") + ggsize(width, DEFAULT_HEIGHT)
 
             return when (style) {
-                Style.PERCENT_AND_NAME -> basePlot + geomPie(size = 20, stroke = 1.0, tooltips = tooltipsNone, showLegend = showLegend,
+                PieChartStyle.PERCENT_AND_NAME -> basePlot + geomPie(size = 20, stroke = 1.0, tooltips = tooltipsNone, showLegend = showLegend,
                                 labels = layerLabels().line("@name").line("(@{..prop..})").format("..prop..", ".0%").size(15))
                             { fill = "name"; weight = "value"; slice = "value" }
 
-                Style.PERCENT -> basePlot + geomPie(hole = 0.2, size = 20, stroke = 1.0, tooltips = tooltipsNone, showLegend = showLegend,
+                PieChartStyle.PERCENT -> basePlot + geomPie(hole = 0.2, size = 20, stroke = 1.0, tooltips = tooltipsNone, showLegend = showLegend,
                                 labels = layerLabels("..proppct..").format("..proppct..", "{.1f}%").size(15))
                             { fill = "name"; weight = "value"; slice = "value" }
 

@@ -80,7 +80,7 @@ class Decomposer(
             CompositionMode.SIMPLE -> {
                 periods.forEach { period ->
                     val changesMade = applyPeriod(cover, period)
-                    if (changesMade > 0)  appliedPeriods.add(Triple(period.first, period.second, changesMade))
+                    if (changesMade > 0) appliedPeriods.add(Triple(period.first, period.second, changesMade))
 
                     if (applyDeltaWindow) {
                         if (array.contentEqualsWithDelta(cover, deltaWindowAlgo, stateToReplace)) return appliedPeriods
@@ -105,6 +105,17 @@ class Decomposer(
                     appliedPeriods.add(Triple(bestPeriod.first, bestPeriod.second, changesMade))
                 } while (!array.contentEquals(cover))
                 return appliedPeriods
+            }
+
+            CompositionMode.SET_COVER_ILP -> {
+                val ilp = SetCoverILP(stateToReplace)
+                ilp.getSetCoverInstanceFromPeriods(periods, array)
+                val optimalPeriods = ilp.solveSetCover()
+                optimalPeriods.forEach { set ->
+                    val period = ilp.subSetMap!![set]!!
+                    val changesMade = applyPeriod(cover, period)
+                    appliedPeriods.add(Triple(period.first, period.second, changesMade))
+                }
             }
         }
 

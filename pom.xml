@@ -85,6 +85,15 @@
             <version>3.2.0</version>
         </dependency>
 
+        <dependency>
+            <artifactId>gurobi</artifactId>
+            <groupId>solver</groupId>
+            <version>9.5.1</version>
+            <scope>system</scope>
+            <systemPath>/opt/gurobi/gurobi951/linux64/lib/gurobi.jar</systemPath>
+        </dependency>
+
+
 
         <!-- https://mvnrepository.com/artifact/org.slf4j -->
         <dependency>

@@ -10,6 +10,6 @@ class Defaults {
         const val DEFAULT_HEIGHT = 375
         val blankTheme = theme(axisLine = elementBlank(), axis = elementBlank(), panelGrid = elementBlank())
         val defaultPieCharConfig = scaleFillManual(values = listOf("#61BAFF", "#03FF07", "#ADF527","#d4FF00", "#FF9500", "#FF0000")) + blankTheme
-        val defaultStyle = Style.PERCENT
+        val defaultStyle = PieChartStyle.PERCENT
     }
 }
