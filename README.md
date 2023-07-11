@@ -2,6 +2,22 @@
 Collection of resources regarding the space efficient data structures edge periodic temporal graphs.
 
 
+### Preliminaries:
+- [Install gurobi](https://www.gurobi.com/documentation/9.5/remoteservices/linux_installation.html)
+
+
+Point `pom.xml` to local gurobi bindings:
+```
+<dependency>
+    <artifactId>gurobi</artifactId>
+    <groupId>solver</groupId>
+    <version>9.5.1</version>
+    <scope>system</scope>
+    <systemPath>/opt/gurobi/gurobi951/linux64/lib/gurobi.jar</systemPath>
+</dependency>
+```
+
+
 ### Build
 ```shell
 mvn clean install
