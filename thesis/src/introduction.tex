@@ -31,6 +31,7 @@ There is a growing interest in EPGs due to their potential applications in vario
 			(B) edge["011\dots"] (D)
 			(B) edge["101\dots"] (E);	
 		\end{tikzpicture}
+		\\ Temporal graph with long edge labels
 	\end{minipage}
 	\begin{minipage}[t]{0.49\textwidth}
 		\centering
@@ -51,17 +52,18 @@ There is a growing interest in EPGs due to their potential applications in vario
 			(B) edge["01111"] (D)
 			(B) edge["10"] (E);
 		\end{tikzpicture}
+	\\ EPG with short and periodic labels
 	\end{minipage}
-\caption{TODO}
+
 \end{figure}
 
+Edge periodic temporal graphs allow us to identify and capture recurring patterns in temporal data. By detecting periodicity, we can gain insights into regular behaviors or events that occur at fixed intervals. This can be valuable in fields such as finance, transportation, and social networks, where understanding periodic trends can aid in decision-making and prediction. Also the analysis is easier for epg's. Temporal graphs can become quite complex as they evolve over time. By transforming them into edge periodic temporal graphs, we can simplify the analysis by focusing on the repeating patterns instead of dealing with the entire temporal range. This reduction in complexity can lead to more efficient algorithms and computational benefits. Resource management also greatly benefits from this transformation. In scenarios where resources need to be allocated or scheduled based on temporal patterns, edge periodic temporal graphs enable more efficient usage. For example, optimizing transportation routes based on recurring traffic patterns can significantly reduce congestion and improve resource allocation. Furthermore from a data compression standpoint, the conversion leads to more compact representations. Rather than storing the entire temporal history, edge periodic temporal graphs capture the essential periodic patterns, reducing storage and memory requirements while preserving critical information. In conclusion, the transformation of temporal graphs into edge periodic temporal graphs serves as a powerful technique that unlocks a variety of applications.
 
-
+To use the benefits of EPG's, a transformation from temporal to egde periodic has to be performed which can be split up into multiple steps. Initially, we search for periods in the label, e.g. a value which repeats every $n$ characters. Afterwards, a set of periods which cover all values from the original label has to be selected. This can be done very simple, for example we can just apply all periods until the cover an the original matches or for example by a greedy algorithm and we will try and discuss multiple approaches.
 
 %% ==============================
 \section{Structure of this Work}
 %% ==============================
 \label{ch:Intoduction:sec:Structure}
-\par{
 This work is structured into a first introduction into the basics of EPGs and an analysis of the current state of the art. Then, the conceptual design is depicted with a following analysis of the results. Afterwards, the implementation of the algorithms are described and the work as a whole is evaluated with a short closing discussion.  
-}
+
