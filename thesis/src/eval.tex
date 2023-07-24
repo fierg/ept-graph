@@ -12,13 +12,13 @@ We are free to choose what states are substituted and used in the decomposition 
 	\begin{minipage}{.5\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{charts/introduction/test-edge-plot-log.png}
-		\caption{A subfigure}
+		\\ A subfigure
 		\label{fig:intro-edge-plot}
 	\end{minipage}%
 	\begin{minipage}{0.5\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{charts/introduction/test-graph-plot.png}
-		\caption{A subfigure}
+		\\ A subfigure
 		\label{fig:intro-graph-plot}
 	\end{minipage}
 \end{figure}
@@ -35,7 +35,7 @@ When looking at a single edge of a single graph (edge 6 of network 0 in this cas
 
 In total, 3.1 mil values have been covered with a total of 2.8 mil periods, so on average a single period only covered 1.095 values from the input label. This is also visible in the bar chart in figure \ref{fig:plot-all-periods-true-state}, where there are some smaller periods present with a period length around 2000 but the main bulk has a period length larger than 4000. Switching the state to substitute to false, increases the amount of states to represent but also the chances of finding shorter periods which cover more than one value on average.
 
-\begin{figure}[h]
+\begin{figure}[h!]
 	\includegraphics[width=\linewidth]{charts/all-graphs-bar-char-sfalse-mSIMPLE.png}
 	\caption{TODO}
 	\label{fig:plot-all-periods-false-state}
@@ -43,11 +43,10 @@ In total, 3.1 mil values have been covered with a total of 2.8 mil periods, so o
 
 Looking at the evaluation of substituting zeroes in figure \ref{fig:plot-all-periods-false-state}, a mixed image is visible. The amount of values to cover as well as the amount of periods increased to 20 mil values and a total of 7.3 mil periods. This means an improvement to 2.73 values per period on average but also a 7x increased amount of periods.
 
-\newpage
 
 \section{Values covered by type of period}
 
-\begin{figure}[b]
+\begin{figure}[h!]
 	\includegraphics[width=\linewidth]{charts/all-covered-values-pie-chart-combined-ontop.png}
 	\caption{A subfigure}
 	\label{fig:plot}
