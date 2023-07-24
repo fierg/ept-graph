@@ -4,5 +4,6 @@ enum class CompositionMode {
     GREEDY,
     SIMPLE,
     ALL,
-    SET_COVER_ILP
+    SET_COVER_ILP,
+    AGGREGATOR
 }

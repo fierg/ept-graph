@@ -18,6 +18,7 @@ class TestDecomposition {
         val trivialPeriods = periods.count { it.second == f2fGraph.steps[edge]!!.size }
         assert(trivialPeriods <= 3)
     }
+
     @Test
     fun testDecomposition2(){
         val f2fGraph = F2FReader().getF2FNetwork(0)
@@ -28,5 +29,14 @@ class TestDecomposition {
 
         val trivialPeriods = periods.count { it.second == f2fGraph.steps[edge]!!.size }
         assert(trivialPeriods <= 3)
+    }
+
+    @Test
+    fun testPeriodAggregator(){
+        val f2fGraph = F2FReader().getF2FNetwork(0)
+        val edge = f2fGraph.edges.elementAt(6)
+        val decomposition = Decomposer(state = true, coroutines = true, clean = true, mode = CompositionMode.AGGREGATOR)
+        decomposition.findCover(f2fGraph.steps[edge]!!)
+
     }
 }

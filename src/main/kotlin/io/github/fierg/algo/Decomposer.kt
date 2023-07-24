@@ -60,7 +60,8 @@ class Decomposer(
 
 
     fun findCover(array: BooleanArray): Set<Triple<Int, Int, Int>> {
-        val periods = cleanMultiplesOfIntervals(if (coroutines) getPeriodsCO(array) else getPeriods(array), clean)
+        val periodAggregator = PeriodAggregator(array.size.factorsSequence(), stateToReplace)
+        val periods = cleanMultiplesOfIntervals(if (coroutines) getPeriodsCO(array, periodAggregator) else getPeriods(array, periodAggregator), clean)
         val cover = BooleanArray(array.size) { !stateToReplace }
         val appliedPeriods = mutableSetOf<Triple<Int, Int, Int>>()
 
@@ -111,11 +112,16 @@ class Decomposer(
                 val ilp = SetCoverILP(stateToReplace)
                 ilp.getSetCoverInstanceFromPeriods(periods, array)
                 val optimalPeriods = ilp.solveSetCover()
-                optimalPeriods.forEach { set ->
+                optimalPeriods.first.forEach { set ->
                     val period = ilp.subSetMap!![set]!!
                     val changesMade = applyPeriod(cover, period)
                     appliedPeriods.add(Triple(period.first, period.second, changesMade))
                 }
+            }
+
+            CompositionMode.AGGREGATOR -> {
+                val periodLength = periodAggregator.findShortestCover(array)
+                Logger.info("Found Cover with length $periodLength.")
             }
         }
 
@@ -161,26 +167,35 @@ class Decomposer(
         return changesMadeByPeriod
     }
 
-    private fun getPeriods(array: BooleanArray): List<Pair<Int, Int>> {
+    private fun getPeriods(array: BooleanArray, periodAggregator: PeriodAggregator): List<Pair<Int, Int>> {
         val periods = mutableListOf<Pair<Int, Int>>()
         for (factor in array.size.factorsSequence()) {
             for (index in 0 until factor) {
                 if (array[index] == stateToReplace && isPeriodic(array, index, factor)) {
-                    periods.add(Pair(index % factor, factor))
+                    val period = Pair(index % factor, factor)
+                    periods.add(period)
+                    periodAggregator.addPeriod(period)
                 }
             }
         }
         return periods
     }
 
-    private fun getPeriodsCO(array: BooleanArray): List<Pair<Int, Int>> {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun getPeriodsCO(array: BooleanArray, periodAggregator: PeriodAggregator): List<Pair<Int, Int>> {
         val jobs = mutableListOf<Deferred<List<Pair<Int, Int>>>>()
         val results = mutableListOf<Pair<Int, Int>>()
         for (factor in array.size.factorsSequence()) {
             jobs.add(computeAsync(array, factor))
         }
+
         runBlocking {
-            jobs.forEach { results.addAll(it.await()) }
+            jobs.forEach {
+                results.addAll(it.await())
+                it.getCompleted().forEach { period ->
+                    periodAggregator.addPeriod(period)
+                }
+            }
         }
 
         return results

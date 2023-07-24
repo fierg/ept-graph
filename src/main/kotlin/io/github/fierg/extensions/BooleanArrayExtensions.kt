@@ -1,20 +1,5 @@
 package io.github.fierg.extensions
 
-/*
-Finds all factors of a given number lazily and yields them into a sequence.
- */
-fun Int.factorsSequence(): Sequence<Int> {
-    val n = this
-    return sequence {
-        (1..n / 2).forEach {
-            if (n % it == 0) yield(it)
-        }
-        yield(n)
-    }
-}
-
-fun Double.format(digits: Int = 5) = "%.${digits}f".format(this)
-
 fun BooleanArray.contentEqualsWithDelta(other: BooleanArray, width: Int, state: Boolean): Boolean {
     if (this.size != other.size) {
         return false // Arrays must have the same length
@@ -55,6 +40,16 @@ fun BooleanArray.valueOfDeltaWindow(width: Int, index: Int, state: Boolean): Boo
     return !state
 }
 
-fun <K, V> Map<K, V>.reversed() = HashMap<V, K>().also { newMap ->
-    entries.forEach { newMap[it.value] = it.key }
+fun BooleanArray.applyPeriod(other: BooleanArray, state: Boolean) {
+    assert(this.size % other.size == 0)
+    val factor = this.size / other.size
+    var offset = 0
+
+    for (i in 0 until factor) {
+        for (j in other.indices) {
+            if (other[j] == state)
+                this[j + offset] = state
+        }
+        offset += other.size
+    }
 }
