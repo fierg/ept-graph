@@ -25,6 +25,8 @@ import org.jetbrains.letsPlot.intern.Plot
 import org.jetbrains.letsPlot.intern.toSpec
 import org.jetbrains.letsPlot.label.ggtitle
 import org.jetbrains.letsPlot.letsPlot
+import org.jetbrains.letsPlot.scale.scaleXLog10
+import org.jetbrains.letsPlot.scale.scaleYLog10
 import org.jetbrains.letsPlot.tooltips.tooltipsNone
 import java.awt.Desktop
 import java.io.File
@@ -74,14 +76,14 @@ class Visualizer {
                 "period Length" to sortedResult.keys.toList(),
                 "occurrence" to sortedResult.values.toList()
             )
-            Logger.debug("PLOT DATA: $data")
-            val basePlot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + if (title == "")
-                    ggtitle("All Periods of all Graphs (state: ${!options.state}, mode: ${options.mode}) covered ${result.totalValues} values with ${result.totalPeriods} periods")
-            else ggtitle(title)
+            Logger.info("PLOT DATA: $data")
+            val basePlot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+                    if (title == "") ggtitle("All Periods of all Graphs (state: ${!options.state}, mode: ${options.mode}) covered ${result.totalValues} values with ${result.totalPeriods} periods")
+                    else ggtitle(title)
 
             return when (type) {
-                PlotStyle.GEOM_POINT -> basePlot + geomPoint(size = 2.0) { x = "period Length"; y = "occurrence" }
-                PlotStyle.GEOM_BAR -> basePlot + geomBar(stat = Stat.identity) { x = "period Length"; y = "occurrence" }
+                PlotStyle.GEOM_POINT -> basePlot + geomPoint(size = 2.0) { x = "period Length"; y = "occurrence" } + scaleYLog10()
+                PlotStyle.GEOM_BAR -> basePlot + geomBar(stat = Stat.identity) { x = "period Length"; y = "occurrence" } + scaleYLog10()
             }
         }
 
