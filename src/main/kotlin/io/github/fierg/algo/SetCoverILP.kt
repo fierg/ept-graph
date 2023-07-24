@@ -45,7 +45,7 @@ class SetCoverILP(private val state: Boolean) {
         return set
     }
 
-    fun solveSetCover(): Set<Set<Int>> {
+    fun solveSetCover(): Pair<Set<Set<Int>>,Long> {
         try {
             // Create empty environment , set options , and start
             val env = GRBEnv("ilp.log")
@@ -56,7 +56,7 @@ class SetCoverILP(private val state: Boolean) {
 
             if (subSets == null || universe == null){
                 Logger.error("Universe or subsets is null!")
-                return emptySet()
+                return Pair(emptySet(),-1)
             }
 
             // Decision variables
@@ -80,10 +80,10 @@ class SetCoverILP(private val state: Boolean) {
             model.dispose()
             env.dispose()
 
-            return chosenSets
+            return Pair(chosenSets, ilpSolveTime)
         } catch (e: GRBException) {
             e.printStackTrace()
-            return emptySet()
+            return Pair(emptySet(),-1)
         }
     }
 

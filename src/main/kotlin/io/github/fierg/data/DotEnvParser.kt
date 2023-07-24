@@ -25,9 +25,9 @@ class DotEnvParser {
                 "ALL" -> CompositionMode.ALL
                 "SIMPLE" -> CompositionMode.SIMPLE
                 "GREEDY" -> CompositionMode.GREEDY
-                "SEC_COVER_ILP" -> CompositionMode.SET_COVER_ILP
+                "SET_COVER_ILP" -> CompositionMode.SET_COVER_ILP
                 else -> {
-                    Logger.error("Composition Mode missing! Running with ALL")
+                    Logger.warn("Composition Mode missing! Running with ALL")
                     CompositionMode.ALL
                 }
             }

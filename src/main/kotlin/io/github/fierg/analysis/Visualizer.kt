@@ -76,7 +76,7 @@ class Visualizer {
                 "period Length" to sortedResult.keys.toList(),
                 "occurrence" to sortedResult.values.toList()
             )
-            Logger.info("PLOT DATA: $data")
+            Logger.debug("PLOT DATA: $data")
             val basePlot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
                     if (title == "") ggtitle("All Periods of all Graphs (state: ${!options.state}, mode: ${options.mode}) covered ${result.totalValues} values with ${result.totalPeriods} periods")
                     else ggtitle(title)

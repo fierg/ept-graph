@@ -1,6 +1,7 @@
 package io.github.fierg
 
 import io.github.fierg.algo.Decomposer
+import io.github.fierg.extensions.applyPeriod
 import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.periodic.Periodic
@@ -28,6 +29,13 @@ class TestUtils {
     }
 
     @Test
+    fun testUtils22() {
+        val number = 28
+        val factors = number.factorsSequence().toList()
+        println("Factors of $number are $factors")
+    }
+
+    @Test
     fun testUtils3() {
         val array = arrayOf(true, false, false, true, true, false).toBooleanArray()
         val periods = Decomposer(mode = CompositionMode.SIMPLE, state = false).findCover(array)
@@ -41,4 +49,21 @@ class TestUtils {
         val cover = Decomposer(mode = CompositionMode.SIMPLE, state = true).findCover(BooleanArray(16))
         assert(cover.contains(Triple(0, 1, 16)))
     }
+
+    @Test
+    fun testUtils10(){
+        val b1 = BooleanArray(8) {false}
+        val b2 = BooleanArray(2) {false}
+        b2[1] = true
+        val result = BooleanArray(8)
+        result[1] = true
+        result[3] = true
+        result[5] = true
+        result[7] = true
+
+
+        b1.applyPeriod(b2, true)
+        assert(b1.contentEquals(result))
+    }
+
 }
