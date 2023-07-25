@@ -6,11 +6,12 @@ import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.extensions.valueOfDeltaWindow
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
-import io.github.fierg.model.options.Options
 import io.github.fierg.model.graph.SelfAwareEdge
+import io.github.fierg.model.options.Options
+import io.github.fierg.model.result.Cover
 import io.github.fierg.model.result.Decomposition
-import jdk.jfr.Threshold
 import kotlinx.coroutines.*
+import java.util.concurrent.ConcurrentHashMap
 
 class Decomposer(
     state: Boolean = true,
@@ -24,7 +25,7 @@ class Decomposer(
     private val stateToReplace = !state
 
     fun findComposite(graph: EPTGraph): Set<Decomposition> {
-        Logger.info("Looking for $stateToReplace values while decomposing.")
+        Logger.info("Looking for $stateToReplace values while decomposing, threshold for cover: $threshold")
 
         val decompositions = mutableSetOf<Decomposition>()
 
@@ -59,15 +60,10 @@ class Decomposer(
 
         input.size.factorsSequence().forEach { size ->
             lastAppliedSize = size
-            if (periods[size] == null){
-                1
-            }
-
-            val precision = (valuesToCover - periods[size]!!.second.size.toDouble()) / valuesToCover
-            if (precision >= threshold) return Decomposition(valuesToCover, lastAppliedSize, emptyList(), periods[lastAppliedSize]!!.first)
+            val precision = (valuesToCover - periods[size]!!.outliers.size).toDouble() / valuesToCover
+            if (precision >= threshold) return Decomposition(valuesToCover, lastAppliedSize, periods[lastAppliedSize]!!.outliers, periods[lastAppliedSize]!!.cover)
         }
-
-        return Decomposition(valuesToCover, lastAppliedSize, periods[lastAppliedSize]!!.second, periods[lastAppliedSize]!!.first)
+        return Decomposition(valuesToCover, lastAppliedSize, periods[lastAppliedSize]!!.outliers, periods[lastAppliedSize]!!.cover)
     }
 
     private fun getOutliers(input: BooleanArray, cover: BooleanArray): List<Int> {
@@ -77,8 +73,8 @@ class Decomposer(
         return expandedCover.indices.filter { expandedCover[it] != input[it] }
     }
 
-    private fun getPeriods(input: BooleanArray): MutableMap<Int, Pair<BooleanArray, List<Int>>> {
-        val periodMap = mutableMapOf<Int, Pair<BooleanArray, List<Int>>>()
+    private fun getPeriods(input: BooleanArray): Map<Int, Cover> {
+        val periodMap = ConcurrentHashMap<Int, Cover>()
         val jobs = mutableListOf<Deferred<Unit>>()
 
         for (factor in input.size.factorsSequence()) {
@@ -88,20 +84,20 @@ class Decomposer(
         runBlocking { jobs.forEach { it.await() } }
 
         if (periodMap.size < input.size.factorsSequence().toSet().size)
-            Logger.error("wtf")
+            Logger.error("Period map is missing some stuff...")
 
         return periodMap
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    private fun computeAsync(input: BooleanArray, factor: Int, periodMap: MutableMap<Int, Pair<BooleanArray, List<Int>>>) = GlobalScope.async {
+    private fun computeAsync(input: BooleanArray, factor: Int, periodMap: MutableMap<Int, Cover>) = GlobalScope.async {
         val cover = BooleanArray(factor) { !stateToReplace }
         for (index in 0 until factor) {
             if (input[index] == stateToReplace && isPeriodic(input, index, factor)) {
                 cover[index % factor] = stateToReplace
             }
         }
-        periodMap[factor] = Pair(cover, getOutliers(input, cover))
+        periodMap[factor] = Cover(cover, getOutliers(input, cover))
         return@async
     }
 
