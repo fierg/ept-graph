@@ -29,7 +29,7 @@ class TestDecomposition {
     fun testDecomposition2(){
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposer(state = true)
+        val decomposition = Decomposer(state = true, threshold = 0.8)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
         decomposition.analyze(f2fGraph, edge, cover)
 

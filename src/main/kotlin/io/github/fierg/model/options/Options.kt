@@ -8,7 +8,8 @@ data class Options(
     var debug: Boolean,
     var quiet: Boolean,
     var deltaWindowPreprocessing: Int,
-    var deltaWindowAlgo: Int
+    var deltaWindowAlgo: Int,
+    var threshold: Double
 ){
     companion object{
         fun emptyOptions(): Options {
@@ -18,7 +19,8 @@ data class Options(
                 debug = false,
                 quiet = false,
                 deltaWindowPreprocessing = 0,
-                deltaWindowAlgo = 0
+                deltaWindowAlgo = 0,
+                threshold = 1.0
             )
         }
     }

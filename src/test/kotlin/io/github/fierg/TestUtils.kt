@@ -38,8 +38,17 @@ class TestUtils {
     @Test
     fun testUtils3() {
         val array = arrayOf(true, false, false, true, true, false).toBooleanArray()
-        val periods = Decomposer(state = false).findCover(array)
+        val periods = Decomposer(state = false, threshold = 0.5).findCover(array)
         val expectedPeriods = Decomposition(3,3, listOf(4), listOf(true,false,false).toBooleanArray())
+
+        assert(periods == expectedPeriods)
+    }
+
+    @Test
+    fun testUtils3b() {
+        val array = arrayOf(true, false, false, true, true, false).toBooleanArray()
+        val periods = Decomposer(state = false).findCover(array)
+        val expectedPeriods = Decomposition(3,6, emptyList(), listOf(true,false,false,true,true,false).toBooleanArray())
 
         assert(periods == expectedPeriods)
     }

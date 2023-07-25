@@ -21,6 +21,7 @@ class DotEnvParser {
             options.deltaWindowAlgo = env["DELTA_WINDOW_ALGO"].toInt()
             options.debug = env["DEBUG"] == "true"
             options.quiet = env["QUIET"] == "true"
+            options.threshold = env["THRESHOLD"].toDouble()
             return options
         }
     }
