@@ -2,41 +2,44 @@ package io.github.fierg
 
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.F2FReader
-import io.github.fierg.model.options.CompositionMode
+import io.github.fierg.model.options.Options
 import org.junit.Test
 
 class TestDecomposition {
+
+    private val options = Options.emptyOptions()
+
+    init {
+        options.state = true
+        options.skipSingleStepEdges = true
+    }
 
     @Test
     fun testDecomposition1(){
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposer(state = false, coroutines = true, clean = true, mode = CompositionMode.SIMPLE)
-        val periods = decomposition.findCover(f2fGraph.steps[edge]!!)
-        decomposition.analyze(f2fGraph, edge, periods)
+        val decomposition = Decomposer(state = false)
+        val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
+        decomposition.analyze(f2fGraph, edge, cover)
 
-        val trivialPeriods = periods.count { it.second == f2fGraph.steps[edge]!!.size }
-        assert(trivialPeriods <= 3)
+        assert(cover.outliers.size <= 3)
     }
 
     @Test
     fun testDecomposition2(){
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposer(state = true, coroutines = true, clean = true, mode = CompositionMode.SIMPLE)
-        val periods = decomposition.findCover(f2fGraph.steps[edge]!!)
-        decomposition.analyze(f2fGraph, edge, periods)
+        val decomposition = Decomposer(state = true)
+        val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
+        decomposition.analyze(f2fGraph, edge, cover)
 
-        val trivialPeriods = periods.count { it.second == f2fGraph.steps[edge]!!.size }
-        assert(trivialPeriods <= 3)
+        assert(cover.outliers.size <= 3)
     }
 
     @Test
-    fun testPeriodAggregator(){
+    fun testDecomposition3(){
         val f2fGraph = F2FReader().getF2FNetwork(0)
-        val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposer(state = true, coroutines = true, clean = true, mode = CompositionMode.AGGREGATOR)
-        decomposition.findCover(f2fGraph.steps[edge]!!)
-
+        val decomposition = Decomposer(options)
+        decomposition.findComposite(f2fGraph)
     }
 }

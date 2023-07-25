@@ -1,42 +1,36 @@
 package io.github.fierg.algo
 
 import io.github.fierg.exceptions.NoCoverFoundException
-import io.github.fierg.extensions.contentEqualsWithDelta
+import io.github.fierg.extensions.applyPeriod
 import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.extensions.valueOfDeltaWindow
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
-import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.model.options.Options
 import io.github.fierg.model.graph.SelfAwareEdge
+import io.github.fierg.model.result.Decomposition
 import kotlinx.coroutines.*
 
 class Decomposer(
     state: Boolean = true,
-    private val coroutines: Boolean = false,
-    private val clean: Boolean = false,
-    private val mode: CompositionMode = CompositionMode.ALL,
     private val deltaWindowAlgo: Int = 0,
     private val skipSingleStepEdges: Boolean = false
 ) {
-    constructor(options: Options) : this(options.state, options.coroutines, options.clean, options.mode!!, options.deltaWindowAlgo, options.skipSingleStepEdges)
+    constructor(options: Options) : this(options.state, options.deltaWindowAlgo, options.skipSingleStepEdges)
 
     private val applyDeltaWindow = deltaWindowAlgo > 0
     private val stateToReplace = !state
 
-    fun findComposite(graph: EPTGraph): Set<Set<Triple<Int, Int, Int>>> {
+    fun findComposite(graph: EPTGraph): Set<Decomposition> {
         Logger.info("Looking for $stateToReplace values while decomposing.")
-        if (coroutines) Logger.info("Using coroutines to compute periods.")
-        if (clean) Logger.info("Cleaning up multiples/duplicates before applying the periods.")
-        Logger.info("Choosing periods in $mode mode.")
 
-        val decomposition = mutableSetOf<Set<Triple<Int, Int, Int>>>()
+        val decompositions = mutableSetOf<Decomposition>()
 
         graph.edges.forEach { edge ->
             try {
                 if (!(skipSingleStepEdges && graph.steps[edge]!!.size <= 1)) {
                     val edgeDecomposition = findCover(graph.steps[edge]!!)
-                    decomposition.add(edgeDecomposition)
+                    decompositions.add(edgeDecomposition)
                     analyze(graph, edge, edgeDecomposition)
                 }
             } catch (e: NoCoverFoundException) {
@@ -44,172 +38,62 @@ class Decomposer(
             }
         }
 
-        return decomposition
+        return decompositions
     }
 
-    fun analyze(graph: EPTGraph, edge: SelfAwareEdge, decomposition: Set<Triple<Int, Int, Int>>) {
-        val valuesToCover = graph.steps[edge]!!.count { it == stateToReplace }
-        val trivialPeriods = decomposition.count { it.second == graph.steps[edge]!!.size }
-
+    fun analyze(graph: EPTGraph, edge: SelfAwareEdge, result: Decomposition) {
         Logger.info(
-            "Found decomposition with ${String.format("%5d", decomposition.size)} periods, " +
-                    "covered ${String.format("%5d", valuesToCover)} values, " +
-                    "used ${String.format("%3d", ((trivialPeriods.toFloat() / decomposition.size) * 100).toInt())}% trivial periods."
+            "Found decomposition with ${String.format("%3d", (result.cover.size.toDouble() / graph.steps[edge]!!.size * 100).toInt())}% original size, " +
+                    "covered ${String.format("%5d", result.totalValues)} values, " +
+                    "including ${String.format("%4d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)."
         )
     }
 
 
-    fun findCover(array: BooleanArray): Set<Triple<Int, Int, Int>> {
-        val periodAggregator = PeriodAggregator(array.size.factorsSequence(), stateToReplace)
-        val periods = cleanMultiplesOfIntervals(if (coroutines) getPeriodsCO(array, periodAggregator) else getPeriods(array, periodAggregator), clean)
-        val cover = BooleanArray(array.size) { !stateToReplace }
-        val appliedPeriods = mutableSetOf<Triple<Int, Int, Int>>()
+    fun findCover(input: BooleanArray): Decomposition {
+        val periods = getPeriods(input)
+        val cover = BooleanArray(input.size) { !stateToReplace }
+        val valuesToCover = input.count { it == stateToReplace }
+        var lastAppliedSize = 0
 
-        when (mode) {
-            CompositionMode.ALL -> {
-                periods.forEach { period ->
-                    val changesMade = applyPeriod(cover, period)
-                    appliedPeriods.add(Triple(period.first, period.second, changesMade))
-
-                    if (applyDeltaWindow) {
-                        if (array.contentEqualsWithDelta(cover, deltaWindowAlgo, stateToReplace)) return appliedPeriods
-                    } else
-                        if (array.contentEquals(cover)) return appliedPeriods
-                }
-            }
-
-            CompositionMode.SIMPLE -> {
-                periods.forEach { period ->
-                    val changesMade = applyPeriod(cover, period)
-                    if (changesMade > 0) appliedPeriods.add(Triple(period.first, period.second, changesMade))
-
-                    if (applyDeltaWindow) {
-                        if (array.contentEqualsWithDelta(cover, deltaWindowAlgo, stateToReplace)) return appliedPeriods
-                    } else
-                        if (array.contentEquals(cover)) return appliedPeriods
-                }
-            }
-
-            CompositionMode.GREEDY -> {
-                do {
-                    var maxDiff = 0
-                    var bestPeriod = Pair(-1, -1)
-                    periods.forEach { period ->
-                        val newCover = cover.copyOf()
-                        val diff = applyPeriod(newCover, period)
-                        if (diff > maxDiff) {
-                            bestPeriod = period
-                            maxDiff = diff
-                        }
-                    }
-                    val changesMade = applyPeriod(cover, bestPeriod)
-                    appliedPeriods.add(Triple(bestPeriod.first, bestPeriod.second, changesMade))
-                } while (!array.contentEquals(cover))
-                return appliedPeriods
-            }
-
-            CompositionMode.SET_COVER_ILP -> {
-                val ilp = SetCoverILP(stateToReplace)
-                ilp.getSetCoverInstanceFromPeriods(periods, array)
-                val optimalPeriods = ilp.solveSetCover()
-                optimalPeriods.first.forEach { set ->
-                    val period = ilp.subSetMap!![set]!!
-                    val changesMade = applyPeriod(cover, period)
-                    appliedPeriods.add(Triple(period.first, period.second, changesMade))
-                }
-            }
-
-            CompositionMode.AGGREGATOR -> {
-                val periodLength = periodAggregator.findShortestCover(array)
-                Logger.info("Found Cover with length $periodLength.")
-            }
+        input.size.factorsSequence(false).forEach { size ->
+            lastAppliedSize = size
+            cover.applyPeriod(periods[size]!!, stateToReplace)
+            if (input.contentEquals(cover)) return Decomposition(valuesToCover, lastAppliedSize, emptyList(), cover.copyOfRange(0, lastAppliedSize))
         }
 
-        if (array.contentEquals(cover)) {
-            return appliedPeriods
-        }
-        var coverage = cover.count { it == stateToReplace }.toDouble() / array.count { it == stateToReplace }
-        if (coverage.isNaN()) coverage = 0.0
-        throw NoCoverFoundException("with coverage of $coverage")
+        return Decomposition(valuesToCover, lastAppliedSize, getOutliers(input, cover), cover.copyOfRange(0, lastAppliedSize))
     }
 
-    private fun countDifferences(cover: BooleanArray, newCover: BooleanArray): Int {
-        var count = 0
-        for (i in cover.indices) {
-            if (cover[i] != newCover[i]) count += 1
-        }
-        return count
+    private fun getOutliers(input: BooleanArray, cover: BooleanArray): List<Int> {
+        val expandedCover = BooleanArray(input.size) { !stateToReplace }
+        expandedCover.applyPeriod(cover, stateToReplace)
+        val outliers = mutableSetOf<Int>()
+
+        return expandedCover.indices.filter { expandedCover[it] != input[it] }
     }
 
-    private fun cleanMultiplesOfIntervals(periods: List<Pair<Int, Int>>, clean: Boolean): List<Pair<Int, Int>> {
-        return if (clean) {
-            val cleanPeriods = mutableListOf<Pair<Int, Int>>()
-            periods.forEach { period ->
-                if (!cleanPeriods.filter { it.first == period.first }.any { period.second / it.second % 2 == 0 }) {
-                    cleanPeriods.add(period)
-                }
-            }
-            cleanPeriods
-        } else
-            periods
-    }
+    private fun getPeriods(array: BooleanArray): MutableMap<Int, BooleanArray> {
+        val periodMap = mutableMapOf<Int, BooleanArray>()
+        val jobs = mutableListOf<Deferred<Unit>>()
 
-    private fun applyPeriod(cover: BooleanArray, period: Pair<Int, Int>): Int {
-        var position = period.first
-        var changesMadeByPeriod = 0
-        do {
-            if (cover[position] != stateToReplace) {
-                cover[position] = stateToReplace
-                changesMadeByPeriod++
-            }
-            position = (position + period.second) % cover.size
-        } while (position != period.first)
-        return changesMadeByPeriod
-    }
-
-    private fun getPeriods(array: BooleanArray, periodAggregator: PeriodAggregator): List<Pair<Int, Int>> {
-        val periods = mutableListOf<Pair<Int, Int>>()
         for (factor in array.size.factorsSequence()) {
-            for (index in 0 until factor) {
-                if (array[index] == stateToReplace && isPeriodic(array, index, factor)) {
-                    val period = Pair(index % factor, factor)
-                    periods.add(period)
-                    periodAggregator.addPeriod(period)
-                }
-            }
-        }
-        return periods
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getPeriodsCO(array: BooleanArray, periodAggregator: PeriodAggregator): List<Pair<Int, Int>> {
-        val jobs = mutableListOf<Deferred<List<Pair<Int, Int>>>>()
-        val results = mutableListOf<Pair<Int, Int>>()
-        for (factor in array.size.factorsSequence()) {
-            jobs.add(computeAsync(array, factor))
+            periodMap[factor] = BooleanArray(factor) {!stateToReplace}
+            jobs.add(computeAsync(array, factor, periodMap))
         }
 
-        runBlocking {
-            jobs.forEach {
-                results.addAll(it.await())
-                it.getCompleted().forEach { period ->
-                    periodAggregator.addPeriod(period)
-                }
-            }
-        }
+        runBlocking { jobs.forEach { it.await() } }
 
-        return results
+        return periodMap
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    private fun computeAsync(array: BooleanArray, factor: Int): Deferred<List<Pair<Int, Int>>> = GlobalScope.async {
-        val periods = mutableListOf<Pair<Int, Int>>()
+    private fun computeAsync(array: BooleanArray, factor: Int, periodMap: MutableMap<Int, BooleanArray>) = GlobalScope.async {
         for (index in 0 until factor) {
             if (array[index] == stateToReplace && isPeriodic(array, index, factor)) {
-                periods.add(Pair(index % factor, factor))
+                periodMap[factor]!![index % factor] = stateToReplace
             }
         }
-        periods
     }
 
     private fun isPeriodic(array: BooleanArray, index: Int, factor: Int): Boolean {
