@@ -47,8 +47,8 @@ class Decomposer(
     fun analyze(graph: EPTGraph, edge: SelfAwareEdge, result: Decomposition) {
         Logger.info(
             "Found decomposition with ${String.format("%3d", (result.cover.size.toDouble() / graph.steps[edge]!!.size * 100).toInt())}% original size, " +
-                    "covered ${String.format("%5d", result.totalValues)} values, " +
-                    "including ${String.format("%4d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)."
+                    "covered ${String.format("%4d", (result.totalValues - result.outliers.size))}/${String.format("%4d", result.totalValues)} values, " +
+                    "resulting in ${String.format("%4d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)."
         )
     }
 
@@ -56,14 +56,13 @@ class Decomposer(
     fun findCover(input: BooleanArray): Decomposition {
         val periods = getPeriods(input)
         val valuesToCover = input.count { it == stateToReplace }
-        var lastAppliedSize = 0
 
         input.size.factorsSequence().forEach { size ->
-            lastAppliedSize = size
             val precision = (valuesToCover - periods[size]!!.outliers.size).toDouble() / valuesToCover
-            if (precision >= threshold) return Decomposition(valuesToCover, lastAppliedSize, periods[lastAppliedSize]!!.outliers, periods[lastAppliedSize]!!.cover)
+            if (precision >= threshold) return Decomposition(valuesToCover, size, periods[size]!!.outliers, periods[size]!!.cover)
         }
-        return Decomposition(valuesToCover, lastAppliedSize, periods[lastAppliedSize]!!.outliers, periods[lastAppliedSize]!!.cover)
+
+        return Decomposition(valuesToCover, input.size, periods[input.size]!!.outliers, periods[input.size]!!.cover)
     }
 
     private fun getOutliers(input: BooleanArray, cover: BooleanArray): List<Int> {
