@@ -5,25 +5,18 @@ import io.github.fierg.algo.Preprocessor
 import io.github.fierg.data.DotEnvParser
 import io.github.fierg.data.F2FReader
 import io.github.fierg.logger.Logger
-import kotlin.system.exitProcess
 
 
 fun main(args: Array<String>) {
 
     val options = io.github.fierg.data.ArgParser.readArgs(args)
+
     if (options.dotenv) {
         DotEnvParser.readDotEnv(options)
     }
-
-    if (options.mode == null) {
-        Logger.error("Mode not provided! Exiting.")
-        exitProcess(1)
-    }
-
     if (options.debug) {
         Logger.setLogLevelToDebug()
-    }
-    if (options.quiet) {
+    } else if (options.quiet) {
         Logger.setLogLevelToQuiet()
     }
 
