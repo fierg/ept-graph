@@ -9,14 +9,16 @@ import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.Options
 import io.github.fierg.model.graph.SelfAwareEdge
 import io.github.fierg.model.result.Decomposition
+import jdk.jfr.Threshold
 import kotlinx.coroutines.*
 
 class Decomposer(
     state: Boolean = true,
     private val deltaWindowAlgo: Int = 0,
-    private val skipSingleStepEdges: Boolean = false
+    private val skipSingleStepEdges: Boolean = false,
+    private val threshold: Double = 1.0
 ) {
-    constructor(options: Options) : this(options.state, options.deltaWindowAlgo, options.skipSingleStepEdges)
+    constructor(options: Options) : this(options.state, options.deltaWindowAlgo, options.skipSingleStepEdges, options.threshold)
 
     private val applyDeltaWindow = deltaWindowAlgo > 0
     private val stateToReplace = !state
@@ -52,48 +54,55 @@ class Decomposer(
 
     fun findCover(input: BooleanArray): Decomposition {
         val periods = getPeriods(input)
-        val cover = BooleanArray(input.size) { !stateToReplace }
         val valuesToCover = input.count { it == stateToReplace }
         var lastAppliedSize = 0
 
-        input.size.factorsSequence(false).forEach { size ->
+        input.size.factorsSequence().forEach { size ->
             lastAppliedSize = size
-            cover.applyPeriod(periods[size]!!, stateToReplace)
-            if (input.contentEquals(cover)) return Decomposition(valuesToCover, lastAppliedSize, emptyList(), cover.copyOfRange(0, lastAppliedSize))
+            if (periods[size] == null){
+                1
+            }
+
+            val precision = (valuesToCover - periods[size]!!.second.size.toDouble()) / valuesToCover
+            if (precision >= threshold) return Decomposition(valuesToCover, lastAppliedSize, emptyList(), periods[lastAppliedSize]!!.first)
         }
 
-        return Decomposition(valuesToCover, lastAppliedSize, getOutliers(input, cover), cover.copyOfRange(0, lastAppliedSize))
+        return Decomposition(valuesToCover, lastAppliedSize, periods[lastAppliedSize]!!.second, periods[lastAppliedSize]!!.first)
     }
 
     private fun getOutliers(input: BooleanArray, cover: BooleanArray): List<Int> {
         val expandedCover = BooleanArray(input.size) { !stateToReplace }
         expandedCover.applyPeriod(cover, stateToReplace)
-        val outliers = mutableSetOf<Int>()
 
         return expandedCover.indices.filter { expandedCover[it] != input[it] }
     }
 
-    private fun getPeriods(array: BooleanArray): MutableMap<Int, BooleanArray> {
-        val periodMap = mutableMapOf<Int, BooleanArray>()
+    private fun getPeriods(input: BooleanArray): MutableMap<Int, Pair<BooleanArray, List<Int>>> {
+        val periodMap = mutableMapOf<Int, Pair<BooleanArray, List<Int>>>()
         val jobs = mutableListOf<Deferred<Unit>>()
 
-        for (factor in array.size.factorsSequence()) {
-            periodMap[factor] = BooleanArray(factor) {!stateToReplace}
-            jobs.add(computeAsync(array, factor, periodMap))
+        for (factor in input.size.factorsSequence()) {
+            jobs.add(computeAsync(input, factor, periodMap))
         }
 
         runBlocking { jobs.forEach { it.await() } }
+
+        if (periodMap.size < input.size.factorsSequence().toSet().size)
+            Logger.error("wtf")
 
         return periodMap
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    private fun computeAsync(array: BooleanArray, factor: Int, periodMap: MutableMap<Int, BooleanArray>) = GlobalScope.async {
+    private fun computeAsync(input: BooleanArray, factor: Int, periodMap: MutableMap<Int, Pair<BooleanArray, List<Int>>>) = GlobalScope.async {
+        val cover = BooleanArray(factor) { !stateToReplace }
         for (index in 0 until factor) {
-            if (array[index] == stateToReplace && isPeriodic(array, index, factor)) {
-                periodMap[factor]!![index % factor] = stateToReplace
+            if (input[index] == stateToReplace && isPeriodic(input, index, factor)) {
+                cover[index % factor] = stateToReplace
             }
         }
+        periodMap[factor] = Pair(cover, getOutliers(input, cover))
+        return@async
     }
 
     private fun isPeriodic(array: BooleanArray, index: Int, factor: Int): Boolean {
