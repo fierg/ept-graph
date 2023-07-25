@@ -3,7 +3,6 @@ package io.github.fierg.algo
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
 
-
 class Preprocessor {
     companion object {
         fun applyDeltaWindow(input: BooleanArray, width: Int, state: Boolean): BooleanArray {
