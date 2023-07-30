@@ -1,6 +1,7 @@
 package io.github.fierg
 
 import io.github.fierg.algo.Decomposer
+import io.github.fierg.data.DotEnvParser
 import io.github.fierg.data.F2FReader
 import io.github.fierg.model.options.Options
 import org.junit.Test
@@ -56,4 +57,27 @@ class TestDecomposition {
         val decomposition = Decomposer(state = true, skipSingleStepEdges = true, threshold = 0.6)
         decomposition.findComposite(f2fGraph)
     }
+
+
+    @Test
+    fun testDecomposition10(){
+        val options = DotEnvParser.readDotEnv()
+        val decomposition = Decomposer(options)
+        decomposition.findComposite(F2FReader().getF2FNetwork(10))
+    }
+
+    @Test
+    fun testDecomposition11(){
+        val options = DotEnvParser.readDotEnv()
+        val decomposition = Decomposer(options)
+        decomposition.findComposite(F2FReader().getF2FNetwork(12))
+    }
+
+    @Test
+    fun testDecomposition12(){
+        val options = DotEnvParser.readDotEnv()
+        val decomposition = Decomposer(options)
+        decomposition.findComposite(F2FReader().getF2FNetwork(14))
+    }
+
 }
