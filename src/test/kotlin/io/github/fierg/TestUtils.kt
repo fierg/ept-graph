@@ -1,6 +1,7 @@
 package io.github.fierg
 
 import io.github.fierg.algo.Decomposer
+import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.applyPeriod
 import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.model.result.Decomposition
@@ -73,6 +74,14 @@ class TestUtils {
 
         b1.applyPeriod(b2, true)
         assert(b1.contentEquals(result))
+    }
+
+    @Test
+    fun testUtils11() {
+        val f2fGraph = F2FReader().getF2FNetwork(0)
+        f2fGraph.getGraphAtStep(2)
+        f2fGraph.getGraphAtStep(4)
+        f2fGraph.getGraphAtStep(6)
     }
 
 }
