@@ -1,16 +1,13 @@
 package io.github.fierg.algo
 
 import io.github.fierg.exceptions.NoCoverFoundException
-import io.github.fierg.extensions.applyPeriod
-import io.github.fierg.extensions.factorsSequence
-import io.github.fierg.extensions.maximalDivisors
-import io.github.fierg.extensions.valueOfDeltaWindow
+import io.github.fierg.extensions.*
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.model.options.Options
+import io.github.fierg.model.result.Factor
 import io.github.fierg.model.result.Cover
-import io.github.fierg.model.result.Decomposition
 import kotlinx.coroutines.*
 
 class Decomposer(state: Boolean = true, private val mode: CompositionMode = CompositionMode.SHORTEST_PERIODS, private val deltaWindowAlgo: Int = 0, private val skipSingleStepEdges: Boolean = false, private val threshold: Double = 1.0) {
@@ -20,9 +17,9 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
     private val applyDeltaWindow = deltaWindowAlgo > 0
     private val stateToReplace = !state
 
-    fun findComposite(graph: EPTGraph): Set<Decomposition> {
+    fun findComposite(graph: EPTGraph): Set<Cover> {
         Logger.info("Looking for $stateToReplace values while decomposing, threshold for cover: $threshold")
-        val decompositions = mutableSetOf<Decomposition>()
+        val decompositions = mutableSetOf<Cover>()
 
         graph.edges.forEach { edge ->
             try {
@@ -39,7 +36,7 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
         return decompositions
     }
 
-    fun analyze(originalSize: Int, result: Decomposition) {
+    fun analyze(originalSize: Int, result: Cover) {
         Logger.info(
             "Found decomposition with ${String.format("%3d", (result.cover.size.toDouble() / originalSize * 100).toInt())}% original size, " +
                     "covered ${String.format("%4d", (result.totalValues - result.outliers.size))}/${String.format("%4d", result.totalValues)} values, " +
@@ -47,17 +44,39 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
         )
     }
 
-    fun findCover(input: BooleanArray): Decomposition {
-        val periodIndex = getFactors(input.size).mapIndexed { index, factor -> factor to index }.toMap()
-        val periods = getPeriods(input, periodIndex)
+    fun findCover(input: BooleanArray): Cover {
+        val factorIndex = getFactors(input.size).mapIndexed { index, factor -> factor to index }.toMap()
+        val factors = getFactors(input, factorIndex)
         val valuesToCover = input.count { it == stateToReplace }
+        val outliers = input.mapIndexed { index, b -> if (b) index else -1 }.filter { it != -1 }.toMutableList()
+        val periods = getFactors(input.size).toList()
+        Logger.debug("Using ${periods.size} periods: $periods")
 
-        getFactors(input.size).forEach { size ->
-            val precision = (valuesToCover - periods[periodIndex[size]!!].outliers.size).toDouble() / valuesToCover
-            if (precision >= threshold) return Decomposition(valuesToCover, size, periods[periodIndex[size]!!].outliers, periods[periodIndex[size]!!].cover)
+        when (mode) {
+            CompositionMode.SHORTEST_PERIODS -> {
+                Logger.debug("Trying to find shortest possible factors which has at least ${threshold * 100}% coverage.")
+                periods.forEach { size ->
+                    outliers.removeIfNotIncludedIn(factors[factorIndex[size]!!].outliers)
+                    val precision = (valuesToCover - outliers.size).toDouble() / valuesToCover
+                    if (precision >= threshold) return Cover(valuesToCover, size, factors[factorIndex[size]!!].outliers, factors[factorIndex[size]!!].cover)
+                }
+            }
+
+            CompositionMode.MAX_DIVISORS -> {
+                Logger.debug("Trying to find cover with only the max divisors.")
+                periods.forEach { size ->
+                    outliers.removeIfNotIncludedIn(factors[factorIndex[size]!!].outliers)
+                    if (outliers.size == 0) return Cover(valuesToCover, size, factors[factorIndex[size]!!].outliers, factors[factorIndex[size]!!].cover)
+                }
+                throw NoCoverFoundException("No Exact Cover only with max divisors possible! Hard outliers (${outliers.size}) $outliers")
+            }
+
+            CompositionMode.GREEDY -> {
+                TODO()
+
+            }
         }
-
-        return Decomposition(valuesToCover, input.size, periods[periodIndex[input.size]!!].outliers, periods[periodIndex[input.size]!!].cover)
+        throw NoCoverFoundException("Unknown Exception!")
     }
 
     private fun getOutliers(input: BooleanArray, cover: BooleanArray): List<Int> {
@@ -67,27 +86,27 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
         return expandedCover.indices.filter { expandedCover[it] != input[it] }
     }
 
-    private fun getPeriods(input: BooleanArray, periodIndex: Map<Int, Int>): Array<Cover> {
-        val periods = Array(periodIndex.size) {Cover(BooleanArray(0), emptyList())}
+    private fun getFactors(input: BooleanArray, factorIndex: Map<Int, Int>): Array<Factor> {
+        val factors = Array(factorIndex.size) { Factor(BooleanArray(0), emptyList()) }
         val jobs = mutableListOf<Deferred<Unit>>()
 
         for (factor in getFactors(input.size)) {
-            jobs.add(computeAsync(input, factor, periods, periodIndex))
+            jobs.add(computeFactors(input, factor, factors, factorIndex[factor]!!))
         }
         runBlocking { jobs.forEach { it.await() } }
 
-        return periods
+        return factors
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    private fun computeAsync(input: BooleanArray, factor: Int, periods: Array<Cover>, periodIndex: Map<Int, Int>) = GlobalScope.async {
+    private fun computeFactors(input: BooleanArray, factor: Int, factors: Array<Factor>, factorIndex: Int) = GlobalScope.async {
         val cover = BooleanArray(factor) { !stateToReplace }
         for (index in 0 until factor) {
             if (input[index] == stateToReplace && isPeriodic(input, index, factor)) {
                 cover[index % factor] = stateToReplace
             }
         }
-        periods[periodIndex[factor]!!] = Cover(cover, getOutliers(input, cover))
+        factors[factorIndex] = Factor(cover, getOutliers(input, cover))
         return@async
     }
 
@@ -103,7 +122,7 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
         return true
     }
 
-    private fun getFactors(input: Int) : Sequence<Int> {
+    private fun getFactors(input: Int): Sequence<Int> {
         return when (mode) {
             CompositionMode.SHORTEST_PERIODS -> input.factorsSequence()
             CompositionMode.MAX_DIVISORS -> input.maximalDivisors()

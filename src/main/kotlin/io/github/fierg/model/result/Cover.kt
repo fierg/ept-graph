@@ -1,23 +1,28 @@
 package io.github.fierg.model.result
 
-data class Cover(val cover: BooleanArray, val outliers: List<Int>) {
+data class Cover(
+    val totalValues: Int,
+    val periodSize: Int,
+    val outliers: Collection<Int>,
+    val cover: BooleanArray
+) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
         other as Cover
 
-        if (!cover.contentEquals(other.cover)) return false
-        return outliers == other.outliers
+        if (totalValues != other.totalValues) return false
+        if (periodSize != other.periodSize) return false
+        if (outliers != other.outliers) return false
+        return cover.contentEquals(other.cover)
     }
 
     override fun hashCode(): Int {
-        var result = cover.contentHashCode()
+        var result = totalValues
+        result = 31 * result + periodSize
         result = 31 * result + outliers.hashCode()
+        result = 31 * result + cover.contentHashCode()
         return result
-    }
-
-    override fun toString(): String {
-        return "${cover.map { if (it) "1" else "0" }}:${outliers}"
     }
 }
