@@ -2,11 +2,8 @@ package io.github.fierg
 
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.F2FReader
-import io.github.fierg.extensions.applyPeriod
-import io.github.fierg.extensions.factorsSequence
-import io.github.fierg.extensions.maximalDivisors
-import io.github.fierg.extensions.primeFactors
-import io.github.fierg.model.result.Decomposition
+import io.github.fierg.extensions.*
+import io.github.fierg.model.result.Cover
 import io.github.fierg.periodic.Periodic
 import org.junit.Test
 
@@ -42,7 +39,7 @@ class TestUtils {
     fun testUtils3() {
         val array = arrayOf(true, false, false, true, true, false).toBooleanArray()
         val periods = Decomposer(state = false, threshold = 0.5).findCover(array)
-        val expectedPeriods = Decomposition(3,3, listOf(4), listOf(true,false,false).toBooleanArray())
+        val expectedPeriods = Cover(3,3, listOf(4), listOf(true,false,false).toBooleanArray())
 
         assert(periods == expectedPeriods)
     }
@@ -51,7 +48,7 @@ class TestUtils {
     fun testUtils3b() {
         val array = arrayOf(true, false, false, true, true, false).toBooleanArray()
         val periods = Decomposer(state = false).findCover(array)
-        val expectedPeriods = Decomposition(3,6, emptyList(), listOf(true,false,false,true,true,false).toBooleanArray())
+        val expectedPeriods = Cover(3,6, emptyList(), listOf(true,false,false,true,true,false).toBooleanArray())
 
         assert(periods == expectedPeriods)
     }
@@ -59,7 +56,7 @@ class TestUtils {
     @Test
     fun testUtils4() {
         val cover = Decomposer(state = false).findCover(BooleanArray(16) {true})
-        assert(cover == Decomposition(16,1, emptyList(), BooleanArray(1){true}))
+        assert(cover == Cover(16,1, emptyList(), BooleanArray(1){true}))
     }
 
     @Test
@@ -102,4 +99,17 @@ class TestUtils {
         println("Maximal Divisors are ${number.maximalDivisors().toList()}")
     }
 
+    @Test
+    fun testRemoveOutliersMethod(){
+        val listA = mutableListOf(1, 3, 5, 7, 9, 11)
+        val listB = listOf(3, 5, 7, 10, 12)
+
+        println("List A: $listA")
+        println("List B: $listB")
+
+        listA.removeIfNotIncludedIn(listB)
+
+        println("Transformed A: $listA")
+        assert(listA == listOf(3,5,7))
+    }
 }

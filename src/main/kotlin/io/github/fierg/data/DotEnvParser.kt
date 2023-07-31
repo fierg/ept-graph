@@ -16,10 +16,10 @@ class DotEnvParser {
                 systemProperties = true
             }
             Logger.info("Parsing arg from .env file:\n${env.entries().filter { envEntry -> ENV.values().map { envVar -> envVar.toString() }.contains(envEntry.key) }.map { "${it.key}:${it.value}\n" }}")
-            options.state = env["STATE"] == "true"
-            options.skipSingleStepEdges = env["SKIP_SINGLE_STEP_EDGES"] == "true"
+            options.state = env[ENV.STATE.name] == "true"
+            options.skipSingleStepEdges = env[ENV.SKIP_SINGLE_STEP_EDGES.name] == "true"
 
-            options.compositionMode = when (env["MODE"]) {
+            options.compositionMode = when (env[ENV.MODE.name]) {
                 "GREEDY" -> CompositionMode.GREEDY
                 "SHORTEST_PERIODS" -> CompositionMode.SHORTEST_PERIODS
                 "MAX_DIVISORS" -> CompositionMode.MAX_DIVISORS
@@ -28,11 +28,11 @@ class DotEnvParser {
                     CompositionMode.SHORTEST_PERIODS
                 }
             }
-            options.deltaWindowPreprocessing = env["DELTA_WINDOW_PREPROCESSING"].toInt()
-            options.deltaWindowAlgo = env["DELTA_WINDOW_ALGO"].toInt()
-            options.debug = env["DEBUG"] == "true"
-            options.quiet = env["QUIET"] == "true"
-            options.threshold = env["THRESHOLD"].toDouble()
+            options.deltaWindowPreprocessing = env[ENV.DELTA_WINDOW_PREPROCESSING.name].toInt()
+            options.deltaWindowAlgo = env[ENV.DELTA_WINDOW_ALGO.name].toInt()
+            options.debug = env[ENV.DEBUG.name] == "true"
+            options.quiet = env[ENV.QUIET.name] == "true"
+            options.threshold = env[ENV.THRESHOLD.name].toDouble()
             return options
         }
     }

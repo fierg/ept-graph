@@ -1,25 +1,11 @@
 package io.github.fierg.analysis
 
 import io.github.fierg.extensions.reversed
-import io.github.fierg.logger.Logger
-import io.github.fierg.model.options.Options
-import io.github.fierg.model.result.Decomposition
-import io.github.fierg.model.style.DefaultPlotStyle.Companion.DEFAULT_HEIGHT
-import io.github.fierg.model.style.DefaultPlotStyle.Companion.DEFAULT_WIDTH
-import io.github.fierg.model.style.DefaultPlotStyle.Companion.defaultPieCharConfig
-import io.github.fierg.model.style.DefaultPlotStyle.Companion.defaultStyle
-import io.github.fierg.model.style.PieChartStyle
 import jetbrains.datalore.plot.PlotSvgExport
 import org.jetbrains.letsPlot.GGBunch
-import org.jetbrains.letsPlot.annotations.layerLabels
 import org.jetbrains.letsPlot.export.ggsave
-import org.jetbrains.letsPlot.geom.geomPie
-import org.jetbrains.letsPlot.ggsize
 import org.jetbrains.letsPlot.intern.Plot
 import org.jetbrains.letsPlot.intern.toSpec
-import org.jetbrains.letsPlot.label.ggtitle
-import org.jetbrains.letsPlot.letsPlot
-import org.jetbrains.letsPlot.tooltips.tooltipsNone
 import java.awt.Desktop
 import java.io.File
 
