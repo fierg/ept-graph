@@ -44,16 +44,9 @@ class F2FReader {
         val people = networkList.readLines()[id + 1].split(",")[1].toInt()
         val edges = mutableListOf<SelfAwareEdge>()
         val steps = mutableMapOf<SelfAwareEdge, MutableList<Boolean>>()
-        val labels = readF2FFile(id,people, steps, edges)
-        val nrOfSteps = steps[edges.last()]!!.size
+        val labels = readF2FFile(id, people, steps, edges)
         val shortenedSteps = steps.map {
-            val array = it.value.toBooleanArray()
-            val period = Periodic().findShortestPeriod(array)
-            if (period == nrOfSteps) {
-                it.key to array
-            } else {
-                it.key to array.copyOfRange(0, period)
-            }
+            it.key to it.value.toBooleanArray()
         }.toMap().toMutableMap()
         return EPTGraph(nodes = (0..people).toList(), edges, shortenedSteps, labels)
     }

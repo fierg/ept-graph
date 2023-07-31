@@ -11,7 +11,7 @@ class IntegrationTest {
     init {
         options.state = true
         options.skipSingleStepEdges = true
-        options.deltaWindowAlgo = 1
+        options.deltaWindowAlgo = 0
     }
 
     @Test

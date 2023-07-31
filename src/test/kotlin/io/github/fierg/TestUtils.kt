@@ -4,6 +4,8 @@ import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.applyPeriod
 import io.github.fierg.extensions.factorsSequence
+import io.github.fierg.extensions.maximalDivisors
+import io.github.fierg.extensions.primeFactors
 import io.github.fierg.model.result.Decomposition
 import io.github.fierg.periodic.Periodic
 import org.junit.Test
@@ -82,6 +84,22 @@ class TestUtils {
         f2fGraph.getGraphAtStep(2)
         f2fGraph.getGraphAtStep(4)
         f2fGraph.getGraphAtStep(6)
+    }
+
+    @Test
+    fun testPrimefactors(){
+        val number = 7260
+        val factors = number.factorsSequence().toList()
+        println("Factors of $number are $factors")
+        println("Prime factors are ${number.primeFactors().toList()}")
+    }
+
+    @Test
+    fun testMaximalDivisors(){
+        val number = 7260
+        val factors = number.factorsSequence().toList()
+        println("Factors of $number are $factors")
+        println("Maximal Divisors are ${number.maximalDivisors().toList()}")
     }
 
 }

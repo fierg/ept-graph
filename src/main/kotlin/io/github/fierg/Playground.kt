@@ -5,7 +5,7 @@ import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.periodic.Periodic
 
-fun main1(){
+fun main(){
     val array = arrayOf(true,false,false,true,true,false).toBooleanArray()
     val period = Periodic().findShortestPeriod(array)
     println("period is $period")
@@ -21,11 +21,3 @@ fun main1(){
     val decomposition = Decomposer(state = false, deltaWindowAlgo = 0, skipSingleStepEdges = true)
     val decompositionResult = decomposition.findComposite(f2fGraph)
 }
-
-/*
-fun main(){
-    val options = DotEnvParser.readDotEnv()
-    val evalResult = Visualizer.analyzeAllGraphs(Decomposer(options), upTo = 1)
-    Visualizer.showPlotAsFile(Visualizer.createPlotFromOccurrences(evalResult, options, PlotStyle.GEOM_BAR))
-}
-*/

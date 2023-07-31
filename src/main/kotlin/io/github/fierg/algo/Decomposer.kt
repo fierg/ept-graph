@@ -3,17 +3,19 @@ package io.github.fierg.algo
 import io.github.fierg.exceptions.NoCoverFoundException
 import io.github.fierg.extensions.applyPeriod
 import io.github.fierg.extensions.factorsSequence
+import io.github.fierg.extensions.maximalDivisors
 import io.github.fierg.extensions.valueOfDeltaWindow
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
+import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.model.options.Options
 import io.github.fierg.model.result.Cover
 import io.github.fierg.model.result.Decomposition
 import kotlinx.coroutines.*
 
-class Decomposer(state: Boolean = true, private val deltaWindowAlgo: Int = 0, private val skipSingleStepEdges: Boolean = false, private val threshold: Double = 1.0) {
+class Decomposer(state: Boolean = true, private val mode: CompositionMode = CompositionMode.SHORTEST_PERIODS, private val deltaWindowAlgo: Int = 0, private val skipSingleStepEdges: Boolean = false, private val threshold: Double = 1.0) {
 
-    constructor(options: Options) : this(options.state, options.deltaWindowAlgo, options.skipSingleStepEdges, options.threshold)
+    constructor(options: Options) : this(options.state, options.compositionMode, options.deltaWindowAlgo, options.skipSingleStepEdges, options.threshold)
 
     private val applyDeltaWindow = deltaWindowAlgo > 0
     private val stateToReplace = !state
@@ -46,11 +48,11 @@ class Decomposer(state: Boolean = true, private val deltaWindowAlgo: Int = 0, pr
     }
 
     fun findCover(input: BooleanArray): Decomposition {
-        val periodIndex = input.size.factorsSequence().mapIndexed { index, factor -> factor to index }.toMap()
+        val periodIndex = getFactors(input.size).mapIndexed { index, factor -> factor to index }.toMap()
         val periods = getPeriods(input, periodIndex)
         val valuesToCover = input.count { it == stateToReplace }
 
-        input.size.factorsSequence().forEach { size ->
+        getFactors(input.size).forEach { size ->
             val precision = (valuesToCover - periods[periodIndex[size]!!].outliers.size).toDouble() / valuesToCover
             if (precision >= threshold) return Decomposition(valuesToCover, size, periods[periodIndex[size]!!].outliers, periods[periodIndex[size]!!].cover)
         }
@@ -69,13 +71,10 @@ class Decomposer(state: Boolean = true, private val deltaWindowAlgo: Int = 0, pr
         val periods = Array(periodIndex.size) {Cover(BooleanArray(0), emptyList())}
         val jobs = mutableListOf<Deferred<Unit>>()
 
-        for (factor in input.size.factorsSequence()) {
+        for (factor in getFactors(input.size)) {
             jobs.add(computeAsync(input, factor, periods, periodIndex))
         }
-
         runBlocking { jobs.forEach { it.await() } }
-        if (periods.size < input.size.factorsSequence().toSet().size)
-            Logger.error("Period map is missing some stuff...")
 
         return periods
     }
@@ -102,5 +101,13 @@ class Decomposer(state: Boolean = true, private val deltaWindowAlgo: Int = 0, pr
             position = (position + factor) % array.size
         }
         return true
+    }
+
+    private fun getFactors(input: Int) : Sequence<Int> {
+        return when (mode) {
+            CompositionMode.SHORTEST_PERIODS -> input.factorsSequence()
+            CompositionMode.MAX_DIVISORS -> input.maximalDivisors()
+            CompositionMode.GREEDY -> input.factorsSequence()
+        }
     }
 }
