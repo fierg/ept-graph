@@ -77,4 +77,5 @@ class TestDeltaWindow {
         assert(array.valueOfDeltaWindow(1, 2, true))
         assert(!array.valueOfDeltaWindow(1, 3, true))
     }
+
 }

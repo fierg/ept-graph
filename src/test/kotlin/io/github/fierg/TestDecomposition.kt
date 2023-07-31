@@ -21,7 +21,7 @@ class TestDecomposition {
         val edge = f2fGraph.edges.elementAt(6)
         val decomposition = Decomposer(state = false)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
-        decomposition.analyze(f2fGraph, edge, cover)
+        decomposition.analyze(f2fGraph.steps[edge]!!.size, cover)
 
         assert(cover.outliers.size <= 3)
     }
@@ -32,7 +32,7 @@ class TestDecomposition {
         val edge = f2fGraph.edges.elementAt(6)
         val decomposition = Decomposer(state = true, threshold = 0.8)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
-        decomposition.analyze(f2fGraph, edge, cover)
+        decomposition.analyze(f2fGraph.steps[edge]!!.size, cover)
 
         assert(cover.outliers.size <= 6)
     }

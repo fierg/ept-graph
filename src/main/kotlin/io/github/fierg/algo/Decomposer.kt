@@ -6,7 +6,6 @@ import io.github.fierg.extensions.factorsSequence
 import io.github.fierg.extensions.valueOfDeltaWindow
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
-import io.github.fierg.model.graph.SelfAwareEdge
 import io.github.fierg.model.options.Options
 import io.github.fierg.model.result.Cover
 import io.github.fierg.model.result.Decomposition
@@ -28,7 +27,7 @@ class Decomposer(state: Boolean = true, private val deltaWindowAlgo: Int = 0, pr
                 if (!(skipSingleStepEdges && graph.steps[edge]!!.size <= 1)) {
                     val edgeDecomposition = findCover(graph.steps[edge]!!)
                     decompositions.add(edgeDecomposition)
-                    analyze(graph, edge, edgeDecomposition)
+                    analyze(graph.steps[edge]!!.size, edgeDecomposition)
                 }
             } catch (e: NoCoverFoundException) {
                 Logger.error("${e.javaClass.simpleName} ${e.message} (edge length ${graph.steps[edge]!!.size})")
@@ -38,9 +37,9 @@ class Decomposer(state: Boolean = true, private val deltaWindowAlgo: Int = 0, pr
         return decompositions
     }
 
-    fun analyze(graph: EPTGraph, edge: SelfAwareEdge, result: Decomposition) {
+    fun analyze(originalSize: Int, result: Decomposition) {
         Logger.info(
-            "Found decomposition with ${String.format("%3d", (result.cover.size.toDouble() / graph.steps[edge]!!.size * 100).toInt())}% original size, " +
+            "Found decomposition with ${String.format("%3d", (result.cover.size.toDouble() / originalSize * 100).toInt())}% original size, " +
                     "covered ${String.format("%4d", (result.totalValues - result.outliers.size))}/${String.format("%4d", result.totalValues)} values, " +
                     "resulting in ${String.format("%4d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)."
         )
