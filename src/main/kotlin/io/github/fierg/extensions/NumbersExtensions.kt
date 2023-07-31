@@ -13,4 +13,34 @@ fun Int.factorsSequence(includeLastValue: Boolean = true): Sequence<Int> {
     }
 }
 
+/*
+Finds all prime factors of a given number lazily and yields them into a sequence.
+ */
+fun Int.primeFactors(): Sequence<Int> {
+    var n: Int = this
+    return sequence {
+        for (i in 2..n) {
+            while (n % i == 0) {
+                yield(i)
+                n /= i
+            }
+        }
+    }
+}
+
+/*
+Finds all maximal divisors of a given number lazily and yields them into a sequence.
+ */
+fun Int.maximalDivisors(): Sequence<Int> {
+    val primeFactors = this.primeFactors().toList().reversed()
+    val primeFactorSet = primeFactors.toSet()
+
+    return sequence {
+        primeFactorSet.forEach { prime ->
+            val indexToFilter = primeFactors.lastIndexOf(prime)
+            yield(primeFactors.filterIndexed { index, _ -> index != indexToFilter }.fold(1) { acc: Int, i: Int -> acc * i })
+        }
+    }
+}
+
 fun Double.format(digits: Int = 5) = "%.${digits}f".format(this)

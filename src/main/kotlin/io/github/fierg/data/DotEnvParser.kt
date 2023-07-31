@@ -2,6 +2,7 @@ package io.github.fierg.data
 
 import io.github.cdimascio.dotenv.dotenv
 import io.github.fierg.logger.Logger
+import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.model.options.ENV
 import io.github.fierg.model.options.Options
 
@@ -17,6 +18,16 @@ class DotEnvParser {
             Logger.info("Parsing arg from .env file:\n${env.entries().filter { envEntry -> ENV.values().map { envVar -> envVar.toString() }.contains(envEntry.key) }.map { "${it.key}:${it.value}\n" }}")
             options.state = env["STATE"] == "true"
             options.skipSingleStepEdges = env["SKIP_SINGLE_STEP_EDGES"] == "true"
+
+            options.compositionMode = when (env["MODE"]) {
+                "GREEDY" -> CompositionMode.GREEDY
+                "SHORTEST_PERIODS" -> CompositionMode.SHORTEST_PERIODS
+                "MAX_DIVISORS" -> CompositionMode.MAX_DIVISORS
+                else -> {
+                    Logger.warn("Composition Mode missing! Running with SHORTEST_PERIODS")
+                    CompositionMode.SHORTEST_PERIODS
+                }
+            }
             options.deltaWindowPreprocessing = env["DELTA_WINDOW_PREPROCESSING"].toInt()
             options.deltaWindowAlgo = env["DELTA_WINDOW_ALGO"].toInt()
             options.debug = env["DEBUG"] == "true"

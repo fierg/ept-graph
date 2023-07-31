@@ -1,5 +1,6 @@
 package io.github.fierg.data
 
+import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.model.options.Options
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
@@ -16,6 +17,7 @@ class ArgParser {
             val input by parser.argument(ArgType.Int, description = "input (Network id in range (0..61)")
             val threshold by parser.argument(ArgType.Double, description = "Min threshold of cover to be valid").optional().default(1.0)
             val state by parser.option(ArgType.Boolean, description = "Invert state to substitute in decomposition (if set, decomposition will replace 0s instead of 1s)", shortName = "s").default(false)
+            val compositionMode by parser.option(ArgType.Choice<CompositionMode>(), description = "Mode of composing factors").default(CompositionMode.SHORTEST_PERIODS)
 
             val skipSingleStepEdges by parser.option(ArgType.Boolean, shortName = "skipSingle", description = "Skip single time step label edges").default(false)
             val debug by parser.option(ArgType.Boolean, shortName = "d", description = "Turn on debug mode").default(false)
@@ -25,7 +27,7 @@ class ArgParser {
 
             parser.parse(args = args)
 
-            return Options(dotenv, input, state, skipSingleStepEdges, debug, quiet, deltaWindowPreprocessing, deltaWindowAlgo, threshold)
+            return Options(dotenv, input, state, compositionMode, skipSingleStepEdges, debug, quiet, deltaWindowPreprocessing, deltaWindowAlgo, threshold)
         }
     }
 }
