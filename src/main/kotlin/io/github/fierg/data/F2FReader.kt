@@ -85,7 +85,7 @@ class F2FReader {
                 }
             }
         }
-        Logger.info("EPT Graph has ${steps[edges.first()]!!.size - 1} time steps.")
+        Logger.debug("EPT Graph has ${steps[edges.first()]!!.size - 1} time steps.")
         return labels
     }
 }

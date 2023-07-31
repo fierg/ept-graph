@@ -1,4 +1,4 @@
-# ept-graph - Edge Periodic Graphs from Temporal Graphs
+# Edge Periodic Graphs from Temporal Graphs
 Collection of resources regarding the space efficient data structures edge periodic temporal graphs.
 
 ### Build
@@ -11,7 +11,7 @@ mvn clean install
 Usage: EPT Graph Reader options_list
 Arguments: 
     input -> input (Network id in range (0..61) { Int }
-    threshold -> Min threshold of cover to be valid { Double }
+    threshold -> Min threshold of cover to be valid { Double } (default is 1.0)
 Options: 
     --dotenv, -env [false] -> Use config from .env file (Recommended usage due to amount of args) 
     --state, -s [false] -> Invert state to substitute in decomposition (if set, decomposition will replace 0s instead of 1s) 

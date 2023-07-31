@@ -17,7 +17,7 @@ class CustomFormatter : Formatter() {
 
         return when (record.level.toString()) {
             "INFO" -> Ansi.ansi().fgDefault().a(String.format(format, dat, "","", record.level, message, )).reset().toString()
-            "FINE" ->  Ansi.ansi().fgBlue().a(String.format(format, dat, "","", record.level, message)).reset().toString()
+            "FINE" ->  Ansi.ansi().fgBlue().a(String.format(format, dat, "","", "DEBUG", message)).reset().toString()
             "WARNING" ->  Ansi.ansi().fgBrightYellow().a(String.format(format, dat, "","", record.level, message)).reset().toString()
             "SEVERE" ->  Ansi.ansi().fgRed().a(String.format(format, dat, "","", record.level, message)).reset().toString()
             else ->  Ansi.ansi().fgDefault().a(String.format(format, dat,  "","", record.level, message)).reset().toString()
