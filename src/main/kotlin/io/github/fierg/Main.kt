@@ -6,9 +6,7 @@ import io.github.fierg.data.DotEnvParser
 import io.github.fierg.data.F2FReader
 import io.github.fierg.logger.Logger
 
-
 fun main(args: Array<String>) {
-
     val options = io.github.fierg.data.ArgParser.readArgs(args)
 
     if (options.dotenv) {

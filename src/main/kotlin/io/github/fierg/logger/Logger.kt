@@ -35,7 +35,7 @@ object Logger {
     }
 
     fun setLogLevelToDebug() {
-        LOGGER!!.level = Level.ALL
+        LOGGER!!.level = Level.FINE
     }
 
     fun setLogLevelToQuiet() {
