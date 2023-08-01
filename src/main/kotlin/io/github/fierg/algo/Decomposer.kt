@@ -83,7 +83,7 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
                     cover.addFactor(factors[factorIndex[size]!!])
                     if (cover.outliers.size == 0) return cover
                 }
-                Logger.error("No Exact Cover with max divisors only possible! Hard outliers (${cover.outliers.size}) ${cover.outliers}")
+                Logger.warn("No Exact Cover with max divisors only possible! Hard outliers (${cover.outliers.size}) ${cover.outliers}")
             }
 
             CompositionMode.FOURIER_TRANSFORM -> {
