@@ -3,13 +3,13 @@ package io.github.fierg.extensions
 /*
 Finds all factors of a given number lazily and yields them into a sequence.
  */
-fun Int.factorsSequence(includeLastValue: Boolean = true): Sequence<Int> {
+fun Int.factorsSequence(includeSelf: Boolean = true): Sequence<Int> {
     val n = this
     return sequence {
         (1..n / 2).forEach {
             if (n % it == 0) yield(it)
         }
-        if (includeLastValue) yield(n)
+        if (includeSelf) yield(n)
     }
 }
 
@@ -19,7 +19,7 @@ Finds all prime factors of a given number lazily and yields them into a sequence
 fun Int.primeFactors(): Sequence<Int> {
     var n: Int = this
     return sequence {
-        for (i in 2..n) {
+        for (i in 2..n / 2) {
             while (n % i == 0) {
                 yield(i)
                 n /= i
