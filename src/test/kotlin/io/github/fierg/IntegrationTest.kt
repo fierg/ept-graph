@@ -20,6 +20,6 @@ class IntegrationTest {
         val decomposition = Decomposer(options)
 
         val result = decomposition.findCover(array)
-        decomposition.analyze(array.size, result)
+        decomposition.analyzeCover(array.size, result)
     }
 }

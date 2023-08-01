@@ -24,30 +24,9 @@ class TestDecomposition {
         val edge = f2fGraph.edges.elementAt(6)
         val decomposition = Decomposer(state = false)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
-        decomposition.analyze(f2fGraph.steps[edge]!!.size, cover)
+        decomposition.analyzeCover(f2fGraph.steps[edge]!!.size, cover)
 
         assert(cover.outliers.size <= 3)
-    }
-
-    @Test
-    fun testDecompositionShortestPeriods(){
-        val f2fGraph = F2FReader().getF2FNetwork(0)
-        val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposer(state = true, threshold = 0.8, mode = CompositionMode.SHORTEST_PERIODS)
-        val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
-        decomposition.analyze(f2fGraph.steps[edge]!!.size, cover)
-
-        assert(cover.outliers.size <= 6)
-    }
-
-    @Test
-    fun testDecompositionMaxDivisors(){
-        assertFailsWith<NoCoverFoundException> {
-            val f2fGraph = F2FReader().getF2FNetwork(0)
-            val edge = f2fGraph.edges.elementAt(6)
-            val decomposition = Decomposer(state = true, threshold = 0.8, mode = CompositionMode.MAX_DIVISORS)
-            val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
-        }
     }
 
     @Test
@@ -91,6 +70,28 @@ class TestDecomposition {
         val options = DotEnvParser.readDotEnv()
         val decomposition = Decomposer(options)
         decomposition.findComposite(F2FReader().getF2FNetwork(14))
+    }
+
+
+    @Test
+    fun testDecompositionShortestPeriods(){
+        val f2fGraph = F2FReader().getF2FNetwork(0)
+        val edge = f2fGraph.edges.elementAt(6)
+        val decomposition = Decomposer(state = true, threshold = 0.8, mode = CompositionMode.SHORTEST_PERIODS)
+        val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
+        decomposition.analyzeCover(f2fGraph.steps[edge]!!.size, cover)
+
+        assert(cover.outliers.size <= 6)
+    }
+
+    @Test
+    fun testDecompositionMaxDivisors(){
+        assertFailsWith<NoCoverFoundException> {
+            val f2fGraph = F2FReader().getF2FNetwork(0)
+            val edge = f2fGraph.edges.elementAt(6)
+            val decomposition = Decomposer(state = true, threshold = 0.8, mode = CompositionMode.MAX_DIVISORS)
+            val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
+        }
     }
 
 }

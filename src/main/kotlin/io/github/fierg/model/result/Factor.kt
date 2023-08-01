@@ -1,6 +1,9 @@
 package io.github.fierg.model.result
 
 data class Factor(val cover: BooleanArray, val outliers: List<Int>) {
+
+    constructor(cover: Array<Boolean>, outliers: List<Int>) : this(cover = cover.toBooleanArray(), outliers)
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
