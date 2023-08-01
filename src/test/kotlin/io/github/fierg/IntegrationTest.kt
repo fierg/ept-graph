@@ -10,7 +10,7 @@ class IntegrationTest {
 
     init {
         options.state = true
-        options.skipSingleStepEdges = true
+        options.skipSelfEdges = true
         options.deltaWindowAlgo = 0
     }
 
@@ -20,6 +20,6 @@ class IntegrationTest {
         val decomposition = Decomposer(options)
 
         val result = decomposition.findCover(array)
-        decomposition.analyzeCover(array.size, result)
+        decomposition.analyzeCover(result)
     }
 }

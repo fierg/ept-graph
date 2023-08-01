@@ -3,13 +3,11 @@ package io.github.fierg
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.DotEnvParser
 import io.github.fierg.data.F2FReader
-import io.github.fierg.exceptions.NoCoverFoundException
 import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.model.options.Options
 import io.github.fierg.model.result.Cover
 import io.github.fierg.model.result.Factor
 import org.junit.Test
-import kotlin.test.assertFailsWith
 
 class TestDecomposition {
 
@@ -17,7 +15,7 @@ class TestDecomposition {
 
     init {
         options.state = true
-        options.skipSingleStepEdges = true
+        options.skipSelfEdges = true
     }
 
     @Test
@@ -26,7 +24,7 @@ class TestDecomposition {
         val edge = f2fGraph.edges.elementAt(6)
         val decomposition = Decomposer(state = false)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
-        decomposition.analyzeCover(f2fGraph.steps[edge]!!.size, cover)
+        decomposition.analyzeCover(cover)
 
         assert(cover.outliers.size <= 3)
     }
@@ -37,7 +35,7 @@ class TestDecomposition {
         val edge = f2fGraph.edges.elementAt(1)
         val decomposition = Decomposer(state = true, threshold = 0.75)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
-        decomposition.analyzeCover(f2fGraph.steps[edge]!!.size, cover)
+        decomposition.analyzeCover(cover)
     }
 
     @Test
@@ -50,14 +48,14 @@ class TestDecomposition {
     @Test
     fun testDecomposition4() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
-        val decomposition = Decomposer(state = true, skipSingleStepEdges = true, threshold = 0.8)
+        val decomposition = Decomposer(state = true, threshold = 0.8)
         decomposition.findComposite(f2fGraph)
     }
 
     @Test
     fun testDecomposition5() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
-        val decomposition = Decomposer(state = true, skipSingleStepEdges = true, threshold = 0.6)
+        val decomposition = Decomposer(state = true, threshold = 0.6)
         decomposition.findComposite(f2fGraph)
     }
 
@@ -88,9 +86,9 @@ class TestDecomposition {
     fun testDecompositionShortestPeriods() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposer(state = false, threshold = 0.8, mode = CompositionMode.SHORTEST_PERIODS)
+        val decomposition = Decomposer(state = false, mode = CompositionMode.SHORTEST_PERIODS, threshold = 0.8)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
-        decomposition.analyzeCover(f2fGraph.steps[edge]!!.size, cover)
+        decomposition.analyzeCover(cover)
 
         assert(cover.outliers.size <= 6)
     }
@@ -99,8 +97,9 @@ class TestDecomposition {
     fun testDecompositionMaxDivisors() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposer(state = false, threshold = 0.8, mode = CompositionMode.MAX_DIVISORS)
+        val decomposition = Decomposer(state = true, mode = CompositionMode.MAX_DIVISORS)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
+
         assert(cover.getPrecision() < 1.0)
     }
 
@@ -111,6 +110,7 @@ class TestDecomposition {
         val periods = Decomposer(state = state, threshold = 0.5).findCover(array)
         val expectedFactors = mutableListOf(Factor(arrayOf(false), listOf(0, 3, 4)), Factor(arrayOf(true, false, false), listOf(4)))
         val expectedPeriods = Cover(array, !state, 3, 3, mutableListOf(4), expectedFactors)
+
         assert(periods == expectedPeriods)
     }
 
@@ -130,10 +130,11 @@ class TestDecomposition {
     }
 
     @Test
-    fun testUtils4() {
+    fun testDecomposition4a() {
         val input = BooleanArray(16) { true }
         val cover = Decomposer(state = false).findCover(input)
         val expectedFactors = mutableListOf(Factor(arrayOf(true), listOf()))
+
         assert(cover == Cover(input, true, 16, 1, mutableListOf(), expectedFactors))
     }
 

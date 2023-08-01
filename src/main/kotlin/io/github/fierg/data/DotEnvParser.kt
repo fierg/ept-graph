@@ -19,7 +19,7 @@ class DotEnvParser {
             Logger.info("Parsing args from .env file:\n${env.entries().filter { envEntry -> ENV.values().map { envVar -> envVar.toString() }.contains(envEntry.key) }.map { "${it.key}:${it.value}\n" }}")
 
             options.state = env[ENV.STATE.name] == "true"
-            options.skipSingleStepEdges = env[ENV.SKIP_SINGLE_STEP_EDGES.name] == "true"
+            options.skipSelfEdges = env[ENV.SKIP_SINGLE_STEP_EDGES.name] == "true"
             options.deltaWindowPreprocessing = env[ENV.DELTA_WINDOW_PREPROCESSING.name].toInt()
             options.deltaWindowAlgo = env[ENV.DELTA_WINDOW_ALGO.name].toInt()
             options.debug = env[ENV.DEBUG.name] == "true"

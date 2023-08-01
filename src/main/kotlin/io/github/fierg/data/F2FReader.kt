@@ -37,7 +37,7 @@ class F2FReader {
         return graph.build()
     }
 
-    fun getF2FNetwork(id: Int): EPTGraph {
+    fun getF2FNetwork(id: Int, excludeSelfEdges: Boolean = true): EPTGraph {
         if (id > 61) throw IllegalArgumentException("ID needs to be in range [0,61]")
         Logger.info("Reading network$id from file data/f2f/network/network$id.csv")
         val networkList = File("data/f2f/network_list.csv")
@@ -45,10 +45,17 @@ class F2FReader {
         val edges = mutableListOf<SelfAwareEdge>()
         val steps = mutableMapOf<SelfAwareEdge, MutableList<Boolean>>()
         val labels = readF2FFile(id, people, steps, edges)
-        val shortenedSteps = steps.map {
-            it.key to it.value.toBooleanArray()
-        }.toMap().toMutableMap()
-        return EPTGraph(nodes = (0..people).toList(), edges, shortenedSteps, labels)
+        return if (excludeSelfEdges) {
+            val shortenedSteps = steps.map {
+                it.key to it.value.toBooleanArray()
+            }.toMap().filter { it.key.source != it.key.target }.toMutableMap()
+            EPTGraph(nodes = (0..people).toList(), edges.filter { it.source != it.target }, shortenedSteps, labels)
+        } else {
+            val shortenedSteps = steps.map {
+                it.key to it.value.toBooleanArray()
+            }.toMap().toMutableMap()
+            EPTGraph(nodes = (0..people).toList(), edges, shortenedSteps, labels)
+        }
     }
 
     private fun readF2FFile(id: Int, people: Int, steps: MutableMap<SelfAwareEdge, MutableList<Boolean>>, edges: MutableList<SelfAwareEdge>): List<String> {
