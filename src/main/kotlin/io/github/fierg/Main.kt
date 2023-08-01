@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
         Logger.resetLogLevel()
     }
 
-    val f2fGraph = F2FReader().getF2FNetwork(options.input)
+    val f2fGraph = F2FReader().getF2FNetwork(options.input, options.skipSelfEdges)
     if (options.deltaWindowPreprocessing > 0)
         Preprocessor.applyDeltaWindow(f2fGraph, options.deltaWindowPreprocessing, options.state)
 

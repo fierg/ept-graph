@@ -59,4 +59,8 @@ data class Cover(
         result = 31 * result + factors.hashCode()
         return result
     }
+
+    fun fourierTransform(): Cover {
+        TODO("Not yet implemented")
+    }
 }

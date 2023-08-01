@@ -10,9 +10,9 @@ import io.github.fierg.model.result.Factor
 import io.github.fierg.model.result.Cover
 import kotlinx.coroutines.*
 
-class Decomposer(state: Boolean = true, private val mode: CompositionMode = CompositionMode.SHORTEST_PERIODS, private val deltaWindowAlgo: Int = 0, private val skipSingleStepEdges: Boolean = false, private val threshold: Double = 1.0) {
+class Decomposer(state: Boolean = true, private val mode: CompositionMode = CompositionMode.SHORTEST_PERIODS, private val deltaWindowAlgo: Int = 0, private val threshold: Double = 1.0) {
 
-    constructor(options: Options) : this(options.state, options.compositionMode, options.deltaWindowAlgo, options.skipSingleStepEdges, options.threshold)
+    constructor(options: Options) : this(options.state, options.compositionMode, options.deltaWindowAlgo, options.threshold)
 
     private val applyDeltaWindow = deltaWindowAlgo > 0
     private val stateToReplace = !state
@@ -24,11 +24,8 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
 
         graph.edges.forEach { edge ->
             try {
-                if (!(skipSingleStepEdges && graph.steps[edge]!!.size <= 1)) {
-                    val cover = findCover(graph.steps[edge]!!)
-                    analyzeCover(graph.steps[edge]!!.size, cover)
-                    covers.add(cover)
-                }
+                covers.add(findCover(graph.steps[edge]!!))
+                analyzeCover(covers.last())
             } catch (e: NoCoverFoundException) {
                 Logger.error("${e.javaClass.simpleName} ${e.message} (edge length ${graph.steps[edge]!!.size})")
             }
@@ -57,9 +54,9 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
         return expandedCover.indices.filter { input[it] == stateToReplace && expandedCover[it] != stateToReplace }
     }
 
-    fun analyzeCover(originalSize: Int, result: Cover) {
+    fun analyzeCover(result: Cover) {
         Logger.info(
-            "Found decomposition with ${String.format("%3d", (result.periodSize.toDouble() / originalSize * 100).toInt())}% original size, " +
+            "Found decomposition with ${String.format("%3d", (result.periodSize.toDouble() / result.target.size * 100).toInt())}% original size (${String.format("%4d", result.periodSize)}), " +
                     "covered ${String.format("%4d", (result.totalValues - result.outliers.size))}/${String.format("%4d", result.totalValues)} values, " +
                     "resulting in ${String.format("%4d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)."
         )
@@ -90,8 +87,11 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
             }
 
             CompositionMode.FOURIER_TRANSFORM -> {
-                TODO()
-
+                periods.forEach { size ->
+                    cover.addFactor(factors[factorIndex[size]!!])
+                    if (cover.outliers.size == 0) return cover.fourierTransform()
+                }
+                Logger.error("No Exact Cover possible! Hard outliers (${cover.outliers.size}) ${cover.outliers}")
             }
         }
         return cover

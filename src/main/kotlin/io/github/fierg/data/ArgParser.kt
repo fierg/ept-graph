@@ -23,7 +23,7 @@ class ArgParser {
                 fullName = "Mode of composing factors"
             ).default(CompositionMode.SHORTEST_PERIODS)
 
-            val skipSingleStepEdges by parser.option(ArgType.Boolean, shortName = "skipSingle", description = "Skip single time step label edges").default(false)
+            val skipSelfEdges by parser.option(ArgType.Boolean, shortName = "skipSelfEdges", description = "Skip loop back edges with same source and target, these are often useless.").default(false)
             val debug by parser.option(ArgType.Boolean, shortName = "d", description = "Turn on debug mode").default(false)
             val quiet by parser.option(ArgType.Boolean, shortName = "q", description = "Turn on quiet mode").default(false)
             val deltaWindowPreprocessing by parser.option(ArgType.Int, description = "Delta window in preprocessing of the label").default(0)
@@ -31,7 +31,7 @@ class ArgParser {
 
             parser.parse(args = args)
 
-            return Options(dotenv, input, state, compositionMode, skipSingleStepEdges, debug, quiet, deltaWindowPreprocessing, deltaWindowAlgo, threshold)
+            return Options(dotenv, input, state, compositionMode, skipSelfEdges, debug, quiet, deltaWindowPreprocessing, deltaWindowAlgo, threshold)
         }
     }
 }
