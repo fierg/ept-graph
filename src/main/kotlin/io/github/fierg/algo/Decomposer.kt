@@ -20,9 +20,9 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
     fun findComposite(graph: EPTGraph): Set<Cover> {
         Logger.info("Searching for composite... (Looking for $stateToReplace values while decomposing)")
         when (mode) {
-            CompositionMode.SHORTEST_PERIODS -> Logger.debug("Trying to find shortest possible factors with at least ${threshold * 100}% coverage.")
-            CompositionMode.MAX_DIVISORS -> Logger.debug("Trying to find cover with only the max divisors.")
-            CompositionMode.FOURIER_TRANSFORM -> {}
+            CompositionMode.SHORTEST_PERIODS -> Logger.info("Trying to find cover with shortest possible factors with at least ${threshold * 100}% coverage.")
+            CompositionMode.MAX_DIVISORS -> Logger.info("Trying to find cover with only the max divisors.")
+            CompositionMode.FOURIER_TRANSFORM -> Logger.info("Trying to find most explainable factors.")
         }
         val covers = mutableSetOf<Cover>()
 
@@ -48,18 +48,23 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
         val valuesToCover = input.count { it == stateToReplace }
         val outliers = input.mapIndexed { index, b -> if (b == stateToReplace) index else -1 }.filter { it != -1 }.toMutableList()
         val periods = getFactorSequence(input.size).toList()
+        val cover = BooleanArray(input.size) { !stateToReplace }
         Logger.debug("Using ${periods.size} periods: $periods")
 
         when (mode) {
             CompositionMode.SHORTEST_PERIODS -> {
+                var lastOutlierSize = Int.MAX_VALUE
                 periods.forEach { size ->
-                    usedFactors.add(factors[factorIndex[size]!!])
-                    outliers.removeIfNotIncludedIn(factors[factorIndex[size]!!].outliers)
-                    val precision = (valuesToCover - outliers.size).toDouble() / valuesToCover
-                    if (precision >= threshold) return Cover(valuesToCover, size, factors[factorIndex[size]!!].outliers, factors[factorIndex[size]!!].cover, usedFactors)
+                    if (factors[factorIndex[size]!!].outliers.size < lastOutlierSize) {
+                        lastOutlierSize = factors[factorIndex[size]!!].outliers.size
+                        usedFactors.add(factors[factorIndex[size]!!])
+                        outliers.removeIfNotIncludedIn(factors[factorIndex[size]!!].outliers)
+                        cover.applyPeriod(factors[factorIndex[size]!!].cover, stateToReplace)
+                        val precision = (valuesToCover - outliers.size).toDouble() / valuesToCover
+                        if (precision >= threshold) return Cover(valuesToCover, size, outliers, cover.copyOfRange(0,size), usedFactors)
+                    }
                 }
             }
-
             CompositionMode.MAX_DIVISORS -> {
                 periods.forEach { size ->
                     usedFactors.add(factors[factorIndex[size]!!])
@@ -68,7 +73,6 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
                 }
                 throw NoCoverFoundException("No Exact Cover only with max divisors possible! Hard outliers (${outliers.size}) $outliers")
             }
-
             CompositionMode.FOURIER_TRANSFORM -> {
                 TODO()
 
