@@ -1,6 +1,6 @@
 package io.github.fierg.model.result
 
-data class Factor(val cover: BooleanArray, val outliers: List<Int>) {
+data class Factor(var cover: BooleanArray, val outliers: List<Int>) {
 
     constructor(cover: Array<Boolean>, outliers: List<Int>) : this(cover = cover.toBooleanArray(), outliers)
 

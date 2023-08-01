@@ -1,11 +1,9 @@
 package io.github.fierg
 
-import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.*
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.result.Cover
-import io.github.fierg.model.result.Factor
 import io.github.fierg.periodic.Periodic
 import org.junit.Test
 
@@ -97,5 +95,15 @@ class TestUtils {
 
         Logger.info("Transformed A: $listA")
         assert(listA == listOf(3,5,7))
+    }
+
+    @Test
+    fun cleanFactor(){
+        val array1 = arrayOf(true, false).toBooleanArray()
+        val array2 = arrayOf(true, false, true, false, true, false, true, true).toBooleanArray()
+
+        val cover = Cover(array1, true)
+        val result = cover.cleanFactor(array1,array2)
+        assert(result.contentEquals(arrayOf(false, false, false, false, false, false, false, true).toBooleanArray()))
     }
 }

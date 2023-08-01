@@ -1,6 +1,7 @@
 package io.github.fierg.model.result
 
 import io.github.fierg.extensions.applyPeriod
+import io.github.fierg.extensions.minus
 import io.github.fierg.extensions.removeIfNotIncludedIn
 
 data class Cover(
@@ -23,8 +24,8 @@ data class Cover(
         mutableListOf()
     )
 
-    fun addFactor(factor: Factor, skipIfNoChangesOccur: Boolean = false) {
-        if (!skipIfNoChangesOccur || factor.outliers.size < lastOutlierSize) {
+    fun addFactor(factor: Factor, skipFactorIfNoChangesOccur: Boolean = false) {
+        if (!skipFactorIfNoChangesOccur || factor.outliers.size < lastOutlierSize) {
             lastOutlierSize = factor.outliers.size
             factors.add(factor)
             periodSize = factor.cover.size
@@ -66,18 +67,20 @@ data class Cover(
         return result
     }
 
-    fun fourierTransform() {
-        val multiples = getMultiplesOfPeriods(factors.map { it.cover.size })
-        multiples.forEach { entry ->
+    fun fourierTransform(factorIndex: Map<Int, Int>) {
+        getMultiplesOfPeriods(factors.map { it.cover.size }).forEach { entry ->
             entry.value.forEach { multiple ->
-                cleanFactor(entry.key, multiple)
+                factors[factorIndex[multiple]!!].cover = cleanFactor(factors[factorIndex[entry.key]!!].cover, factors[factorIndex[multiple]!!].cover)
             }
         }
     }
 
-    private fun cleanFactor(key: Int, multiple: Int) {
-        TODO("Not yet implemented")
+    fun cleanFactor(pureFactor: BooleanArray, dirtyFactor: BooleanArray): BooleanArray {
+        val extendedPureFactor = BooleanArray(dirtyFactor.size) {!stateToReplace}
+        extendedPureFactor.applyPeriod(pureFactor, stateToReplace)
+        return dirtyFactor - extendedPureFactor
     }
+
 
     private fun getMultiplesOfPeriods(periods: List<Int>): Map<Int, List<Int>> {
         val multiples = mutableMapOf<Int, MutableList<Int>>()

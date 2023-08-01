@@ -131,7 +131,7 @@ class TestDecomposition {
         val decomposition = Decomposer(state = true, mode = CompositionMode.FOURIER_TRANSFORM)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
 
-        assert(cover.getPrecision() < 1.0)
+        assert(cover.getPrecision() == 1.0)
     }
 
     @Test

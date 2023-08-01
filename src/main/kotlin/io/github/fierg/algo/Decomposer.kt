@@ -68,12 +68,11 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
         when (mode) {
             CompositionMode.SHORTEST_PERIODS -> {
                 periods.forEach { size ->
-                    cover.addFactor(factors[factorIndex[size]!!], skipIfNoChangesOccur = true)
+                    cover.addFactor(factors[factorIndex[size]!!], skipFactorIfNoChangesOccur = true)
                     if (cover.getPrecision() >= threshold) return cover
                 }
-                Logger.error("No Exact Cover with threshold $threshold possible! Hard outliers (${cover.outliers.size})")
+                Logger.warn("No Exact Cover with threshold $threshold possible! Hard outliers (${cover.outliers.size})")
             }
-
             CompositionMode.MAX_DIVISORS -> {
                 periods.forEach { size ->
                     cover.addFactor(factors[factorIndex[size]!!])
@@ -81,16 +80,15 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
                 }
                 Logger.warn("No Exact Cover with max divisors only possible! Hard outliers (${cover.outliers.size})")
             }
-
             CompositionMode.FOURIER_TRANSFORM -> {
                 periods.forEach { size ->
                     cover.addFactor(factors[factorIndex[size]!!])
                     if (cover.outliers.size == 0) {
-                        cover.fourierTransform()
+                        cover.fourierTransform(factorIndex)
                         return cover
                     }
                 }
-                Logger.error("No Exact Cover possible! Hard outliers (${cover.outliers.size})")
+                Logger.warn("No Exact Cover possible! Hard outliers (${cover.outliers.size})")
             }
         }
         return cover
