@@ -18,13 +18,8 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
     private val stateToReplace = !state
 
     fun findComposite(graph: EPTGraph): Set<Cover> {
-        Logger.info("Searching for composite... (Looking for $stateToReplace values while decomposing)")
-        when (mode) {
-            CompositionMode.SHORTEST_PERIODS -> Logger.info("Trying to find cover with shortest possible factors with at least ${threshold * 100}% coverage.")
-            CompositionMode.MAX_DIVISORS -> Logger.info("Trying to find cover with only the max divisors.")
-            CompositionMode.FOURIER_TRANSFORM -> Logger.info("Trying to find most explainable factors.")
-        }
         val covers = mutableSetOf<Cover>()
+        logInfo()
 
         graph.edges.forEach { edge ->
             try {
@@ -32,11 +27,10 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
                     val input = graph.steps[edge]!!
                     val periods = getFactorSequence(input.size).toList()
                     val factorIndex = periods.mapIndexed { index, factor -> factor to index }.toMap()
-                    val factors = getFactors(input, factorIndex)
 
                     Logger.debug("Using ${periods.size} periods: $periods")
 
-                    val cover = findCover(graph.steps[edge]!!, factorIndex, factors, periods)
+                    val cover = findCover(graph.steps[edge]!!, factorIndex,  getFactors(input, factorIndex), periods)
                     analyzeCover(graph.steps[edge]!!.size, cover)
                     covers.add(cover)
                 }
@@ -64,17 +58,14 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
 
     fun analyzeCover(originalSize: Int, result: Cover) {
         Logger.info(
-            "Found decomposition with ${String.format("%3d", (result.cover.size.toDouble() / originalSize * 100).toInt())}% original size, " +
+            "Found decomposition with ${String.format("%3d", (result.periodSize.toDouble() / originalSize * 100).toInt())}% original size, " +
                     "covered ${String.format("%4d", (result.totalValues - result.outliers.size))}/${String.format("%4d", result.totalValues)} values, " +
                     "resulting in ${String.format("%4d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)."
         )
     }
 
     private fun findCover(input: BooleanArray, factorIndex: Map<Int, Int>, factors: Array<Factor>, periods: List<Int>): Cover {
-        val usedFactors = mutableListOf<Factor>()
-        val valuesToCover = input.count { it == stateToReplace }
-        val outliers = input.mapIndexed { index, b -> if (b == stateToReplace) index else -1 }.filter { it != -1 }.toMutableList()
-        val cover = BooleanArray(input.size) { !stateToReplace }
+        val cover = Cover(input, stateToReplace)
 
         when (mode) {
             CompositionMode.SHORTEST_PERIODS -> {
@@ -82,22 +73,18 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
                 periods.forEach { size ->
                     if (factors[factorIndex[size]!!].outliers.size < lastOutlierSize) {
                         lastOutlierSize = factors[factorIndex[size]!!].outliers.size
-                        usedFactors.add(factors[factorIndex[size]!!])
-                        outliers.removeIfNotIncludedIn(factors[factorIndex[size]!!].outliers)
-                        cover.applyPeriod(factors[factorIndex[size]!!].cover, stateToReplace)
-                        val precision = (valuesToCover - outliers.size).toDouble() / valuesToCover
-                        if (precision >= threshold) return Cover(valuesToCover, size, outliers, cover.copyOfRange(0,size), usedFactors)
+                        cover.addFactor(factors[factorIndex[size]!!])
+                        if (cover.getPrecision() >= threshold) return cover
                     }
                 }
-                throw NoCoverFoundException("No Exact Cover with threshold $threshold possible! Hard outliers (${outliers.size}) $outliers")
+                throw NoCoverFoundException("No Exact Cover with threshold $threshold possible! Hard outliers (${cover.outliers.size}) $cover.outliers")
             }
             CompositionMode.MAX_DIVISORS -> {
                 periods.forEach { size ->
-                    usedFactors.add(factors[factorIndex[size]!!])
-                    outliers.removeIfNotIncludedIn(factors[factorIndex[size]!!].outliers)
-                    if (outliers.size == 0) return Cover(valuesToCover, size, factors[factorIndex[size]!!].outliers, factors[factorIndex[size]!!].cover, usedFactors)
+                   cover.addFactor(factors[factorIndex[size]!!])
+                    if (cover.outliers.size == 0) return cover
                 }
-                throw NoCoverFoundException("No Exact Cover only with max divisors possible! Hard outliers (${outliers.size}) $outliers")
+                throw NoCoverFoundException("No Exact Cover only with max divisors possible! Hard outliers (${cover.outliers.size}) $cover.outliers")
             }
             CompositionMode.FOURIER_TRANSFORM -> {
                 TODO()
@@ -147,6 +134,15 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
             CompositionMode.SHORTEST_PERIODS -> input.factorsSequence()
             CompositionMode.MAX_DIVISORS -> input.maximalDivisors()
             CompositionMode.FOURIER_TRANSFORM -> input.factorsSequence()
+        }
+    }
+
+    private fun logInfo() {
+        Logger.info("Searching for composite... (Looking for $stateToReplace values while decomposing)")
+        when (mode) {
+            CompositionMode.SHORTEST_PERIODS -> Logger.info("Trying to find cover with shortest possible factors with at least ${threshold * 100}% coverage.")
+            CompositionMode.MAX_DIVISORS -> Logger.info("Trying to find cover with only the max divisors.")
+            CompositionMode.FOURIER_TRANSFORM -> Logger.info("Trying to find most explainable factors.")
         }
     }
 }

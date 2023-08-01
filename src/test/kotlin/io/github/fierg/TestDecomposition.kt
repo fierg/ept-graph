@@ -21,7 +21,7 @@ class TestDecomposition {
     }
 
     @Test
-    fun testDecomposition1(){
+    fun testDecomposition1() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
         val decomposition = Decomposer(state = false)
@@ -32,7 +32,7 @@ class TestDecomposition {
     }
 
     @Test
-    fun testDecomposition1b(){
+    fun testDecomposition1b() {
         val f2fGraph = F2FReader().getF2FNetwork(6)
         val edge = f2fGraph.edges.elementAt(1)
         val decomposition = Decomposer(state = true, threshold = 0.75)
@@ -41,21 +41,21 @@ class TestDecomposition {
     }
 
     @Test
-    fun testDecomposition3(){
+    fun testDecomposition3() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val decomposition = Decomposer(options)
         decomposition.findComposite(f2fGraph)
     }
 
     @Test
-    fun testDecomposition4(){
+    fun testDecomposition4() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val decomposition = Decomposer(state = true, skipSingleStepEdges = true, threshold = 0.8)
         decomposition.findComposite(f2fGraph)
     }
 
     @Test
-    fun testDecomposition5(){
+    fun testDecomposition5() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val decomposition = Decomposer(state = true, skipSingleStepEdges = true, threshold = 0.6)
         decomposition.findComposite(f2fGraph)
@@ -63,21 +63,21 @@ class TestDecomposition {
 
 
     @Test
-    fun testDecomposition10(){
+    fun testDecomposition10() {
         val options = DotEnvParser.readDotEnv()
         val decomposition = Decomposer(options)
         decomposition.findComposite(F2FReader().getF2FNetwork(10))
     }
 
     @Test
-    fun testDecomposition11(){
+    fun testDecomposition11() {
         val options = DotEnvParser.readDotEnv()
         val decomposition = Decomposer(options)
         decomposition.findComposite(F2FReader().getF2FNetwork(12))
     }
 
     @Test
-    fun testDecomposition12(){
+    fun testDecomposition12() {
         val options = DotEnvParser.readDotEnv()
         val decomposition = Decomposer(options)
         decomposition.findComposite(F2FReader().getF2FNetwork(14))
@@ -85,7 +85,7 @@ class TestDecomposition {
 
 
     @Test
-    fun testDecompositionShortestPeriods(){
+    fun testDecompositionShortestPeriods() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
         val decomposition = Decomposer(state = false, threshold = 0.8, mode = CompositionMode.SHORTEST_PERIODS)
@@ -96,7 +96,7 @@ class TestDecomposition {
     }
 
     @Test
-    fun testDecompositionMaxDivisors(){
+    fun testDecompositionMaxDivisors() {
         assertFailsWith<NoCoverFoundException> {
             val f2fGraph = F2FReader().getF2FNetwork(0)
             val edge = f2fGraph.edges.elementAt(6)
@@ -106,33 +106,36 @@ class TestDecomposition {
     }
 
     @Test
-    fun testUtils3() {
+    fun testDecomposition3x() {
         val array = arrayOf(true, false, false, true, true, false).toBooleanArray()
-        val periods = Decomposer(state = false, threshold = 0.5).findCover(array)
-        val expectedFactors = listOf(Factor(arrayOf(false), listOf(0,3,4)), Factor(arrayOf(true,false,false), listOf(4)))
-        val expectedPeriods = Cover(3,3, listOf(4), listOf(true,false,false).toBooleanArray(), expectedFactors)
+        val state = false
+        val periods = Decomposer(state = state, threshold = 0.5).findCover(array)
+        val expectedFactors = mutableListOf(Factor(arrayOf(false), listOf(0, 3, 4)), Factor(arrayOf(true, false, false), listOf(4)))
+        val expectedPeriods = Cover(array, !state, 3, 3, mutableListOf(4), expectedFactors)
         assert(periods == expectedPeriods)
     }
 
     @Test
-    fun testUtils3b() {
+    fun testDecomposition3y() {
         val array = arrayOf(true, false, false, true, true, false).toBooleanArray()
-        val periods = Decomposer(state = false).findCover(array)
-        val expectedFactors = listOf(
-            Factor(arrayOf(false), listOf(0,3,4)),
-            Factor(arrayOf(true,false,false), listOf(4)),
-            Factor(arrayOf(true,false,false,true,true,false), listOf())
+        val state = false
+        val periods = Decomposer(state = state).findCover(array)
+        val expectedFactors = mutableListOf(
+            Factor(arrayOf(false), listOf(0, 3, 4)),
+            Factor(arrayOf(true, false, false), listOf(4)),
+            Factor(arrayOf(true, false, false, true, true, false), listOf())
         )
-        val expectedPeriods = Cover(3,6, emptyList(), listOf(true,false,false,true,true,false).toBooleanArray(),expectedFactors)
+        val expectedPeriods = Cover(array, !state, 3, 6, mutableListOf(), expectedFactors)
 
         assert(periods == expectedPeriods)
     }
 
     @Test
     fun testUtils4() {
-        val cover = Decomposer(state = false).findCover(BooleanArray(16) {true})
-        val expectedFactors = listOf(Factor(arrayOf(true), listOf()))
-        assert(cover == Cover(16,1, emptyList(), BooleanArray(1){true}, expectedFactors))
+        val input = BooleanArray(16) { true }
+        val cover = Decomposer(state = false).findCover(input)
+        val expectedFactors = mutableListOf(Factor(arrayOf(true), listOf()))
+        assert(cover == Cover(input, true, 16, 1, mutableListOf(), expectedFactors))
     }
 
     @Test
