@@ -97,12 +97,11 @@ class TestDecomposition {
 
     @Test
     fun testDecompositionMaxDivisors() {
-        assertFailsWith<NoCoverFoundException> {
-            val f2fGraph = F2FReader().getF2FNetwork(0)
-            val edge = f2fGraph.edges.elementAt(6)
-            val decomposition = Decomposer(state = false, threshold = 0.8, mode = CompositionMode.MAX_DIVISORS)
-            val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
-        }
+        val f2fGraph = F2FReader().getF2FNetwork(0)
+        val edge = f2fGraph.edges.elementAt(6)
+        val decomposition = Decomposer(state = false, threshold = 0.8, mode = CompositionMode.MAX_DIVISORS)
+        val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
+        assert(cover.getPrecision() < 1.0)
     }
 
     @Test
