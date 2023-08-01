@@ -16,6 +16,8 @@ fun main(args: Array<String>) {
         Logger.setLogLevelToDebug()
     } else if (options.quiet) {
         Logger.setLogLevelToQuiet()
+    } else {
+        Logger.resetLogLevel()
     }
 
     val f2fGraph = F2FReader().getF2FNetwork(options.input)

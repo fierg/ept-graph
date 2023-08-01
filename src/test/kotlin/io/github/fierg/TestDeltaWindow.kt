@@ -4,6 +4,7 @@ import io.github.fierg.algo.Preprocessor
 import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.contentEqualsWithDelta
 import io.github.fierg.extensions.valueOfDeltaWindow
+import io.github.fierg.logger.Logger
 import org.junit.Test
 
 
@@ -15,9 +16,9 @@ class TestDeltaWindow {
         val expectedOutput = booleanArrayOf(false, false, true, true, false, false, false, false, true)
         val width = 1
         val output = Preprocessor.applyDeltaWindow(input, width, state = true)
-        println("Input: \t\t\t" + input.contentToString())
-        println("Output: \t\t" + output.contentToString())
-        println("Expected output: \t" + expectedOutput.contentToString())
+        Logger.info("Input: \t\t\t" + input.contentToString())
+        Logger.info("Output: \t\t" + output.contentToString())
+        Logger.info("Expected output: \t" + expectedOutput.contentToString())
 
         assert(output.contentEquals(expectedOutput))
     }
@@ -28,9 +29,9 @@ class TestDeltaWindow {
         val expectedOutput = booleanArrayOf(false, false, true, true, true, true, true, false, true)
         val width = 2
         val output = Preprocessor.applyDeltaWindow(input, width, state = true)
-        println("Input: \t\t\t" + input.contentToString())
-        println("Output: \t\t" + output.contentToString())
-        println("Expected output: \t" + expectedOutput.contentToString())
+        Logger.info("Input: \t\t\t" + input.contentToString())
+        Logger.info("Output: \t\t" + output.contentToString())
+        Logger.info("Expected output: \t" + expectedOutput.contentToString())
 
         assert(output.contentEquals(expectedOutput))
     }
@@ -49,8 +50,8 @@ class TestDeltaWindow {
 
         val isEqual = array1.contentEqualsWithDelta(array2, 1, true)
 
-        println("Array 1: " + array1.contentToString())
-        println("Array 2: " + array2.contentToString())
+        Logger.info("Array 1: " + array1.contentToString())
+        Logger.info("Array 2: " + array2.contentToString())
 
         assert(isEqual)
     }
@@ -62,8 +63,8 @@ class TestDeltaWindow {
 
         val isEqual = array1.contentEqualsWithDelta(array2, 1, true)
 
-        println("Array 1: " + array1.contentToString())
-        println("Array 2: " + array2.contentToString())
+        Logger.info("Array 1: " + array1.contentToString())
+        Logger.info("Array 2: " + array2.contentToString())
 
         assert(!isEqual)
     }
@@ -71,7 +72,7 @@ class TestDeltaWindow {
     @Test
     fun testDeltaWindowValueFunction() {
         val array = booleanArrayOf(false, false, true, false, false, false)
-        println("Array 1: " + array.contentToString())
+        Logger.info("Array 1: " + array.contentToString())
 
         assert(array.valueOfDeltaWindow(1, 1, true))
         assert(array.valueOfDeltaWindow(1, 2, true))

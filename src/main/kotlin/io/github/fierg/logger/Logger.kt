@@ -41,4 +41,7 @@ object Logger {
     fun setLogLevelToQuiet() {
         LOGGER!!.level = Level.OFF
     }
+    fun resetLogLevel() {
+        LOGGER!!.level = Level.INFO
+    }
 }
