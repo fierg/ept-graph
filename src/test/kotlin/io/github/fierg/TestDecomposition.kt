@@ -107,21 +107,38 @@ class TestDecomposition {
     fun testDecompositionMaxDivisorsGraph1() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val decomposition = Decomposer(state = true, mode = CompositionMode.MAX_DIVISORS)
-        val cover = decomposition.findComposite(f2fGraph)
+        decomposition.findComposite(f2fGraph)
     }
 
     @Test
     fun testDecompositionMaxDivisorsGraph2() {
         val f2fGraph = F2FReader().getF2FNetwork(4)
         val decomposition = Decomposer(state = true, mode = CompositionMode.MAX_DIVISORS)
-        val cover = decomposition.findComposite(f2fGraph)
+        decomposition.findComposite(f2fGraph)
     }
 
     @Test
     fun testDecompositionMaxDivisorsGraph3() {
         val f2fGraph = F2FReader().getF2FNetwork(4)
         val decomposition = Decomposer(state = false, mode = CompositionMode.MAX_DIVISORS)
-        val cover = decomposition.findComposite(f2fGraph)
+        decomposition.findComposite(f2fGraph)
+    }
+
+    @Test
+    fun testDecompositionFourierEdge() {
+        val f2fGraph = F2FReader().getF2FNetwork(0)
+        val edge = f2fGraph.edges.elementAt(6)
+        val decomposition = Decomposer(state = true, mode = CompositionMode.FOURIER_TRANSFORM)
+        val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
+
+        assert(cover.getPrecision() < 1.0)
+    }
+
+    @Test
+    fun testDecompositionFourierGraph() {
+        val f2fGraph = F2FReader().getF2FNetwork(4)
+        val decomposition = Decomposer(state = false, mode = CompositionMode.FOURIER_TRANSFORM)
+        decomposition.findComposite(f2fGraph)
     }
 
     @Test
@@ -129,7 +146,7 @@ class TestDecomposition {
         val array = arrayOf(true, false, false, true, true, false).toBooleanArray()
         val state = false
         val periods = Decomposer(state = state, threshold = 0.5).findCover(array)
-        val expectedFactors = mutableListOf(Factor(arrayOf(false), listOf(0, 3, 4)), Factor(arrayOf(true, false, false), listOf(4)))
+        val expectedFactors = mutableListOf(Factor(arrayOf(true, false, false), listOf(4)))
         val expectedPeriods = Cover(array, !state, 3, 3, mutableListOf(4), expectedFactors)
 
         assert(periods == expectedPeriods)
@@ -141,7 +158,6 @@ class TestDecomposition {
         val state = false
         val periods = Decomposer(state = state).findCover(array)
         val expectedFactors = mutableListOf(
-            Factor(arrayOf(false), listOf(0, 3, 4)),
             Factor(arrayOf(true, false, false), listOf(4)),
             Factor(arrayOf(true, false, false, true, true, false), listOf())
         )
