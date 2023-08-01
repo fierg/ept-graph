@@ -20,7 +20,13 @@ data class Factor(val cover: BooleanArray, val outliers: List<Int>) {
         return result
     }
 
+    /*
     override fun toString(): String {
         return "${cover.map { if (it) "1" else "0" }}:${outliers}"
     }
+     */
+    override fun toString(): String {
+        return "${cover.size}:${outliers.size}"
+    }
+
 }

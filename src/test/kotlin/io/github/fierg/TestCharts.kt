@@ -1,6 +1,7 @@
 package io.github.fierg
 
 import io.github.fierg.analysis.Visualizer
+import io.github.fierg.logger.Logger
 import io.github.fierg.model.style.DefaultPlotStyle.Companion.DEFAULT_HEIGHT
 import io.github.fierg.model.style.DefaultPlotStyle.Companion.DEFAULT_WIDTH
 import io.github.fierg.model.style.DefaultPlotStyle.Companion.blankTheme
@@ -28,6 +29,7 @@ class TestCharts {
 
     @Test
     fun testPieChart() {
+        Logger.debug("Test generation of pie chart 1 ...")
         val plot = letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Pie Chart") +
                 blankTheme +
                 geomPie(
@@ -40,6 +42,7 @@ class TestCharts {
 
     @Test
     fun testPieChart2() {
+        Logger.debug("Test generation of pie chart 2 ...")
         val plot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Pie Chart") +
                 blankTheme +
                 geomPie(
@@ -52,6 +55,7 @@ class TestCharts {
 
     @Test
     fun testPieChart3(){
+        Logger.debug("Test generation of pie chart 3 ...")
         val plot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Pie Chart") +
                 blankTheme +
                 geomPie(stat = Stat.identity, hole = 0.3, tooltips = tooltipsNone, size = 25)
@@ -63,6 +67,7 @@ class TestCharts {
 
     @Test
     fun testPieChartPPCT(){
+        Logger.debug("Test generation of ppct chart ...")
         val plot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Pie Chart") +
                 blankTheme +
                 geomPie(hole = 0.2, size = 20, stroke = 1.0, tooltips = tooltipsNone,
@@ -75,6 +80,7 @@ class TestCharts {
 
     @Test
     fun testPieChartPPCT2(){
+        Logger.debug("Test generation ppct pie chart 2 ...")
         val plot = letsPlot(data2) + scaleFillManual(values = listOf("#61BAFF", "#04FF00", "#91FF00","#d4FF00", "#FF9500", "#FF0000")) +
                 ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Pie Chart") +
                 blankTheme +
@@ -88,6 +94,7 @@ class TestCharts {
 
     @Test
     fun testHistogramChart(){
+        Logger.debug("Test generation of histogram and plots ...")
         val plot1 = letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Point Chart") + geomPoint(size = 2.0) { x = "name"; y = "value" }
         val plot2 = letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Histogram Chart") + geomHistogram { x = "name"; y = "value" }
 

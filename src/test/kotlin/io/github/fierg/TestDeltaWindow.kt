@@ -16,7 +16,7 @@ class TestDeltaWindow {
         val expectedOutput = booleanArrayOf(false, false, true, true, false, false, false, false, true)
         val width = 1
         val output = Preprocessor.applyDeltaWindow(input, width, state = true)
-        Logger.info("Input: \t\t\t" + input.contentToString())
+        Logger.info("Input: \t\t" + input.contentToString())
         Logger.info("Output: \t\t" + output.contentToString())
         Logger.info("Expected output: \t" + expectedOutput.contentToString())
 
@@ -29,7 +29,7 @@ class TestDeltaWindow {
         val expectedOutput = booleanArrayOf(false, false, true, true, true, true, true, false, true)
         val width = 2
         val output = Preprocessor.applyDeltaWindow(input, width, state = true)
-        Logger.info("Input: \t\t\t" + input.contentToString())
+        Logger.info("Input: \t\t" + input.contentToString())
         Logger.info("Output: \t\t" + output.contentToString())
         Logger.info("Expected output: \t" + expectedOutput.contentToString())
 
