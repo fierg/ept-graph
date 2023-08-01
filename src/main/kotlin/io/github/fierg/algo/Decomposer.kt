@@ -67,15 +67,11 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
 
         when (mode) {
             CompositionMode.SHORTEST_PERIODS -> {
-                var lastOutlierSize = Int.MAX_VALUE
                 periods.forEach { size ->
-                    if (factors[factorIndex[size]!!].outliers.size < lastOutlierSize) {
-                        lastOutlierSize = factors[factorIndex[size]!!].outliers.size
-                        cover.addFactor(factors[factorIndex[size]!!])
-                        if (cover.getPrecision() >= threshold) return cover
-                    }
+                    cover.addFactor(factors[factorIndex[size]!!], skipIfNoChangesOccur = true)
+                    if (cover.getPrecision() >= threshold) return cover
                 }
-                Logger.error("No Exact Cover with threshold $threshold possible! Hard outliers (${cover.outliers.size}) ${cover.outliers}")
+                Logger.error("No Exact Cover with threshold $threshold possible! Hard outliers (${cover.outliers.size})")
             }
 
             CompositionMode.MAX_DIVISORS -> {
@@ -83,15 +79,18 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
                     cover.addFactor(factors[factorIndex[size]!!])
                     if (cover.outliers.size == 0) return cover
                 }
-                Logger.warn("No Exact Cover with max divisors only possible! Hard outliers (${cover.outliers.size}) ${cover.outliers}")
+                Logger.warn("No Exact Cover with max divisors only possible! Hard outliers (${cover.outliers.size})")
             }
 
             CompositionMode.FOURIER_TRANSFORM -> {
                 periods.forEach { size ->
                     cover.addFactor(factors[factorIndex[size]!!])
-                    if (cover.outliers.size == 0) return cover.fourierTransform()
+                    if (cover.outliers.size == 0) {
+                        cover.fourierTransform()
+                        return cover
+                    }
                 }
-                Logger.error("No Exact Cover possible! Hard outliers (${cover.outliers.size}) ${cover.outliers}")
+                Logger.error("No Exact Cover possible! Hard outliers (${cover.outliers.size})")
             }
         }
         return cover
