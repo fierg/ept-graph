@@ -17,7 +17,11 @@ class ArgParser {
             val input by parser.argument(ArgType.Int, description = "input (Network id in range (0..61)")
             val threshold by parser.argument(ArgType.Double, description = "Min threshold of cover to be valid").optional().default(1.0)
             val state by parser.option(ArgType.Boolean, description = "Invert state to substitute in decomposition (if set, decomposition will replace 0s instead of 1s)", shortName = "s").default(false)
-            val compositionMode by parser.option(ArgType.Choice<CompositionMode>(), description = "Mode of composing factors").default(CompositionMode.SHORTEST_PERIODS)
+            val compositionMode by parser.option(
+                ArgType.Choice<CompositionMode>(),
+                description = "Choose how a composition is formed, using only maximal divisors, using all factors and collect up to the threshold or perform a fourier transform for increased understandability.",
+                fullName = "Mode of composing factors"
+            ).default(CompositionMode.SHORTEST_PERIODS)
 
             val skipSingleStepEdges by parser.option(ArgType.Boolean, shortName = "skipSingle", description = "Skip single time step label edges").default(false)
             val debug by parser.option(ArgType.Boolean, shortName = "d", description = "Turn on debug mode").default(false)

@@ -15,24 +15,27 @@ class DotEnvParser {
                 ignoreIfMissing = true
                 systemProperties = true
             }
-            Logger.info("Parsing arg from .env file:\n${env.entries().filter { envEntry -> ENV.values().map { envVar -> envVar.toString() }.contains(envEntry.key) }.map { "${it.key}:${it.value}\n" }}")
+
+            Logger.info("Parsing args from .env file:\n${env.entries().filter { envEntry -> ENV.values().map { envVar -> envVar.toString() }.contains(envEntry.key) }.map { "${it.key}:${it.value}\n" }}")
+
             options.state = env[ENV.STATE.name] == "true"
             options.skipSingleStepEdges = env[ENV.SKIP_SINGLE_STEP_EDGES.name] == "true"
-
-            options.compositionMode = when (env[ENV.MODE.name]) {
-                "GREEDY" -> CompositionMode.GREEDY
-                "SHORTEST_PERIODS" -> CompositionMode.SHORTEST_PERIODS
-                "MAX_DIVISORS" -> CompositionMode.MAX_DIVISORS
-                else -> {
-                    Logger.warn("Composition Mode missing! Running with SHORTEST_PERIODS")
-                    CompositionMode.SHORTEST_PERIODS
-                }
-            }
             options.deltaWindowPreprocessing = env[ENV.DELTA_WINDOW_PREPROCESSING.name].toInt()
             options.deltaWindowAlgo = env[ENV.DELTA_WINDOW_ALGO.name].toInt()
             options.debug = env[ENV.DEBUG.name] == "true"
             options.quiet = env[ENV.QUIET.name] == "true"
             options.threshold = env[ENV.THRESHOLD.name].toDouble()
+
+            options.compositionMode = when (env[ENV.MODE.name]) {
+                CompositionMode.FOURIER_TRANSFORM.name -> CompositionMode.FOURIER_TRANSFORM
+                CompositionMode.SHORTEST_PERIODS.name -> CompositionMode.SHORTEST_PERIODS
+                CompositionMode.MAX_DIVISORS.name -> CompositionMode.MAX_DIVISORS
+                else -> {
+                    Logger.warn("Composition Mode missing! Running with ${CompositionMode.SHORTEST_PERIODS.name}")
+                    CompositionMode.SHORTEST_PERIODS
+                }
+            }
+
             return options
         }
     }

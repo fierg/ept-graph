@@ -4,7 +4,8 @@ data class Cover(
     val totalValues: Int,
     val periodSize: Int,
     val outliers: Collection<Int>,
-    val cover: BooleanArray
+    val cover: BooleanArray,
+    val factors: Collection<Factor>
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -15,7 +16,8 @@ data class Cover(
         if (totalValues != other.totalValues) return false
         if (periodSize != other.periodSize) return false
         if (outliers != other.outliers) return false
-        return cover.contentEquals(other.cover)
+        if (!cover.contentEquals(other.cover)) return false
+        return factors == other.factors
     }
 
     override fun hashCode(): Int {
@@ -23,6 +25,7 @@ data class Cover(
         result = 31 * result + periodSize
         result = 31 * result + outliers.hashCode()
         result = 31 * result + cover.contentHashCode()
+        result = 31 * result + factors.hashCode()
         return result
     }
 }
