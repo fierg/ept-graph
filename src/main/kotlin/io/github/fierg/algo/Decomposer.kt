@@ -37,7 +37,7 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
     fun findCover(input: BooleanArray): Cover {
         val periods = getFactorSequence(input.size).toList()
         val factorIndex = periods.mapIndexed { index, factor -> factor to index }.toMap()
-        val factors = getFactors(input, factorIndex)
+        val factors = getFactors(input, factorIndex, periods)
 
         if (singleDebugLog) {
             Logger.debug("Using ${periods.size} periods: $periods")
@@ -94,11 +94,11 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
         return cover
     }
 
-    private fun getFactors(input: BooleanArray, factorIndex: Map<Int, Int>): Array<Factor> {
+    private fun getFactors(input: BooleanArray, factorIndex: Map<Int, Int>, periods: List<Int>): Array<Factor> {
         val factors = Array(factorIndex.size) { Factor(BooleanArray(0), emptyList()) }
         val jobs = mutableListOf<Deferred<Unit>>()
 
-        for (factor in getFactorSequence(input.size)) {
+        for (factor in periods) {
             jobs.add(computeFactors(input, factor, factors, factorIndex[factor]!!))
         }
         runBlocking { jobs.forEach { it.await() } }
