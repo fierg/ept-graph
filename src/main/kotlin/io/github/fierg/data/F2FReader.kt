@@ -4,7 +4,6 @@ import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.graph.LabeledEdge
 import io.github.fierg.model.graph.SelfAwareEdge
-import io.github.fierg.periodic.Periodic
 import org.jgrapht.graph.DefaultDirectedGraph
 import org.jgrapht.graph.builder.GraphBuilder
 import java.io.File
@@ -13,7 +12,7 @@ import java.nio.charset.Charset
 class F2FReader {
 
     fun readSimpleGraph(file: String): DefaultDirectedGraph<Int, LabeledEdge> {
-        Logger.info("Reading graph from file $file ...")
+        Logger.debug("Reading graph from file $file ...")
         val regex = Regex("(\\d+) (\\d+) (\\d+)")
         val graph = GraphBuilder<Int, LabeledEdge, DefaultDirectedGraph<Int, LabeledEdge>>(DefaultDirectedGraph(LabeledEdge::class.java))
         val nodes = mutableSetOf<Int>()
@@ -33,7 +32,7 @@ class F2FReader {
             }
 
         }
-        Logger.info("Done. Read graph with ${nodes.size} nodes and $edges edges.")
+        Logger.debug("Done. Read graph with ${nodes.size} nodes and $edges edges.")
         return graph.build()
     }
 

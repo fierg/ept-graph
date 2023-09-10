@@ -64,21 +64,20 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
 
     private fun getCover(input: BooleanArray, factorIndex: Map<Int, Int>, factors: Array<Factor>, periods: List<Int>): Cover {
         val cover = Cover(input, stateToReplace)
-
         when (mode) {
-            CompositionMode.SHORTEST_PERIODS -> {
-                periods.forEach { size ->
-                    cover.addFactor(factors[factorIndex[size]!!], skipFactorIfNoChangesOccur = true)
-                    if (cover.getPrecision() >= threshold) return cover
-                }
-                Logger.warn("No Exact Cover with threshold $threshold possible! Hard outliers (${cover.outliers.size})")
-            }
             CompositionMode.MAX_DIVISORS -> {
                 periods.forEach { size ->
                     cover.addFactor(factors[factorIndex[size]!!])
                     if (cover.outliers.size == 0) return cover
                 }
                 Logger.warn("No Exact Cover with max divisors only possible! Hard outliers (${cover.outliers.size})")
+            }
+            CompositionMode.SHORTEST_PERIODS -> {
+                periods.forEach { size ->
+                    cover.addFactor(factors[factorIndex[size]!!], skipFactorIfNoChangesOccur = true)
+                    if (cover.getPrecision() >= threshold) return cover
+                }
+                Logger.warn("No Exact Cover with threshold $threshold possible! Hard outliers (${cover.outliers.size})")
             }
             CompositionMode.FOURIER_TRANSFORM -> {
                 periods.forEach { size ->
@@ -132,9 +131,8 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
 
     private fun getFactorSequence(input: Int): Sequence<Int> {
         return when (mode) {
-            CompositionMode.SHORTEST_PERIODS -> input.factorsSequence()
+            CompositionMode.SHORTEST_PERIODS, CompositionMode.FOURIER_TRANSFORM -> input.factorsSequence()
             CompositionMode.MAX_DIVISORS -> input.maximalDivisors()
-            CompositionMode.FOURIER_TRANSFORM -> input.factorsSequence()
         }
     }
 
