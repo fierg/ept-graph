@@ -52,11 +52,10 @@ To transform a temporal graph, a shortest possible string $w'$ which is equal to
 
 \section{Decompositions of Unary DFAs}
 
-A DFA $\mathcal{A}$ is composite if its language $L(\mathcal{A})$ can be decomposed into an intersection $\cup^k_{i=1} L(\mathcal{A}_i)$ of languages of smaller DFAs. Otherwise, $\mathcal{A}$ is prime. This notion of primality was introduced by Kupferman and Mosheiff in \cite{prime-languages}, and they proved that we can decide whether a DFA is composite in ExpSpace and later in \cite{unara-prime-languages}, the is composite question for unary DFAs was proven to be in LOGSPACE. In the work \cite{DBLP:journals/corr/abs-2107-04683} by Jecker, Mazzocchi and Wolf, where they provided a LOGSPACE algorithm for commutative permutation DFAs, if the alphabet size is fixed which also puts the $k$-composite question in the LOGSPACE complexity class.
+A DFA $\mathcal{A}$ is composite if its language $L(\mathcal{A})$ can be decomposed into an intersection $\cup^k_{i=1} L(\mathcal{A}_i)$ of languages of smaller DFAs. Otherwise, $\mathcal{A}$ is prime. This notion of primality was introduced by Kupferman and Mosheiff in \cite{prime-languages}, and they proved that we can decide whether a DFA is composite in ExpSpace and later in \cite{unara-prime-languages}, the decomposition question for unary DFAs was proven to be in LOGSPACE. In the work \cite{DBLP:journals/corr/abs-2107-04683} by Jecker, Mazzocchi and Wolf, where they provided a LOGSPACE algorithm for commutative permutation DFAs, if the alphabet size is fixed which also puts the bounded $k$-composite question in the LOGSPACE complexity class, see \ref{tab:dfa-decomp-complexity} for reference.
 
 \subsection{Decomposing using maximal divisors}
-
-
+Following the LOGSPACE-algorithm solving the Bound-Decomp problem for unary DFAs from \cite{DBLP:journals/corr/abs-2107-04683}
 
 
 \section{Combining factors into a EPG label}
