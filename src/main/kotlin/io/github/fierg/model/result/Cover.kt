@@ -43,30 +43,6 @@ data class Cover(
         return cover
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Cover
-
-        if (!target.contentEquals(other.target)) return false
-        if (stateToReplace != other.stateToReplace) return false
-        if (totalValues != other.totalValues) return false
-        if (periodSize != other.periodSize) return false
-        if (outliers != other.outliers) return false
-        return factors == other.factors
-    }
-
-    override fun hashCode(): Int {
-        var result = target.contentHashCode()
-        result = 31 * result + stateToReplace.hashCode()
-        result = 31 * result + totalValues
-        result = 31 * result + periodSize
-        result = 31 * result + outliers.hashCode()
-        result = 31 * result + factors.hashCode()
-        return result
-    }
-
     fun fourierTransform(factorIndex: Map<Int, Int>) {
         getMultiplesOfPeriods(factors.map { it.cover.size }).forEach { entry ->
             entry.value.forEach { multiple ->
@@ -96,5 +72,29 @@ data class Cover(
             }
         }
         return multiples
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Cover
+
+        if (!target.contentEquals(other.target)) return false
+        if (stateToReplace != other.stateToReplace) return false
+        if (totalValues != other.totalValues) return false
+        if (periodSize != other.periodSize) return false
+        if (outliers != other.outliers) return false
+        return factors == other.factors
+    }
+
+    override fun hashCode(): Int {
+        var result = target.contentHashCode()
+        result = 31 * result + stateToReplace.hashCode()
+        result = 31 * result + totalValues
+        result = 31 * result + periodSize
+        result = 31 * result + outliers.hashCode()
+        result = 31 * result + factors.hashCode()
+        return result
     }
 }

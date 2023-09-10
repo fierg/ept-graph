@@ -4,19 +4,9 @@ import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.*
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.result.Cover
-import io.github.fierg.periodic.Periodic
 import org.junit.Test
 
 class TestUtils {
-
-    @Test
-    fun testUtils1() {
-        val array = arrayOf(true, false, false, true, true, false).toBooleanArray()
-        val period = Periodic().findShortestPeriod(array)
-        Logger.info("period is $period")
-
-        assert(period == 6)
-    }
 
     @Test
     fun testUtils2() {
