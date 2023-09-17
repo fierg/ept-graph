@@ -24,6 +24,7 @@ As our goal is to represent general dynamic networks and temporal graphs as EPGs
 			(B) edge["011\dots"] (D)
 			(B) edge["101\dots"] (E);	
 		\end{tikzpicture}
+		
 	\end{minipage}
 	\begin{minipage}[t]{0.49\textwidth}
 		\centering
@@ -48,14 +49,36 @@ As our goal is to represent general dynamic networks and temporal graphs as EPGs
 	\caption{TODO}
 \end{figure}
 
-To transform a temporal graph, a shortest possible string $w'$ which is equal to the original label at every time step $\forall t \geq 0, \tau(e)[t] = w'[t]$ has to be found. This $w'$ can itself be composed by combining different factors $w_1,w_2,\dots,w_n$. Initially, we start with a temporal graph where all edge labels $\tau(e)$ have fixed length and there are no periods present. To find and analyze such periods in the given labels, the algorithm from \cite{DBLP:journals/corr/abs-2107-04683} is used and adapted to our problem. To apply the algorithm which is defined for automata, a label $ w \in \{0,1\}^*$ is interpreted as an unary automata. In the label either the $0s$ or the $1s$ symbols are used to represent final states $Q_f$. The algorithm from \cite{DBLP:journals/corr/abs-2107-04683} can be simplified due to the fact that we only represent unary automata and therefore only have a single transition from each state, basically forming a simple circle of all possible states. Using the fact that our alphabet is of size one, $|\Sigma| = 1$ we only need to follow a single transition and furthermore, we do not need to check each state separately, we only need to check multiples of the chosen period. This means that for a period length of $i$ we only have to check $i$ states on the circle being in the same state.
+To transform a temporal graph, a shortest possible string $w'$ which is equal to the original label at every time step $\forall t \geq 0, \tau(e)[t] = w'[t]$ has to be found. This $w'$ can itself be composed by combining different factors $w_1,w_2,\dots,w_n$. Initially, we start with a temporal graph where all edge labels $\tau(e)$ have fixed length and there are no periods present. To find and analyze such periods in the given labels, the algorithm from \cite{DBLP:journals/corr/abs-2107-04683} is used and adapted to our problem. To apply the algorithm which is defined for automata, a label $ w \in \{0,1\}^*$ is interpreted as an unary automata. In the label either the $0s$ or the $1s$ symbols are used to represent final states $Q_f$. The algorithm from \cite{DBLP:journals/corr/abs-2107-04683} can be simplified due to the fact that we only represent unary automata with \textbf{$|\Sigma| = 1$} and therefore only have a single transition from each state, basically forming a simple circle of all possible states. Using the fact that our alphabet is of size one, we only need to follow a single transition and furthermore, we only need to check multiples of the chosen period. This means that for a period length of $i$ we only have to check $i$ states on the circle being in the same state.
 
 \section{Decompositions of Unary DFAs}
+\label{sec:decomposition-unary-dfas}
+A DFA $\mathcal{A}$ is composite if its language $L(\mathcal{A})$ can be decomposed into an intersection $\cup^k_{i=1} L(\mathcal{A}_i)$ of languages of smaller DFAs. Otherwise, $\mathcal{A}$ is prime. This notion of \textit{primality} was introduced by Kupferman and Mosheiff in \cite{prime-languages}, and they proved that we can decide whether a DFA is composite in ExpSpace and later in \cite{unara-prime-languages}, the decomposition question for unary DFAs was proven to be in \LogSpace. In the paper~\cite{DBLP:journals/corr/abs-2107-04683} by Jecker, Mazzocchi and Wolf, they provided a \LogSpace algorithm for commutative permutation DFAs, if the alphabet size is fixed, which also puts the bounded $k$-composite question for unary DFAs in the \LogSpace complexity class, see \ref{tab:dfa-decomp-complexity} for further reference.
 
-A DFA $\mathcal{A}$ is composite if its language $L(\mathcal{A})$ can be decomposed into an intersection $\cup^k_{i=1} L(\mathcal{A}_i)$ of languages of smaller DFAs. Otherwise, $\mathcal{A}$ is prime. This notion of primality was introduced by Kupferman and Mosheiff in \cite{prime-languages}, and they proved that we can decide whether a DFA is composite in ExpSpace and later in \cite{unara-prime-languages}, the decomposition question for unary DFAs was proven to be in LOGSPACE. In the work \cite{DBLP:journals/corr/abs-2107-04683} by Jecker, Mazzocchi and Wolf, where they provided a LOGSPACE algorithm for commutative permutation DFAs, if the alphabet size is fixed which also puts the bounded $k$-composite question in the LOGSPACE complexity class, see \ref{tab:dfa-decomp-complexity} for reference.
+\begin{figure}[h]
+	\begin{minipage}[t]{0.49\textwidth}
+		\centering
+		1001
+	\end{minipage}
+	\begin{minipage}[t]{0.49\textwidth}
+		\centering
+		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+			\node[state,initial,accepting] (q_0)   {$q_0$}; 
+			\node[state] (q_1) [above right=of q_0] {$q_1$}; 
+			\node[state] (q_2) [below right=of q_1] {$q_2$}; 
+			\node[state,accepting](q_3) [below left=of q_2] {$q_3$};
+			\path[->] 
+			(q_0) edge  node {} (q_1)
+			(q_1) edge  node {} (q_2)
+			(q_2) edge  node {} (q_3)
+			(q_3) edge  node {} (q_0);
+		\end{tikzpicture}
+	\end{minipage}
+	\caption{TODO}
+\end{figure}
 
 \subsection{Decomposing using maximal divisors}
-Following the LOGSPACE-algorithm solving the Bound-Decomp problem for unary DFAs from \cite{DBLP:journals/corr/abs-2107-04683}
+Following the \LogSpace-algorithm solving the Bound-Decomp problem for unary DFAs from \cite{DBLP:journals/corr/abs-2107-04683}
 
 
 \section{Combining factors into a EPG label}

@@ -25,9 +25,7 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows}
 \usetikzlibrary{arrows.meta}
-\usetikzlibrary{positioning, 
-	quotes}
-\usetikzlibrary{babel}
+\usetikzlibrary{positioning, quotes, automata, babel}
 \usepackage{wrapfig}
 \usepackage{pgfplots}
 \usepackage{readarray}
@@ -40,6 +38,8 @@
 \usepackage{environ}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{xspace}
+
 
 \makeatletter
 \newsavebox{\measure@tikzpicture}
@@ -92,7 +92,10 @@
 \newcommand{\blankpage}{% Leerseite ohne Seitennummer, nächste Seite rechts
  \clearpage{\pagestyle{empty}\cleardoublepage}
 }
-\newcommand{\DFA}{\textsc{DFA}~}
+\newcommand{\DFA}{\textsc{DFA}\xspace}
+\newcommand{\DFAs}{\textsc{DFAs}\xspace}
+\newcommand{\ExpSpace}{ExpSpace\xspace}
+\newcommand{\LogSpace}{LogSpace\xspace}
 
 
 
