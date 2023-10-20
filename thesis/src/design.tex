@@ -78,8 +78,61 @@ A DFA $\mathcal{A}$ is composite if its language $L(\mathcal{A})$ can be decompo
 \end{figure}
 
 \subsection{Decomposing using maximal divisors}
-Following the \LogSpace-algorithm solving the Bound-Decomp problem for unary DFAs from \cite{DBLP:journals/corr/abs-2107-04683}
+In this section the general decomposition of unary DFAs is explained. These decompositions are usually characterized by means of clean quotients.
+Let  $A = \lbrace\Sigma, Q, q_I , \sigma, F\rbrace$ be a unary-DFA. A clean quotient $A'$ of $A$ is a DFA obtained by quotienting $A_d$ by folding its cycle to a cycle of length $d$, for some strict divisor $d$ of $l$. Formally, $A_d$ is induced by the equivalence relation $\sim_d$ defined by
 
+\[ s_i \sim_d s_j ~\text{if and only if}~i=j \]
+\[ q_i \sim_d q_j ~\text{if and only if}~i \equiv j ~mod~ d \]
+
+Note that $\sim_d$ is coherent with $\sigma$, and so $L(A) \subseteq L(A_d)$. As with general quotient DFAs, the latter containment may be strict.
+
+
+\begin{figure}[h]
+	\begin{minipage}[t]{\textwidth}
+		\centering
+		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+			\node[state,initial] (q_0)   {$q_0$}; 
+			\node[state,accepting] (q_1) [ right=of q_0] {$q_1$}; 
+			\node[state] (q_2) [ right=of q_1] {$q_2$}; 
+			\node[state,accepting] (q_3) [ right=of q_2] {$q_3$};
+			\node[state](q_4) [ right=of q_3] {$q_4$};
+			\path[->] 
+			(q_0) edge  node {} (q_1)
+			(q_1) edge  node {} (q_2)
+			(q_2) edge  node {} (q_3)
+			(q_3) edge  node {} (q_4)
+			(q_4) edge[bend right, above]  node {} (q_0);
+		\end{tikzpicture}		
+	\end{minipage}
+	\begin{minipage}[b]{0.49\textwidth}
+		\centering
+		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+		\node[state,initial,accepting] (q_0)   {$q_0$}; 
+		\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+		\node[state](q_2) [right=of q_1] {$q_2$};
+		\path[->] 
+		(q_0) edge  node {} (q_1)
+		(q_1) edge  node {} (q_2)
+		(q_2) edge[bend right, above]  node {} (q_0);
+
+\end{tikzpicture}
+	\end{minipage}
+	\begin{minipage}[b]{0.49\textwidth}
+		\centering
+		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+		\node[state,initial] (q_0)   {$q_0$}; 
+		\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+		\path[->] 
+		(q_0) edge  node {} (q_1)
+		(q_1) edge[bend right, above]  node {} (q_0);
+		\end{tikzpicture}
+	\end{minipage}
+	\caption{The DFA $A$ and its clean quotients $A_1$ and $A_2$ .}
+\end{figure}
+
+\subsection{Short Factors}
+
+\subsection{Fourier Transform}
 
 \section{Combining factors into a EPG label}
 
