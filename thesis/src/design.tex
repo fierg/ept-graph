@@ -81,11 +81,9 @@ A DFA $\mathcal{A}$ is composite if its language $L(\mathcal{A})$ can be decompo
 In this section the general decomposition of unary DFAs is explained. These decompositions are usually characterized by means of clean quotients.
 Let  $A = \lbrace\Sigma, Q, q_I , \sigma, F\rbrace$ be a unary-DFA. A clean quotient $A'$ of $A$ is a DFA obtained by quotienting $A_d$ by folding its cycle to a cycle of length $d$, for some strict divisor $d$ of $l$. Formally, $A_d$ is induced by the equivalence relation $\sim_d$ defined by
 
-\[ s_i \sim_d s_j ~\text{if and only if}~i=j \]
 \[ q_i \sim_d q_j ~\text{if and only if}~i \equiv j ~mod~ d \]
 
-Note that $\sim_d$ is coherent with $\sigma$, and so $L(A) \subseteq L(A_d)$. As with general quotient DFAs, the latter containment may be strict.
-
+Note that $\sim_d$ is coherent with $\sigma$, and so $L(A) \subseteq L(A_d)$.
 
 \begin{figure}[h]
 	\begin{minipage}[t]{\textwidth}
@@ -127,8 +125,40 @@ Note that $\sim_d$ is coherent with $\sigma$, and so $L(A) \subseteq L(A_d)$. As
 		(q_1) edge[bend right, above]  node {} (q_0);
 		\end{tikzpicture}
 	\end{minipage}
-	\caption{The DFA $A$ and its clean quotients $A_1$ and $A_2$ .}
+	\caption{The DFA $A$ and its clean quotients $A_1$ and $A_2$}
 \end{figure}
+
+Usually the algorithms and proofs are considering unary \DFAs consisting of a chain leading into a cycle of states. Since we obtain our \DFAs by transforming from a periodic label, we only have \DFAs with empty chains, therefore only considering unary permutation \DFA. This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683}.
+
+\begin{algorithm}[H]
+	\DontPrintSemicolon
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{getComposite($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, integer k)}{
+		FactorList $\gets \emptyset$\; 
+		\ForEach{binaryString $\in \{0,1\}^{log|Q|}$ with $\leq k$ ones}{
+			\If{isFactor($A$,binaryString)}{FactorList.add(binaryString)}
+		}
+		\KwRet FactorList\;
+	}
+
+	\Fn{isFactor($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, binaryString)}{
+		\ForEach{$q \in Q \setminus F$}{
+			\If{not cover(A,q,binaryString)}{\KwRet false}
+			\KwRet true
+		}
+	}
+	
+	\Fn{cover($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, binaryString, $q \in Q \setminus F$)}{
+		\ForEach{$i$ with wordCombination[i]=1}{
+			$p_1 \gets i$'th prime divisor of $|Q|$\;
+			\If{cover($A,q,\sigma(q,a^{|Q|/p_i})$)}{\KwRet true}
+		}
+		\KwRet false
+	}
+	
+	\caption{LOGSPACE-algorithm solving the Decomp problem for unary DFAs and returning the factors.}
+\end{algorithm}
+
 
 \subsection{Short Factors}
 
@@ -137,4 +167,9 @@ Note that $\sim_d$ is coherent with $\sigma$, and so $L(A) \subseteq L(A_d)$. As
 \section{Combining factors into a EPG label}
 
 Now with the collection of periods, novel problems arises. How to combine the periods in the most optimal manner? What is the minimal number of periods needed to cover a given array? These and other questions where tried to answer both theoretically and empirically with some real world data.
+
+\section{Modified Decomposition Problem}
+\begin{figure}[h]
+	\includegraphics[width=\linewidth]{proof-sketches/Screenshot[2]-01.png}
+\end{figure}
 
