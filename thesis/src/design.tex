@@ -51,9 +51,8 @@ As our goal is to represent general dynamic networks and temporal graphs as EPGs
 
 To transform a temporal graph, a shortest possible string $w'$ which is equal to the original label at every time step $\forall t \geq 0, \tau(e)[t] = w'[t]$ has to be found. This $w'$ can itself be composed by combining different factors $w_1,w_2,\dots,w_n$. Initially, we start with a temporal graph where all edge labels $\tau(e)$ have fixed length and there are no periods present. To find and analyze such periods in the given labels, the algorithm from \cite{DBLP:journals/corr/abs-2107-04683} is used and adapted to our problem. To apply the algorithm which is defined for automata, a label $ w \in \{0,1\}^*$ is interpreted as an unary automata. In the label either the $0s$ or the $1s$ symbols are used to represent final states $Q_f$. The algorithm from \cite{DBLP:journals/corr/abs-2107-04683} can be simplified due to the fact that we only represent unary automata with \textbf{$|\Sigma| = 1$} and therefore only have a single transition from each state, basically forming a simple circle of all possible states. Using the fact that our alphabet is of size one, we only need to follow a single transition and furthermore, we only need to check multiples of the chosen period. This means that for a period length of $i$ we only have to check $i$ states on the circle being in the same state.
 
-\section{Decompositions of Unary DFAs}
+\section{Decompositions of DFAs}
 \label{sec:decomposition-unary-dfas}
-A DFA $\mathcal{A}$ is composite if its language $L(\mathcal{A})$ can be decomposed into an intersection $\cup^k_{i=1} L(\mathcal{A}_i)$ of languages of smaller DFAs. Otherwise, $\mathcal{A}$ is prime. This notion of \textit{primality} was introduced by Kupferman and Mosheiff in \cite{prime-languages}, and they proved that we can decide whether a DFA is composite in ExpSpace and later in \cite{unara-prime-languages}, the decomposition question for unary DFAs was proven to be in \LogSpace. In the paper~\cite{DBLP:journals/corr/abs-2107-04683} by Jecker, Mazzocchi and Wolf, they provided a \LogSpace algorithm for commutative permutation DFAs, if the alphabet size is fixed, which also puts the bounded $k$-composite question for unary DFAs in the \LogSpace complexity class, see \ref{tab:dfa-decomp-complexity} for further reference.
 
 \begin{figure}[h]
 	\begin{minipage}[t]{0.29\textwidth}
@@ -73,13 +72,22 @@ A DFA $\mathcal{A}$ is composite if its language $L(\mathcal{A})$ can be decompo
 			(q_2) edge  node {} (q_3)
 			(q_3) edge[bend right, above]  node {} (q_0);
 		\end{tikzpicture}
+		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+			\node[state,initial] (q_0)   {$q_0$}; 
+			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+			\node[state,accepting] (q_2) [right=of q_1] {$q_2$}; 
+			\node[state](q_3) [right=of q_2] {$q_3$};
+			\path[->] 
+			(q_0) edge  node {} (q_1)
+			(q_1) edge  node {} (q_2)
+			(q_2) edge  node {} (q_3)
+			(q_3) edge[bend right, above]  node {} (q_0);
+		\end{tikzpicture}
 	\end{minipage}
 	\caption{Equivalence of binary strings and unary permutation \DFAs}
 \end{figure}
 
-\subsection{Decomposing using maximal divisors}
-In this section the general decomposition of unary DFAs is explained. These decompositions are usually characterized by means of clean quotients.
-Let  $A = \lbrace\Sigma, Q, q_I , \sigma, F\rbrace$ be a unary-DFA. A clean quotient $A'$ of $A$ is a DFA obtained by folding its cycle of length $l$ to a cycle of length $d$, for some strict divisor $d$ of $l$. Formally, $A_d$ is induced by the equivalence relation $\sim_d$ defined by
+A DFA $\mathcal{A}$ is composite if its language $L(\mathcal{A})$ can be decomposed into an intersection $\cup^k_{i=1} L(\mathcal{A}_i)$ of languages of smaller DFAs. Otherwise, $\mathcal{A}$ is prime. This notion of \textit{primality} was introduced by Kupferman and Mosheiff in \cite{prime-languages}, and they proved that we can decide whether a DFA is composite in ExpSpace and later in \cite{unara-prime-languages}, the decomposition question for unary DFAs was proven to be in \LogSpace. In the paper~\cite{DBLP:journals/corr/abs-2107-04683} by Jecker, Mazzocchi and Wolf, they provided a \LogSpace algorithm for commutative permutation DFAs, if the alphabet size is fixed, which also puts the bounded $k$-composite question for unary DFAs in the \LogSpace complexity class, see \ref{tab:dfa-decomp-complexity} for further reference. The decomposition of unary \DFAs are usually characterized by means of clean quotients. Let  $A = \lbrace\Sigma, Q, q_I , \sigma, F\rbrace$ be a unary-DFA. A clean quotient $A_d$ of $A$ is a DFA obtained by folding its cycle of length $l$ to a cycle of length $d$, for some strict divisor $d$ of $l$. Formally, $A_d$ is induced by the equivalence relation $\sim_d$ defined by
 
 \[ q_i \sim_d q_j ~\text{if and only if}~i \equiv j ~mod~ d \]
 
@@ -130,6 +138,7 @@ Since $\sim_d$ is coherent with $\sigma$, and therefore $L(A) \subseteq L(A_d)$.
 
 TODO: Explain example
 
+\subsection{Decomposing using maximal divisors}
 Usually the algorithms and proofs are considering unary \DFAs consisting of a chain leading into a cycle of states. Since we obtain our \DFAs by transforming from a periodic label, we only have \DFAs with empty chains, therefore only considering unary permutation \DFA. This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683} as seen in Algorithm \ref{algo:composite} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$. Additional we are not only interested in answering the yes/no question of the composite problem but we actually want to collect the factors and continue our computation.
 
 \begin{algorithm}[H]
