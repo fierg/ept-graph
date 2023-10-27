@@ -11,7 +11,7 @@ class TestUtils {
     @Test
     fun testUtils2() {
         val number = 24
-        val factors = number.factorsSequence().toList()
+        val factors = number.factors().toList()
         Logger.info("Factors of $number are $factors")
         val expectedFactors = listOf(1, 2, 3, 4, 6, 8, 12, 24)
 
@@ -21,7 +21,7 @@ class TestUtils {
     @Test
     fun testUtils22() {
         val number = 28
-        val factors = number.factorsSequence().toList()
+        val factors = number.factors().toList()
         Logger.info("Factors of $number are $factors")
         assert(factors == listOf(1, 2, 4, 7, 14, 28))
     }
@@ -52,7 +52,7 @@ class TestUtils {
     @Test
     fun testFactors(){
         val number = 7260
-        val factors = number.factorsSequence().toList()
+        val factors = number.factors().toList()
         Logger.info("Factors of $number are $factors")
         assert(factors == listOf(1, 2, 3, 4, 5, 6, 10, 11, 12, 15, 20, 22, 30, 33, 44, 55, 60, 66, 110, 121, 132, 165, 220, 242, 330, 363, 484, 605, 660, 726, 1210, 1452, 1815, 2420, 3630, 7260))
     }

@@ -6,6 +6,7 @@ import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.model.options.Options
+import io.github.fierg.model.result.CleanQuotient
 import io.github.fierg.model.result.Factor
 import io.github.fierg.model.result.Cover
 import kotlinx.coroutines.*
@@ -89,6 +90,9 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
                 }
                 Logger.warn("No Exact Cover possible! Hard outliers (${cover.outliers.size})")
             }
+            CompositionMode.CLEAN_QUOTIENTS -> {
+                factors.forEach { factor -> println("${factor.cover.map { if (it) "1" else "0"  }}") }
+            }
         }
         return cover
     }
@@ -98,11 +102,23 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
         val jobs = mutableListOf<Deferred<Unit>>()
 
         for (factor in periods) {
-            jobs.add(computeFactors(input, factor, factors, factorIndex[factor]!!))
+            if (this.mode == CompositionMode.CLEAN_QUOTIENTS)
+                jobs.add(computeCleanQuotients(input, factor, factors, factorIndex[factor]!!))
+                else jobs.add(computeFactors(input, factor, factors, factorIndex[factor]!!))
         }
         runBlocking { jobs.forEach { it.await() } }
-
         return factors
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun computeCleanQuotients(input: BooleanArray, factorSize: Int, factors: Array<Factor>, factorIndex: Int) = GlobalScope.async {
+        val coverArray = BooleanArray(factorSize) { !stateToReplace }
+        for (index in input.indices) {
+            val modIndex = index % factorSize
+            if (input[index] == stateToReplace) coverArray[modIndex] = stateToReplace
+        }
+        factors[factorIndex] = Factor(coverArray, emptyList())
+        return@async
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -131,8 +147,9 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
 
     private fun getFactorSequence(input: Int): Sequence<Int> {
         return when (mode) {
-            CompositionMode.SHORTEST_PERIODS, CompositionMode.FOURIER_TRANSFORM -> input.factorsSequence()
+            CompositionMode.SHORTEST_PERIODS, CompositionMode.FOURIER_TRANSFORM -> input.factors()
             CompositionMode.MAX_DIVISORS -> input.maximalDivisors()
+            CompositionMode.CLEAN_QUOTIENTS -> input.upTo()
         }
     }
 
@@ -141,7 +158,8 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
         when (mode) {
             CompositionMode.SHORTEST_PERIODS -> Logger.info("Trying to find cover with shortest possible factors with at least ${threshold * 100}% coverage.")
             CompositionMode.MAX_DIVISORS -> Logger.info("Trying to find cover with only the max divisors.")
-            CompositionMode.FOURIER_TRANSFORM -> Logger.info("Trying to find most explainable factors.")
+            CompositionMode.FOURIER_TRANSFORM -> Logger.info("Trying to find most explainable factors using fourier transform.")
+            CompositionMode.CLEAN_QUOTIENTS -> Logger.info("Trying to find clean quotients.")
         }
     }
 }
