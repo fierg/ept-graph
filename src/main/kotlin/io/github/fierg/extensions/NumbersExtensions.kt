@@ -3,7 +3,7 @@ package io.github.fierg.extensions
 /*
 Finds all factors of a given number lazily and yields them into a sequence.
  */
-fun Int.factorsSequence(includeSelf: Boolean = true): Sequence<Int> {
+fun Int.factors(includeSelf: Boolean = true): Sequence<Int> {
     val n = this
     return sequence {
         (1..n / 2).forEach {
@@ -42,5 +42,7 @@ fun Int.maximalDivisors(): Sequence<Int> {
         }
     }
 }
+
+fun Int.upTo() = (1 .. this).asSequence()
 
 fun Double.format(digits: Int = 5) = "%.${digits}f".format(this)
