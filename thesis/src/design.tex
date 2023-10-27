@@ -22,9 +22,9 @@ As our goal is to represent general dynamic networks and temporal graphs as EPGs
 			(A) edge["000\dots"] (C)
 			(D) edge["111\dots"] (E)
 			(B) edge["011\dots"] (D)
-			(B) edge["101\dots"] (E);	
-		\end{tikzpicture}
-		
+			(B) edge["101\dots"] (E);
+		\end{tikzpicture}\\
+	Temporal graph with long labels
 	\end{minipage}
 	\begin{minipage}[t]{0.49\textwidth}
 		\centering
@@ -37,16 +37,20 @@ As our goal is to represent general dynamic networks and temporal graphs as EPGs
 				\node (E) at (1,3) {};
 			\end{scope}
 			
-			\draw (A) edge["101"] (B)
+			\draw (A) edge[bend left, below,"101"] (B)
+			(A) edge[bend right, below,"0001"] (B)
 			(B) edge["100"] (C)
-			(D) edge["0010"] (C)
+			(D) edge[bend right, below,"0010"] (C)
+			(D) edge[bend left, below,"10"] (C)
 			(A) edge["0"] (C)
-			(D) edge["110"] (E)
-			(B) edge["01111"] (D)
-			(B) edge["10"] (E);
-		\end{tikzpicture}
+			(D) edge[bend right, above,"110"] (E)
+			(B) edge[bend right, below,"01111"] (D)
+			(B) edge["10"] (E)
+			(E) edge[bend right, below,"01"]  (D);
+		\end{tikzpicture}\\
+	EPG with multi edges but short labels
 	\end{minipage}
-	\caption{TODO}
+\caption{Desired transformation of temporal graphs into EPGs}
 \end{figure}
 
 To transform a temporal graph, a shortest possible string $w'$ which is equal to the original label at every time step $\forall t \geq 0, \tau(e)[t] = w'[t]$ has to be found. This $w'$ can itself be composed by combining different factors $w_1,w_2,\dots,w_n$. Initially, we start with a temporal graph where all edge labels $\tau(e)$ have fixed length and there are no periods present. To find and analyze such periods in the given labels, the algorithm from \cite{DBLP:journals/corr/abs-2107-04683} is used and adapted to our problem. To apply the algorithm which is defined for automata, a label $ w \in \{0,1\}^*$ is interpreted as an unary automata. In the label either the $0s$ or the $1s$ symbols are used to represent final states $Q_f$. The algorithm from \cite{DBLP:journals/corr/abs-2107-04683} can be simplified due to the fact that we only represent unary automata with \textbf{$|\Sigma| = 1$} and therefore only have a single transition from each state, basically forming a simple circle of all possible states. Using the fact that our alphabet is of size one, we only need to follow a single transition and furthermore, we only need to check multiples of the chosen period. This means that for a period length of $i$ we only have to check $i$ states on the circle being in the same state.
@@ -133,10 +137,11 @@ Since $\sim_d$ is coherent with $\sigma$, and therefore $L(A) \subseteq L(A_d)$.
 		(q_1) edge[bend right, above]  node {} (q_0);
 		\end{tikzpicture}
 	\end{minipage}
-	\caption{The DFA $A$ and its clean quotients $A_1$ and $A_2$}
+	\caption{The DFA $A$ and its clean quotients $A_2$ and $A_3$}
+	\label{fig:clean-quotients}
 \end{figure}
 
-TODO: Explain example
+In the example in figure \ref{fig:clean-quotients}, the \DFA $A$ with final states $q_1$ and $q_3$ can be replaced by the clean quotients $A_2$ and $A_3$ as there is no $q_i \in F$ in $A$ where both clean quotients $A_d$ are not in a final state $q_{i ~mod~ d}$. Notice that there is a state $q_0$ in $A$ where the clean quotient $A_2$ is in a final state but $A_3$ is not and only the combination of both clean quotients is required to fully decompose the original \DFA.
 
 \subsection{Decomposing using maximal divisors}
 Usually the algorithms and proofs are considering unary \DFAs consisting of a chain leading into a cycle of states. Since we obtain our \DFAs by transforming from a periodic label, we only have \DFAs with empty chains, therefore only considering unary permutation \DFA. This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683} as seen in Algorithm \ref{algo:composite} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$. Additional we are not only interested in answering the yes/no question of the composite problem but we actually want to collect the factors and continue our computation.
