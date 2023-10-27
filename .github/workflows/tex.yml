@@ -8,6 +8,8 @@ name: Build Latex Document
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build_latex:
