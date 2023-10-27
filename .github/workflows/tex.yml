@@ -20,8 +20,9 @@ jobs:
         with:
           working_directory: thesis
           root_file: thesis.tex
-          #pre_compile: "tlmgr update --self && tlmgr update --all"
+          pre_compile: "tlmgr update --self && tlmgr update --all"
           post_compile: "latexmk -c"
+          args: pdf -interaction=nonstopmode
         env:
           TEXINPUTS: ".:./wissdoc.cls//:"
       - name: Upload PDF file
