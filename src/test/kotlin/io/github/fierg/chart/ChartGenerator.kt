@@ -1,4 +1,4 @@
-package io.github.fierg
+package io.github.fierg.chart
 
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.analysis.Visualizer

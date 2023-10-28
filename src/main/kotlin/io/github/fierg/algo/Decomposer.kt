@@ -5,6 +5,7 @@ import io.github.fierg.extensions.*
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.CompositionMode
+import io.github.fierg.model.options.Operator
 import io.github.fierg.model.options.Options
 import io.github.fierg.model.result.CleanQuotient
 import io.github.fierg.model.result.Factor
@@ -64,7 +65,7 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
     }
 
     private fun getCover(input: BooleanArray, factorIndex: Map<Int, Int>, factors: Array<Factor>, periods: List<Int>): Cover {
-        val cover = Cover(input, stateToReplace)
+        val cover = Cover(input, stateToReplace, if (this.mode == CompositionMode.CLEAN_QUOTIENTS) Operator.AND else Operator.OR)
         when (mode) {
             CompositionMode.MAX_DIVISORS -> {
                 periods.forEach { size ->
@@ -91,7 +92,15 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
                 Logger.warn("No Exact Cover possible! Hard outliers (${cover.outliers.size})")
             }
             CompositionMode.CLEAN_QUOTIENTS -> {
-                factors.forEach { factor -> println("${factor.cover.map { if (it) "1" else "0"  }}") }
+                factors.forEach { factor -> Logger.debug("${factor.cover.map { if (it) "1" else "0"  }}") }
+                periods.forEach {size ->
+                    if (size > 1) {
+                        cover.addFactor(factors[factorIndex[size]!!])
+                        if (cover.outliers.size == 0) {
+                            return cover
+                        }
+                    }
+                }
             }
         }
         return cover

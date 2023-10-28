@@ -1,4 +1,4 @@
-package io.github.fierg
+package io.github.fierg.utils
 
 import io.github.fierg.algo.Preprocessor
 import io.github.fierg.data.F2FReader

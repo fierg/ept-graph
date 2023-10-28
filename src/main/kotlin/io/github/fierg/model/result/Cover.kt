@@ -3,34 +3,60 @@ package io.github.fierg.model.result
 import io.github.fierg.extensions.applyPeriod
 import io.github.fierg.extensions.minus
 import io.github.fierg.extensions.removeIfNotIncludedIn
+import io.github.fierg.logger.Logger
+import io.github.fierg.model.options.Operator
 
 data class Cover(
     val target: BooleanArray,
     val stateToReplace: Boolean,
     val totalValues: Int,
     var periodSize: Int,
-    val outliers: MutableList<Int>,
-    val factors: MutableList<Factor>
+    var outliers: MutableList<Int>,
+    val factors: MutableList<Factor>,
+    val operator: Operator = Operator.OR
 ) {
 
     private var lastOutlierSize = outliers.size
 
-    constructor(input: BooleanArray, stateToReplace: Boolean) : this(
+    constructor(input: BooleanArray, stateToReplace: Boolean, operator: Operator = Operator.OR) : this(
         input,
         stateToReplace,
         input.count { it == stateToReplace },
         0,
         input.mapIndexed { index, b -> if (b == stateToReplace) index else -1 }.filter { it != -1 }.toMutableList(),
-        mutableListOf()
+        mutableListOf(),
+        operator
     )
 
     fun addFactor(factor: Factor, skipFactorIfNoChangesOccur: Boolean = false) {
         if (!skipFactorIfNoChangesOccur || factor.outliers.size < lastOutlierSize) {
-            lastOutlierSize = factor.outliers.size
             factors.add(factor)
             periodSize = factor.cover.size
-            outliers.removeIfNotIncludedIn(factor.outliers)
+
+            when (this.operator) {
+                Operator.OR -> {
+                    lastOutlierSize = factor.outliers.size
+                    outliers.removeIfNotIncludedIn(factor.outliers)
+                }
+                Operator.AND -> {
+                    recompute()
+                }
+            }
         }
+    }
+
+    private fun recompute() {
+        outliers = mutableListOf()
+        target.forEachIndexed { index, state ->
+            if (state == stateToReplace){
+                if (factors.any { factor -> factor.get(index) != stateToReplace })
+                    outliers.add(index)
+            } else {
+                if (factors.all { factor -> factor.get(index) == stateToReplace })
+                    outliers.add(index)
+            }
+        }
+        Logger.debug("Current factors: $factors -> outliers: $outliers")
     }
 
     fun getPrecision() = (totalValues - outliers.size).toDouble() / totalValues
