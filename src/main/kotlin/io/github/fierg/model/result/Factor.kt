@@ -4,8 +4,12 @@ class Factor(var cover: BooleanArray, val outliers: List<Int>) : CleanQuotient(c
     constructor(cover: Array<Boolean>, outliers: List<Int>) : this(cover = cover.toBooleanArray(), outliers)
 
     override fun toString(): String {
-        return "${cover.map { if (it) "1" else "0" }}:${outliers}"
+        return "${cover.map { if (it) "1" else "0" }}"
         //return "${cover.size}:${outliers.size}"
+    }
+
+    fun get(index: Int): Boolean {
+        return cover[index % cover.size]
     }
 
 }

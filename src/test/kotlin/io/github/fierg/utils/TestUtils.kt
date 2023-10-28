@@ -1,4 +1,4 @@
-package io.github.fierg
+package io.github.fierg.utils
 
 import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.*
@@ -74,7 +74,7 @@ class TestUtils {
     }
 
     @Test
-    fun testRemoveOutliersMethod(){
+    fun testRemoveOutliersMethod1(){
         val listA = mutableListOf(1, 3, 5, 7, 9, 11)
         val listB = listOf(3, 5, 7, 10, 12)
 
@@ -85,6 +85,48 @@ class TestUtils {
 
         Logger.info("Transformed A: $listA")
         assert(listA == listOf(3,5,7))
+    }
+
+    @Test
+    fun testRemoveOutliersMethod2(){
+        val listA = mutableListOf(1, 3, 5, 7, 9, 11)
+        val listB = listOf(9)
+
+        Logger.info("List A: $listA")
+        Logger.info("List B: $listB")
+
+        listA.removeIfNotIncludedIn(listB)
+
+        Logger.info("Transformed A: $listA")
+        assert(listA == listOf(9))
+    }
+
+    @Test
+    fun testRemoveOutliersMethod3(){
+        val listA = mutableListOf(1, 3, 5, 7, 9, 11)
+        val listB = emptyList<Int>()
+
+        Logger.info("List A: $listA")
+        Logger.info("List B: $listB")
+
+        listA.removeIfNotIncludedIn(listB)
+
+        Logger.info("Transformed A: $listA")
+        assert(listA == emptyList<Int>())
+    }
+
+    @Test
+    fun testRemoveOutliersMethod4(){
+        val listA = emptyList<Int>().toMutableList()
+        val listB = mutableListOf(1, 3, 5, 7, 9, 11)
+
+        Logger.info("List A: $listA")
+        Logger.info("List B: $listB")
+
+        listA.removeIfNotIncludedIn(listB)
+
+        Logger.info("Transformed A: $listA")
+        assert(listA == emptyList<Int>())
     }
 
     @Test
