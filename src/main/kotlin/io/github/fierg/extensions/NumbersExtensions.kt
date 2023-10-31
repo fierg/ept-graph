@@ -1,5 +1,8 @@
 package io.github.fierg.extensions
 
+import kotlin.math.abs
+import kotlin.math.log10
+
 /*
 Finds all factors of a given number lazily and yields them into a sequence.
  */
@@ -46,3 +49,8 @@ fun Int.maximalDivisors(): Sequence<Int> {
 fun Int.upTo() = (1 .. this).asSequence()
 
 fun Double.format(digits: Int = 5) = "%.${digits}f".format(this)
+
+fun Int.digits() = when(this) {
+    0 -> 1
+    else -> log10(abs(toDouble())).toInt() + 1
+}
