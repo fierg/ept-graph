@@ -19,10 +19,10 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
     private val applyDeltaWindow = deltaWindowAlgo > 0
     private val stateToReplace = !state
     private var singleDebugLog = true
+    private var nrDigits = 3
 
     fun findComposite(graph: EPTGraph): Set<Cover> {
         val covers = mutableSetOf<Cover>()
-        logInfo()
 
         graph.edges.forEach { edge ->
             try {
@@ -37,11 +37,13 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
     }
 
     fun findCover(input: BooleanArray): Cover {
+        nrDigits = input.size.digits()
         val periods = getFactorSequence(input.size).toList()
         val factorIndex = periods.mapIndexed { index, factor -> factor to index }.toMap()
         val factors = getFactors(input, factorIndex, periods)
 
         if (singleDebugLog) {
+            logInfo()
             Logger.debug("Using ${periods.size} periods: $periods")
             singleDebugLog = false
         }
@@ -58,10 +60,14 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
 
     fun analyzeCover(result: Cover) {
         Logger.info(
-            "Found decomposition with ${String.format("%3d", (result.periodSize.toDouble() / result.target.size * 100).toInt())}% original size (${String.format("%4d", result.periodSize)}), " +
-                    "covered ${String.format("%4d", (result.totalValues - result.outliers.size))}/${String.format("%4d", result.totalValues)} values, " +
-                    "resulting in ${String.format("%4d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)."
+            "Found decomposition with ${String.format("%${nrDigits}d", (result.periodSize.toDouble() / result.target.size * 100).toInt())}% original size (${String.format("%${nrDigits}d", result.periodSize)}), " +
+                    "covered ${String.format("%${nrDigits}d", (result.totalValues - result.outliers.size))}/${String.format("%${nrDigits}d", result.totalValues)} values, " +
+                    "resulting in ${String.format("%${nrDigits}d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)."
         )
+        Logger.debug("Cover: ${result.target.getString()}")
+        result.factors.forEach {factor ->
+            Logger.debug("Factor: $factor -> Outliers: ${factor.outliers}")
+        }
     }
 
     private fun getCover(input: BooleanArray, factorIndex: Map<Int, Int>, factors: Array<Factor>, periods: List<Int>): Cover {
@@ -111,9 +117,10 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
         val jobs = mutableListOf<Deferred<Unit>>()
 
         for (factor in periods) {
-            if (this.mode == CompositionMode.CLEAN_QUOTIENTS)
-                jobs.add(computeCleanQuotients(input, factor, factors, factorIndex[factor]!!))
-                else jobs.add(computeFactors(input, factor, factors, factorIndex[factor]!!))
+            when (this.mode) {
+                CompositionMode.CLEAN_QUOTIENTS -> jobs.add(computeCleanQuotients(input, factor, factors, factorIndex[factor]!!))
+                else -> jobs.add(computeFactors(input, factor, factors, factorIndex[factor]!!))
+            }
         }
         runBlocking { jobs.forEach { it.await() } }
         return factors

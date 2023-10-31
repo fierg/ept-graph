@@ -30,9 +30,15 @@ class DotEnvParser {
                 CompositionMode.FOURIER_TRANSFORM.name -> CompositionMode.FOURIER_TRANSFORM
                 CompositionMode.SHORTEST_PERIODS.name -> CompositionMode.SHORTEST_PERIODS
                 CompositionMode.MAX_DIVISORS.name -> CompositionMode.MAX_DIVISORS
+                CompositionMode.CLEAN_QUOTIENTS.name -> CompositionMode.CLEAN_QUOTIENTS
                 else -> {
-                    Logger.warn("Composition Mode missing! Running with ${CompositionMode.SHORTEST_PERIODS.name}")
-                    CompositionMode.SHORTEST_PERIODS
+                    if (env[ENV.MODE.name].isNullOrEmpty()) {
+                        Logger.warn("Composition Mode missing! Running with ${CompositionMode.SHORTEST_PERIODS.name}")
+                        CompositionMode.SHORTEST_PERIODS
+                    } else {
+                        Logger.warn("Composition Mode ${env[ENV.MODE.name]} not recognized! Running with ${CompositionMode.SHORTEST_PERIODS.name}")
+                        CompositionMode.SHORTEST_PERIODS
+                    }
                 }
             }
 

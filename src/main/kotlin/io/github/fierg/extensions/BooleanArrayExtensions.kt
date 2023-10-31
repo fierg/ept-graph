@@ -53,3 +53,28 @@ fun BooleanArray.applyPeriod(other: BooleanArray, state: Boolean) {
         offset += other.size
     }
 }
+
+/*
+Lets you apply the & operator for BooleanArrays iff they are of same size.
+ */
+operator fun BooleanArray.plus(other: BooleanArray): BooleanArray {
+    if (this.size != other.size) throw IllegalArgumentException("Arrays are not of same size.")
+    val result = BooleanArray(this.size)
+    for (i in indices) {
+        result[i] = this[i] && other[i]
+    }
+    return result
+}
+
+operator fun BooleanArray.minus(other: BooleanArray): BooleanArray {
+    if (this.size != other.size) throw IllegalArgumentException("Arrays are not of same size.")
+    val result = BooleanArray(this.size)
+    for (i in indices) {
+        result[i] = this[i] && !other[i]
+    }
+    return result
+}
+
+fun BooleanArray.getString(): String {
+    return this.map { if (it) "1" else "0" }.toString()
+}

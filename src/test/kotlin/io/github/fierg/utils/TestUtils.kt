@@ -19,6 +19,18 @@ class TestUtils {
     }
 
     @Test
+    fun testUtils2b() {
+        val number = 8
+        val factors = number.factors().toList()
+        Logger.info("Factors of $number are $factors")
+        Logger.info("Max Divisors of $number are ${number.maximalDivisors().toList()}")
+
+        val expectedFactors = listOf(1,2,4,8)
+
+        assert(factors == expectedFactors)
+    }
+
+    @Test
     fun testUtils22() {
         val number = 28
         val factors = number.factors().toList()
