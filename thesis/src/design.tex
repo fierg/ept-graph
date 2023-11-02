@@ -238,7 +238,7 @@ TODO: outlier handling
 TODO: gather idea for 'explainablity' of a temporal or ept graph..
 
 \subsection{Short Factors}
-Searching for a decomposition using only the maximal divisors of $|Q|$, provides good solutions in \LogSpace, but there are certain limitations. Consider for example the following trivial \DFA $A$ with its factors $A_2$ and $A_4$. Since for this \DFA, $|Q| = 8$, the only maximal divisor is 4 so the factor $A_4$ will be found be the original algorithm. In this particular example, there exists a smaller factor with size 2, $A_2$ which will only be found if checking all factors of $|Q|$.
+Searching for a decomposition using only the maximal divisors of $|Q|$, provides good solutions in \LogSpace, but there are certain limitations. Consider for example the following trivial \DFA $A$ with its factors $A_2$ and $A_4$. Since for this \DFA, $|Q| = 8$, the only maximal divisor is 4 so the factor $A_4$ will be found be the original algorithm. In this particular example, there exists a smaller factor with size 2, $A_2$ which will only be found if checking all factors of $|Q|$ instead of only the maximal divisors.
 
 
 \begin{figure}[h]
@@ -291,6 +291,12 @@ Searching for a decomposition using only the maximal divisors of $|Q|$, provides
 	\caption{The DFA $A$ and its factors $A_4$ \& $A_2$}
 	\label{fig:short-factors}
 \end{figure}
+
+TODO: Complexity if all divisors are used instead of maximal divisors
+
+
+Given a positive integer $n$, let $d(n)$ denote the number of divisors of $n$ (including 1 and $n$), thus for instance $d(6)=4$, and more generally, if $n$ has a prime factorization $n = p_1^{a_1} \ldots p_k^{a_k}$ then by the fundamental theorem of arithmetic $d(n) = (a_1+1) \ldots (a_k+1)$. Clearly, $d(n) \leq n$ and therefore $d(n) = n^{o(1)}$.  
+
 
 \subsection{Fourier Transform}
 
