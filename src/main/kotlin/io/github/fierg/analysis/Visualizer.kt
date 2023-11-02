@@ -1,11 +1,28 @@
 package io.github.fierg.analysis
 
+import io.github.fierg.algo.Decomposer
+import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.reversed
+import io.github.fierg.logger.Logger
+import io.github.fierg.model.options.Options
+import io.github.fierg.model.result.Cover
+import io.github.fierg.model.style.DefaultPlotStyle.Companion.DEFAULT_HEIGHT
+import io.github.fierg.model.style.DefaultPlotStyle.Companion.DEFAULT_WIDTH
+import io.github.fierg.model.style.DefaultPlotStyle.Companion.defaultPieCharConfig
+import io.github.fierg.model.style.DefaultPlotStyle.Companion.defaultStyle
+import io.github.fierg.model.style.PieChartStyle
 import jetbrains.datalore.plot.PlotSvgExport
 import org.jetbrains.letsPlot.GGBunch
+import org.jetbrains.letsPlot.annotations.layerLabels
 import org.jetbrains.letsPlot.export.ggsave
+import org.jetbrains.letsPlot.geom.geomPie
+import org.jetbrains.letsPlot.geom.geomPoint
+import org.jetbrains.letsPlot.ggsize
 import org.jetbrains.letsPlot.intern.Plot
 import org.jetbrains.letsPlot.intern.toSpec
+import org.jetbrains.letsPlot.label.ggtitle
+import org.jetbrains.letsPlot.letsPlot
+import org.jetbrains.letsPlot.tooltips.tooltipsNone
 import java.awt.Desktop
 import java.io.File
 
@@ -46,12 +63,18 @@ class Visualizer {
             openPlotAsFile(content)
         }
 
-        /*
-        fun createPieChartOfOccurrences(result: Decomposition, options: Options, style: PieChartStyle = defaultStyle, showLegend: Boolean = true, width: Int = DEFAULT_WIDTH): Plot {
-            val sortedMap = result
+        private fun getPeriodLengthsFromResult(result: List<List<Cover>>): List<Int> {
+            val periodLengths = mutableSetOf<Int>()
+            result.flatten().forEach { cover ->
+                cover.factors.forEach { factor -> periodLengths.add(factor.cover.size) }
+            }
+            return periodLengths.toList()
+        }
+
+        fun createPieChartOfOccurrences(result: List<List<Cover>>, options: Options, style: PieChartStyle = defaultStyle, showLegend: Boolean = true, width: Int = DEFAULT_WIDTH): Plot {
             val data = mapOf<String, List<Int>>(
-                "period length" to sortedMap.keys.toList(),
-                "covered values" to sortedMap.values.toList()
+                "period length" to getPeriodLengthsFromResult(result),
+                "covered values" to emptyList<Int>()
             )
 
             val mappedData = mapOf<String, MutableList<Any>>(
@@ -90,7 +113,9 @@ class Visualizer {
             }
         }
 
-         */
-
+        fun createCoverByFactorPlot(flatten: List<Cover>): Plot {
+            TODO("Not yet implemented")
+            //letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Point Chart") + geomPoint(size = 2.0) { x = "name"; y = "value" }
+        }
     }
 }

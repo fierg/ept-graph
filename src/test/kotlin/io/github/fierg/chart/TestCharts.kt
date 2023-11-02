@@ -27,6 +27,11 @@ class TestCharts {
 
     private val data2 = mapOf("name" to listOf("a", "b", "c", "d", "b"), "value" to listOf(40, 90, 10, 50, 20))
 
+    private val data3 = mapOf(
+        "name" to listOf("1", "2", "4", "4"),
+        "value" to listOf(0.25, 0.5, 0.75, 1)
+    )
+
     @Test
     fun testPieChart() {
         Logger.debug("Test generation of pie chart 1 ...")
@@ -54,7 +59,7 @@ class TestCharts {
     }
 
     @Test
-    fun testPieChart3(){
+    fun testPieChart3() {
         Logger.debug("Test generation of pie chart 3 ...")
         val plot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Pie Chart") +
                 blankTheme +
@@ -66,12 +71,14 @@ class TestCharts {
     }
 
     @Test
-    fun testPieChartPPCT(){
+    fun testPieChartPPCT() {
         Logger.debug("Test generation of ppct chart ...")
         val plot = letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Pie Chart") +
                 blankTheme +
-                geomPie(hole = 0.2, size = 20, stroke = 1.0, tooltips = tooltipsNone,
-                    labels = layerLabels("..proppct..").format("..proppct..", "{.1f}%").size(15))
+                geomPie(
+                    hole = 0.2, size = 20, stroke = 1.0, tooltips = tooltipsNone,
+                    labels = layerLabels("..proppct..").format("..proppct..", "{.1f}%").size(15)
+                )
                 { fill = "name"; weight = "value"; slice = "value" } +
                 scaleFillBrewer(palette = "Set1")
 
@@ -79,21 +86,23 @@ class TestCharts {
     }
 
     @Test
-    fun testPieChartPPCT2(){
+    fun testPieChartPPCT2() {
         Logger.debug("Test generation ppct pie chart 2 ...")
-        val plot = letsPlot(data2) + scaleFillManual(values = listOf("#61BAFF", "#04FF00", "#91FF00","#d4FF00", "#FF9500", "#FF0000")) +
+        val plot = letsPlot(data2) + scaleFillManual(values = listOf("#61BAFF", "#04FF00", "#91FF00", "#d4FF00", "#FF9500", "#FF0000")) +
                 ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Pie Chart") +
                 blankTheme +
-                geomPie(size = 20, stroke = 1.0, tooltips = tooltipsNone, showLegend = false,
-                    labels = layerLabels().line("@name").line("(@{..prop..})").format("..prop..", ".0%").size(10))
-                { fill = "name"; weight = "value"; slice = "value"}
+                geomPie(
+                    size = 20, stroke = 1.0, tooltips = tooltipsNone, showLegend = false,
+                    labels = layerLabels().line("@name").line("(@{..prop..})").format("..prop..", ".0%").size(10)
+                )
+                { fill = "name"; weight = "value"; slice = "value" }
 
         Visualizer.savePlotToFile("test.png", plot, "test-plots")
     }
 
 
     @Test
-    fun testHistogramChart(){
+    fun testHistogramChart() {
         Logger.debug("Test generation of histogram and plots ...")
         val plot1 = letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Point Chart") + geomPoint(size = 2.0) { x = "name"; y = "value" }
         val plot2 = letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Histogram Chart") + geomHistogram { x = "name"; y = "value" }
@@ -102,4 +111,13 @@ class TestCharts {
         Visualizer.savePlotToFile("test-histo.png", plot2, "test-plots")
 
     }
+
+    @Test
+    fun testCoverByFactorPlot() {
+        Logger.debug("Test generation of cover by factor plot ...")
+        val plot1 = letsPlot(data3) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Point Chart") + geomPoint(size = 2.0) { x = "name"; y = "value" }
+
+        Visualizer.savePlotToFile("test-cover-factor.png", plot1, "test-plots")
+    }
+
 }

@@ -1,5 +1,6 @@
 package io.github.fierg.algo
 
+import io.github.fierg.data.F2FReader
 import io.github.fierg.exceptions.NoCoverFoundException
 import io.github.fierg.extensions.*
 import io.github.fierg.graph.EPTGraph
@@ -7,7 +8,6 @@ import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.model.options.Operator
 import io.github.fierg.model.options.Options
-import io.github.fierg.model.result.CleanQuotient
 import io.github.fierg.model.result.Factor
 import io.github.fierg.model.result.Cover
 import kotlinx.coroutines.*
@@ -21,8 +21,8 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
     private var singleDebugLog = true
     private var nrDigits = 3
 
-    fun findComposite(graph: EPTGraph): Set<Cover> {
-        val covers = mutableSetOf<Cover>()
+    fun findComposite(graph: EPTGraph): List<Cover> {
+        val covers = mutableListOf<Cover>()
 
         graph.edges.forEach { edge ->
             try {
@@ -60,13 +60,19 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
 
     fun analyzeCover(result: Cover) {
         Logger.info(
-            "Found decomposition with ${String.format("%${nrDigits}d", (result.periodSize.toDouble() / result.target.size * 100).toInt())}% original size (${String.format("%${nrDigits}d", result.periodSize)}), " +
+            "Found decomposition with ${String.format("%${nrDigits}d", (result.size.toDouble() / result.target.size * 100).toInt())}% original size (${
+                String.format(
+                    "%${nrDigits}d",
+                    result.size
+                )
+            }), " +
                     "covered ${String.format("%${nrDigits}d", (result.totalValues - result.outliers.size))}/${String.format("%${nrDigits}d", result.totalValues)} values, " +
                     "resulting in ${String.format("%${nrDigits}d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)."
         )
-        Logger.debug("Cover: ${result.target.getString()}")
-        result.factors.forEach {factor ->
-            Logger.debug("Factor: $factor -> Outliers: ${factor.outliers}")
+        Logger.debug("Target:\t ${result.target.getBinaryString()}")
+        Logger.debug("Cover:\t ${result.getCoverArray().getBinaryString()}")
+        result.factors.forEach { factor ->
+            Logger.debug("Factor:\t $factor -> Outliers: ${factor.outliers}")
         }
     }
 
@@ -80,6 +86,7 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
                 }
                 Logger.warn("No Exact Cover with max divisors only possible! Hard outliers (${cover.outliers.size})")
             }
+
             CompositionMode.SHORTEST_PERIODS -> {
                 periods.forEach { size ->
                     cover.addFactor(factors[factorIndex[size]!!], skipFactorIfNoChangesOccur = true)
@@ -87,19 +94,22 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
                 }
                 Logger.warn("No Exact Cover with threshold $threshold possible! Hard outliers (${cover.outliers.size})")
             }
+
             CompositionMode.FOURIER_TRANSFORM -> {
                 periods.forEach { size ->
                     cover.addFactor(factors[factorIndex[size]!!])
                     if (cover.outliers.size == 0) {
-                        cover.fourierTransform(factorIndex)
+                        cover.fourierTransform()
                         return cover
                     }
                 }
                 Logger.warn("No Exact Cover possible! Hard outliers (${cover.outliers.size})")
             }
+
             CompositionMode.CLEAN_QUOTIENTS -> {
-                factors.forEach { factor -> Logger.debug("${factor.cover.map { if (it) "1" else "0"  }}") }
-                periods.forEach {size ->
+                Logger.debug("Found Clean Quotients:")
+                factors.forEach { factor -> Logger.debug("${factor.cover.map { if (it) "1" else "0" }}") }
+                periods.forEach { size ->
                     if (size > 1) {
                         cover.addFactor(factors[factorIndex[size]!!])
                         if (cover.outliers.size == 0) {
@@ -133,7 +143,7 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
             val modIndex = index % factorSize
             if (input[index] == stateToReplace) coverArray[modIndex] = stateToReplace
         }
-        factors[factorIndex] = Factor(coverArray, emptyList())
+        factors[factorIndex] = Factor(coverArray, Factor.getOutliersForCleanQuotients(input, stateToReplace, listOf(coverArray)))
         return@async
     }
 
@@ -163,9 +173,8 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
 
     private fun getFactorSequence(input: Int): Sequence<Int> {
         return when (mode) {
-            CompositionMode.SHORTEST_PERIODS, CompositionMode.FOURIER_TRANSFORM -> input.factors()
+            CompositionMode.SHORTEST_PERIODS, CompositionMode.FOURIER_TRANSFORM, CompositionMode.CLEAN_QUOTIENTS -> input.factors()
             CompositionMode.MAX_DIVISORS -> input.maximalDivisors()
-            CompositionMode.CLEAN_QUOTIENTS -> input.upTo()
         }
     }
 
@@ -177,5 +186,15 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
             CompositionMode.FOURIER_TRANSFORM -> Logger.info("Trying to find most explainable factors using fourier transform.")
             CompositionMode.CLEAN_QUOTIENTS -> Logger.info("Trying to find clean quotients.")
         }
+    }
+
+    fun analyzeAllGraphs(upTo: Int): List<List<Cover>> {
+        val result = mutableListOf<List<Cover>>()
+        for (i in 0..upTo) {
+            val f2fGraph = F2FReader().getF2FNetwork(0)
+            result.add(findComposite(f2fGraph))
+        }
+
+        return result
     }
 }

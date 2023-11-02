@@ -99,6 +99,7 @@ class TestDecomposition {
         val edge = f2fGraph.edges.elementAt(6)
         val decomposition = Decomposer(state = true, mode = CompositionMode.MAX_DIVISORS)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
+        Decomposer(state = true, threshold = 0.5).analyzeCover(cover)
 
         assert(cover.getPrecision() < 1.0)
     }
@@ -130,6 +131,7 @@ class TestDecomposition {
         val edge = f2fGraph.edges.elementAt(6)
         val decomposition = Decomposer(state = true, mode = CompositionMode.FOURIER_TRANSFORM)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
+        Decomposer(state = true, threshold = 0.5).analyzeCover(cover)
 
         assert(cover.getPrecision() == 1.0)
     }
@@ -148,7 +150,7 @@ class TestDecomposition {
         val periods = Decomposer(state = state, threshold = 0.5).findCover(array)
         val expectedFactors = mutableListOf(Factor(arrayOf(true, false, false), listOf(4)))
         val expectedPeriods = Cover(array, !state, 3, 3, mutableListOf(4), expectedFactors)
-
+        Decomposer(state = state, threshold = 0.5).analyzeCover(periods)
         assert(periods == expectedPeriods)
     }
 
@@ -162,6 +164,7 @@ class TestDecomposition {
             Factor(arrayOf(true, false, false, true, true, false), listOf())
         )
         val expectedPeriods = Cover(array, !state, 3, 6, mutableListOf(), expectedFactors)
+        Decomposer(state = state, threshold = 0.5).analyzeCover(periods)
 
         assert(periods == expectedPeriods)
     }
@@ -171,6 +174,7 @@ class TestDecomposition {
         val input = BooleanArray(16) { true }
         val cover = Decomposer(state = false).findCover(input)
         val expectedFactors = mutableListOf(Factor(arrayOf(true), listOf()))
+        Decomposer(state = false, threshold = 0.5).analyzeCover(cover)
 
         assert(cover == Cover(input, true, 16, 1, mutableListOf(), expectedFactors))
     }

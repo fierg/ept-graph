@@ -75,6 +75,6 @@ operator fun BooleanArray.minus(other: BooleanArray): BooleanArray {
     return result
 }
 
-fun BooleanArray.getString(): String {
+fun BooleanArray.getBinaryString(): String {
     return this.map { if (it) "1" else "0" }.toString()
 }
