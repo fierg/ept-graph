@@ -10,7 +10,7 @@ data class Cover(
     val target: BooleanArray,
     val stateToReplace: Boolean,
     val totalValues: Int,
-    var periodSize: Int,
+    var size: Int,
     var outliers: MutableList<Int>,
     val factors: MutableList<Factor>,
     val operator: Operator = Operator.OR
@@ -28,48 +28,49 @@ data class Cover(
         operator
     )
 
-    fun addFactor(factor: Factor, skipFactorIfNoChangesOccur: Boolean = false) {
-        if (!skipFactorIfNoChangesOccur || factor.outliers.size < lastOutlierSize) {
-            factors.add(factor)
-            periodSize = factor.cover.size
-
-            when (this.operator) {
-                Operator.OR -> {
+    fun addFactor(factor: Factor, skipFactorIfNoChangesOccur: Boolean = true) {
+        when (this.operator) {
+            Operator.OR -> {
+                if (!skipFactorIfNoChangesOccur || factor.outliers.size < lastOutlierSize) {
+                    factors.add(factor)
+                    size = factor.cover.size
                     lastOutlierSize = factor.outliers.size
                     outliers.removeIfNotIncludedIn(factor.outliers)
                 }
-                Operator.AND -> {
-                    recompute()
+            }
+
+            Operator.AND -> {
+                if (!skipFactorIfNoChangesOccur || !outliers.any { factor.outliers.contains(it) }) {
+                    factors.add(factor)
+                    size = factor.cover.size
+                    outliers = Factor.getOutliersForCleanQuotients(target, stateToReplace, factors.map { it.cover })
                 }
             }
         }
-    }
-
-    private fun recompute() {
-        outliers = mutableListOf()
-        target.forEachIndexed { index, state ->
-            if (state == stateToReplace){
-                if (factors.any { factor -> factor.get(index) != stateToReplace })
-                    outliers.add(index)
-            } else {
-                if (factors.all { factor -> factor.get(index) == stateToReplace })
-                    outliers.add(index)
-            }
-        }
-        Logger.debug("Current factors: $factors -> outliers: $outliers")
     }
 
     fun getPrecision() = (totalValues - outliers.size).toDouble() / totalValues
 
     fun getCoverArray(): BooleanArray {
         val cover = BooleanArray(target.size) { !stateToReplace }
-        factors.forEach { factor ->
-            cover.applyPeriod(factor.cover, stateToReplace)
+        when (operator) {
+            Operator.OR -> {
+                factors.forEach { factor ->
+                    cover.applyPeriod(factor.cover, stateToReplace)
+                }
+            }
+            Operator.AND ->{
+                cover.indices.forEach { index ->
+                    if (factors.all { it.cover[index % it.cover.size] }) cover[index] = true
+                }
+            }
         }
         return cover
     }
 
-    fun fourierTransform(factorIndex: Map<Int, Int>) {
+    fun fourierTransform() {
+        //Clean factors of multiples, e.g. if 10 and 101110 are both factors, 10 and 000100 are considered clean factors.
+        val factorIndex = factors.mapIndexed { index, factor -> factor.cover.size to index }.toMap()
         getMultiplesOfPeriods(factors.map { it.cover.size }).forEach { entry ->
             entry.value.forEach { multiple ->
                 factors[factorIndex[multiple]!!].cover = cleanFactor(factors[factorIndex[entry.key]!!].cover, factors[factorIndex[multiple]!!].cover)
@@ -78,7 +79,7 @@ data class Cover(
     }
 
     fun cleanFactor(pureFactor: BooleanArray, dirtyFactor: BooleanArray): BooleanArray {
-        val extendedPureFactor = BooleanArray(dirtyFactor.size) {!stateToReplace}
+        val extendedPureFactor = BooleanArray(dirtyFactor.size) { !stateToReplace }
         extendedPureFactor.applyPeriod(pureFactor, stateToReplace)
         return dirtyFactor - extendedPureFactor
     }
@@ -109,7 +110,7 @@ data class Cover(
         if (!target.contentEquals(other.target)) return false
         if (stateToReplace != other.stateToReplace) return false
         if (totalValues != other.totalValues) return false
-        if (periodSize != other.periodSize) return false
+        if (size != other.size) return false
         if (outliers != other.outliers) return false
         return factors == other.factors
     }
@@ -118,7 +119,7 @@ data class Cover(
         var result = target.contentHashCode()
         result = 31 * result + stateToReplace.hashCode()
         result = 31 * result + totalValues
-        result = 31 * result + periodSize
+        result = 31 * result + size
         result = 31 * result + outliers.hashCode()
         result = 31 * result + factors.hashCode()
         return result
