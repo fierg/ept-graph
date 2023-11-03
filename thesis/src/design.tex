@@ -234,26 +234,21 @@ Regarding the complexity of the given algorithm, since given 2 divisors $i^1$ an
 TODO: outlier handling
 
 \section{Explainability metrics \& measurement}
+Understanding and interpreting labels in edge periodic temporal graphs is essential for various applications, such as network analysis, system monitoring, and predictive modeling. However, assessing the ease with which humans can comprehend these labels presents a unique challenge. In this context, we propose a comprehensive metric to measure the \enquote{explainability} of such labels, taking into account multiple factors that influence their possibility to interpret. Our metric Explainability, denoted as $\mathcal{E}$, is defined as a weighted combination of the following components:
 
-TODO: gather idea for 'explainablity' of a temporal or ept graph..
+\textbf{Label Size ($s = \frac{\text{factor size}}{\text{original size}}$) }: The label size is a fundamental factor in assessing explainability. A smaller label, in relation to the original size, often implies a more concise representation. A label that is more compact is generally easier for humans to understand, as it conveys information succinctly. Larger labels may overwhelm human observers with excessive detail.
 
-Understanding and interpreting labels in edge periodic temporal graphs is essential for various applications, such as network analysis, system monitoring, and predictive modeling. However, assessing the ease with which humans can comprehend these labels presents a unique challenge. In this context, we propose a comprehensive metric to measure the "explainability" of such labels, taking into account multiple factors that influence their possibility to interpret. Our metric, denoted as Explainability, is defined as a weighted combination of the following components:
+\textbf{Periodicity ($P = \frac{|\text{outliers}|}{|\text{values to cover}|}$)}: Periodicity refers to the regularity of patterns in the label across different time steps. A label that exhibits a clear and consistent periodicity allows human observers to anticipate when changes in connectivity occur. This predictability aids in comprehending the temporal dynamics of the graph. Few outliers which cannot be covered by any factor imply a high periodicity.
 
-\textbf{Label Size ($s$)}: The label size is a fundamental factor in assessing explainability. A smaller label, in terms of the number of bits or characters, often implies a more concise representation. A label that is more compact is generally easier for humans to understand, as it conveys information succinctly. Larger labels may overwhelm human observers with excessive detail.
+\textbf{Label Structure ($LS = |\text{factors of decomposition}|$)}: The label structure takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels. Labels with multiple shorter segments may facilitate explanation, as they enable a more granular understanding of connectivity changes at different time steps. For example, dividing the label into daily or weekly segments could aid in interpreting temporal patterns. This generally implies more factors is better that few factors.
 
-\textbf{Periodicity ($P$)}: Periodicity refers to the regularity of patterns in the label across different time steps. A label that exhibits a clear and consistent periodicity allows human observers to anticipate when changes in connectivity occur. This predictability aids in comprehending the temporal dynamics of the graph.
-
-\textbf{Label Structure ($LS$)}: The label structure takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels. Labels with multiple shorter segments may facilitate explanation, as they enable a more granular understanding of connectivity changes at different time steps. For example, dividing the label into daily or weekly segments could aid in interpreting temporal patterns.
-
-\textbf{Connectivity Change Rate ($CCR$)}: The connectivity change rate quantifies the frequency of transitions between 0 (indicating no connection) and 1 (indicating a connection) within the label. Labels with gradual transitions and fewer abrupt changes are generally easier to explain. Sudden, frequent changes in connectivity can be challenging to interpret.
-
-The overall \textbf{Explainability ($E$)} of a graph label is calculated as a weighted sum of these components, allowing for customization based on specific use cases and preferences. The composite metric is expressed as follows:
+The overall \textbf{Explainability ($\mathcal{E}$)} of a graph label is calculated as a weighted sum of these components, allowing for customization based on specific use cases and preferences. The composite metric is expressed as follows:
 
 \[
-E = w1 * LS + w2 * P + w3 * LS + w4 * CCR
+\mathcal{E} = w1 * \frac{1}{s} + w2 * P + w3 * LS
 \]
 
-Here, $w1, w2, w3$, and $w4$ represent weight coefficients assigned to each component, determined based on the importance attributed to that factor in the context of the particular application. Assessing the explainability of graph labels in edge periodic temporal graphs is crucial for effective human interpretation and decision-making. This proposed metric offers a structured approach to measure explainability, allowing for customization and adaptability to diverse scenarios. By considering label size, periodicity, label structure, and connectivity change rate, it enables a more holistic evaluation of label interpretability and enhances the usability of edge periodic temporal graphs in practical applications.
+Here, $w1, w2$ and $w3$ represent weight coefficients assigned to each component, determined based on the importance attributed to that factor in the context of the particular application. Assessing the explainability of graph labels in edge periodic temporal graphs is crucial for effective human interpretation and decision-making. This proposed metric offers a structured approach to measure explainability, allowing for customization and adaptability to diverse scenarios. By considering label size, periodicity, label structure, and connectivity change rate, it enables a more holistic evaluation of label interpretability and enhances the usability of edge periodic temporal graphs in practical applications.
 
 \subsection{Short Factors}
 Searching for a decomposition using only the maximal divisors of $|Q|$, provides good solutions in \LogSpace, but there are certain limitations. Consider for example the following trivial \DFA $A$ with its factors $A_2$ and $A_4$. Since for this \DFA, $|Q| = 8$, the only maximal divisor is 4 so the factor $A_4$ will be found be the original algorithm. In this particular example, there exists a smaller factor with size 2, $A_2$ which will only be found if checking all factors of $|Q|$ instead of only the maximal divisors.
@@ -318,6 +313,17 @@ Given a positive integer $n$, let $d(n)$ denote the number of divisors of $n$ in
 
 
 \section{Modified Decomposition Problem}
+The original problem was solvable in \LogSpace, but extending the problem to e.g. the Fourier-transformed factors, we face a different problem. Finding all the factors is fast but choosing which factors are actually required in the decomposition, is not. This problem can be described as:
+
+Given an input $u = 101101\dots$ as binary word, and integer $k$ and the set of found factors $w_1, w_2, \dots, w_n$ with $l(u) > l(w_n) ~\forall n$ and $\#1(w_n) = 1 ~\forall n$. Find indices $i_1, i_2 \dots i_k$ such that
+\[
+w_{i_1}, w_{i_1}, \dots, w_{i_1} \cup_k = u\]
+
+To reduce the problem you described to the Set Cover problem, we'll create a Set Cover instance as follows: The universe $U$ will consist of all possible $k$-length binary words that can be formed. There are $2^k$ such words.
+For each word $w_i$ in the given set of words $w$, create a corresponding subset $C_i$ of $U$. This subset contains all $k$-length binary words that can be formed by choosing $k$ indices $i_1, i_2 \dots i_k$. The Set Cover problem now involves finding the minimum number of subsets from $C$ that cover the entire universe $U$. Now, the goal is to show that if we can efficiently solve the Set Cover problem for this constructed instance, we can efficiently solve the original problem:
+
+If the Set Cover problem finds a cover of size $k$, it means there is a set of indices $i_1, i_2, \dots, i_k$ that chooses from the words $w_i$ such that $w_{i_1}, w_{i_2}, \dots, w_{i_k}$ can form the same binary word as $u$, which satisfies the original problem. Conversely, if you can efficiently solve the original problem and find a set of indices $i_1, i_2, \dots, i_k$ that chooses from the words $w_i$ to form $u$, then the corresponding subsets $C_i$ in the constructed Set Cover instance cover the entire universe $U$. This means you've found a Set Cover of size $k$. This reduction demonstrates that solving the original problem is at least as hard as solving the Set Cover problem. Therefore, if you can efficiently solve Set Cover, you can also efficiently solve the original problem, and vice versa.
+
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{proof-sketches/Screenshot[2]-01.png}
 \end{figure}
