@@ -1,20 +1,22 @@
 package io.github.fierg.model.result
 
+import io.github.fierg.extensions.removeIfNotIncludedIn
+
 /**
  * The `Factor` class represents a factor with a set of boolean values (cover) and a list of outliers.
  * It is a subclass of the `CleanQuotient` class, inheriting its properties and methods.
  *
- * @param cover     The array of boolean values representing the factor.
+ * @param array     The array of boolean values representing the factor.
  * @param outliers  The list of indices representing outliers in the factor.
  */
-class Factor(var cover: BooleanArray, val outliers: List<Int>) : CleanQuotient(cover) {
+class Factor(var array: BooleanArray, val outliers: List<Int>) {
     /**
      * Constructs a `Factor` object using a boolean array to represent the cover and a list of outliers.
      *
      * @param cover     The array of boolean values representing the factor.
      * @param outliers  The list of indices representing outliers in the factor.
      */
-    constructor(cover: Array<Boolean>, outliers: List<Int>) : this(cover = cover.toBooleanArray(), outliers)
+    constructor(cover: Array<Boolean>, outliers: List<Int>) : this(array = cover.toBooleanArray(), outliers)
 
     companion object {
 
@@ -47,7 +49,7 @@ class Factor(var cover: BooleanArray, val outliers: List<Int>) : CleanQuotient(c
      * @return A string representation of the `Factor` object.
      */
     override fun toString(): String {
-        return "${cover.map { if (it) "1" else "0" }}"
+        return "${array.map { if (it) "1" else "0" }}"
         //return "${cover.size}:${outliers.size}"
     }
 
@@ -58,6 +60,29 @@ class Factor(var cover: BooleanArray, val outliers: List<Int>) : CleanQuotient(c
      * @return The boolean value at the specified index in the cover array.
      */
     fun get(index: Int): Boolean {
-        return cover[index % cover.size]
+        return array[index % array.size]
+    }
+
+    fun getRelativeSize(cover: Cover): Double {
+        return array.size.toDouble() / cover.target.size
+    }
+
+    fun getRelativeCoveredValues(cover: Cover): Double {
+        val outliers = cover.target.indices.filter { cover.target[it] == cover.stateToReplace }.toMutableList()
+        val outliersOfFactors = cover.factors.subList(0, cover.factors.indexOf(this) + 1).map { it.outliers }
+        outliersOfFactors.forEach { outliersList ->
+            outliers.removeIfNotIncludedIn(outliersList)
+        }
+        return cover.getRelativeCoveredValues(outliers)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Factor
+
+        if (!array.contentEquals(other.array)) return false
+        return outliers == other.outliers
     }
 }

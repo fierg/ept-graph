@@ -154,7 +154,7 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
 
             CompositionMode.CLEAN_QUOTIENTS -> {
                 Logger.debug("Found Clean Quotients:")
-                factors.forEach { factor -> Logger.debug("${factor.cover.map { if (it) "1" else "0" }}") }
+                factors.forEach { factor -> Logger.debug("${factor.array.map { if (it) "1" else "0" }}") }
                 periods.forEach { size ->
                     if (size > 1) {
                         cover.addFactor(factors[factorIndex[size]!!])
@@ -284,7 +284,7 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
     fun analyzeAllGraphs(upTo: Int): List<List<Cover>> {
         val result = mutableListOf<List<Cover>>()
         for (i in 0..upTo) {
-            val f2fGraph = F2FReader().getF2FNetwork(0)
+            val f2fGraph = F2FReader().getF2FNetwork(i)
             result.add(findComposite(f2fGraph))
         }
 

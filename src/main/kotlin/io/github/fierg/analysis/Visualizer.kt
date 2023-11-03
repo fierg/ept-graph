@@ -1,7 +1,5 @@
 package io.github.fierg.analysis
 
-import io.github.fierg.algo.Decomposer
-import io.github.fierg.data.F2FReader
 import io.github.fierg.extensions.reversed
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.Options
@@ -51,10 +49,12 @@ class Visualizer {
         }
 
         fun savePlotToFile(filename: String, plot: Plot, path: String = "./plots") {
+            Logger.debug("Saving file $filename to $path.")
             ggsave(plot, filename, path = path)
         }
 
         fun savePlotToFile(filename: String, plot: GGBunch, path: String = "./plots") {
+            Logger.debug("Saving file $filename to $path.")
             ggsave(plot, filename, path = path)
         }
 
@@ -66,15 +66,15 @@ class Visualizer {
         private fun getPeriodLengthsFromResult(result: List<List<Cover>>): List<Int> {
             val periodLengths = mutableSetOf<Int>()
             result.flatten().forEach { cover ->
-                cover.factors.forEach { factor -> periodLengths.add(factor.cover.size) }
+                cover.factors.forEach { factor -> periodLengths.add(factor.array.size) }
             }
             return periodLengths.toList()
         }
 
         fun createPieChartOfOccurrences(result: List<List<Cover>>, options: Options, style: PieChartStyle = defaultStyle, showLegend: Boolean = true, width: Int = DEFAULT_WIDTH): Plot {
-            val data = mapOf<String, List<Int>>(
+            val data = mapOf(
                 "period length" to getPeriodLengthsFromResult(result),
-                "covered values" to emptyList<Int>()
+                "covered values" to emptyList()
             )
 
             val mappedData = mapOf<String, MutableList<Any>>(
@@ -113,9 +113,70 @@ class Visualizer {
             }
         }
 
-        fun createCoverByFactorPlot(flatten: List<Cover>): Plot {
-            TODO("Not yet implemented")
-            //letsPlot(data2) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Point Chart") + geomPoint(size = 2.0) { x = "name"; y = "value" }
+        fun createCoverByFactorPlot(covers: List<Cover>, useAverage: Boolean = false): Plot {
+            val xS = "Rel Factor Size"
+            val yS = "Rel amount of values covered"
+            Logger.info("Collecting values to plot...")
+            val resultMap = mutableMapOf<Double, MutableList<Double>>()
+            covers.forEach { cover ->
+                cover.factors.forEach { factor ->
+                    val size = factor.getRelativeSize(cover)
+                    if (resultMap[size].isNullOrEmpty()) {
+                        resultMap[size] = mutableListOf(factor.getRelativeCoveredValues(cover))
+                    } else {
+                        resultMap[size]!!.add(factor.getRelativeCoveredValues(cover))
+                    }
+                }
+            }
+
+            return generatePointPlot(resultMap, xS, yS, useAverage)
         }
+
+        fun createCoverByDecompositionPlot(covers: List<Cover>, useAverage: Boolean = false): Plot {
+            val xS = "Rel Cover Size"
+            val yS = "Rel amount of values covered"
+            Logger.info("Collecting values to plot...")
+            val resultMap = mutableMapOf<Double, MutableList<Double>>()
+            covers.forEach { cover ->
+                val size = cover.size.toDouble() / cover.target.size
+                if (resultMap[size].isNullOrEmpty()) {
+                    resultMap[size] = mutableListOf(cover.getRelativeCoveredValues())
+                } else {
+                    resultMap[size]!!.add(cover.getRelativeCoveredValues())
+                }
+            }
+
+            return generatePointPlot(resultMap, xS, yS, useAverage)
+        }
+
+        private fun generatePointPlot(resultMap: Map<Double, List<Double>>, xS: String, yS: String, useAverage: Boolean): Plot {
+            val data = if (useAverage) {
+                mapOf(
+                    xS to resultMap.keys.toList(),
+                    yS to resultMap.values.map { it.average() }
+                )
+            } else {
+                val expandedResultList = expandToResultList(resultMap)
+                mapOf(
+                    xS to expandedResultList.map { it.first },
+                    yS to expandedResultList.map { it.second }
+                )
+            }
+
+            Logger.info("Generating plot...")
+            Logger.info("PLOT DATA: $data")
+            return letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("% of Values covered by factor of size x") + geomPoint(size = 2.0) { x = xS; y = yS }
+        }
+
+        private fun expandToResultList(resultMap: Map<Double, List<Double>>): List<Pair<Double, Double>> {
+            val result = mutableListOf<Pair<Double, Double>>()
+            resultMap.entries.forEach { entry ->
+                entry.value.forEach { value ->
+                    result.add(Pair(entry.key, value))
+                }
+            }
+            return result
+        }
+
     }
 }

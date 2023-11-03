@@ -28,7 +28,7 @@ class TestCharts {
     private val data2 = mapOf("name" to listOf("a", "b", "c", "d", "b"), "value" to listOf(40, 90, 10, 50, 20))
 
     private val data3 = mapOf(
-        "name" to listOf("1", "2", "4", "4"),
+        "name" to listOf("1", "2", "4", "8"),
         "value" to listOf(0.25, 0.5, 0.75, 1)
     )
 

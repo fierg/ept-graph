@@ -40,7 +40,7 @@ class TestPaperQuotientExamples {
         val d = Decomposer(options)
         val cover = d.findCover(array)
         d.analyzeCover(cover)
-        val resultingFactors = cover.factors.map { it.cover }
+        val resultingFactors = cover.factors.map { it.array }
         val expectedFactors = listOf(arrayOf(false,true).toBooleanArray(), arrayOf(true,true,false).toBooleanArray())
 
         expectedFactors.forEach { target ->

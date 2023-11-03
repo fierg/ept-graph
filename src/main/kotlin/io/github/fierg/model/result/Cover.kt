@@ -3,7 +3,6 @@ package io.github.fierg.model.result
 import io.github.fierg.extensions.applyPeriod
 import io.github.fierg.extensions.minus
 import io.github.fierg.extensions.removeIfNotIncludedIn
-import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.Operator
 
 /**
@@ -49,6 +48,7 @@ data class Cover(
 
     /**
      * Adds a factor to the cover and updates its properties based on the operator and the factor's outliers.
+     * Assumes factors are added in a sorted manner, from small to large.
      *
      * @param factor                    The factor to add to the cover.
      * @param skipFactorIfNoChangesOccur Whether to skip adding the factor if there are no changes in outliers.
@@ -58,7 +58,7 @@ data class Cover(
             Operator.OR -> {
                 if (!skipFactorIfNoChangesOccur || factor.outliers.size < lastOutlierSize) {
                     factors.add(factor)
-                    size = factor.cover.size
+                    size = factor.array.size
                     lastOutlierSize = factor.outliers.size
                     outliers.removeIfNotIncludedIn(factor.outliers)
                 }
@@ -67,15 +67,15 @@ data class Cover(
             Operator.AND -> {
                 if (!skipFactorIfNoChangesOccur || !outliers.any { factor.outliers.contains(it) }) {
                     factors.add(factor)
-                    size = factor.cover.size
-                    outliers = Factor.getOutliersForCleanQuotients(target, stateToReplace, factors.map { it.cover })
+                    size = factor.array.size
+                    outliers = Factor.getOutliersForCleanQuotients(target, stateToReplace, factors.map { it.array })
                 }
             }
         }
     }
 
     /**
-     * Calculates the precision of the cover based on the total values and outliers.
+     * Calculates the precision of the cover based on the total values to cover and outliers.
      *
      * @return The precision of the cover as a double value.
      */
@@ -91,7 +91,7 @@ data class Cover(
         when (operator) {
             Operator.OR -> {
                 factors.forEach { factor ->
-                    cover.applyPeriod(factor.cover, stateToReplace)
+                    cover.applyPeriod(factor.array, stateToReplace)
                 }
             }
             Operator.AND ->{
@@ -109,10 +109,10 @@ data class Cover(
      */
     fun fourierTransform() {
 
-        val factorIndex = factors.mapIndexed { index, factor -> factor.cover.size to index }.toMap()
-        getMultiplesOfPeriods(factors.map { it.cover.size }).forEach { entry ->
+        val factorIndex = factors.mapIndexed { index, factor -> factor.array.size to index }.toMap()
+        getMultiplesOfPeriods(factors.map { it.array.size }).forEach { entry ->
             entry.value.forEach { multiple ->
-                factors[factorIndex[multiple]!!].cover = cleanFactor(factors[factorIndex[entry.key]!!].cover, factors[factorIndex[multiple]!!].cover)
+                factors[factorIndex[multiple]!!].array = cleanFactor(factors[factorIndex[entry.key]!!].array, factors[factorIndex[multiple]!!].array)
             }
         }
     }
@@ -185,5 +185,9 @@ data class Cover(
         result = 31 * result + outliers.hashCode()
         result = 31 * result + factors.hashCode()
         return result
+    }
+
+    fun getRelativeCoveredValues(outliers: MutableList<Int> = this.outliers): Double {
+        return  ((totalValues - outliers.size).toDouble() / totalValues)
     }
 }
