@@ -6,6 +6,18 @@ import io.github.fierg.extensions.removeIfNotIncludedIn
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.Operator
 
+/**
+ * The `Cover` class represents a cover with various properties, including a target state, state to replace,
+ * total values, size, outliers, a list of factors, and an operator.
+ *
+ * @param target            The boolean array representing the target state.
+ * @param stateToReplace    The boolean value to replace in the cover.
+ * @param totalValues       The total number of values in the cover.
+ * @param size              The size of the cover.
+ * @param outliers          A mutable list of integer indices representing outliers in the cover.
+ * @param factors           A list of associated factors affecting the cover.
+ * @param operator          The logical operator used for combining factors (default is Operator.OR).
+ */
 data class Cover(
     val target: BooleanArray,
     val stateToReplace: Boolean,
@@ -18,6 +30,13 @@ data class Cover(
 
     private var lastOutlierSize = outliers.size
 
+    /**
+     * Constructs a `Cover` object based on the input boolean array, state to replace, and operator.
+     *
+     * @param input             The boolean array representing the cover.
+     * @param stateToReplace    The boolean value to replace in the cover.
+     * @param operator          The logical operator used for combining factors (default is Operator.OR).
+     */
     constructor(input: BooleanArray, stateToReplace: Boolean, operator: Operator = Operator.OR) : this(
         input,
         stateToReplace,
@@ -28,6 +47,12 @@ data class Cover(
         operator
     )
 
+    /**
+     * Adds a factor to the cover and updates its properties based on the operator and the factor's outliers.
+     *
+     * @param factor                    The factor to add to the cover.
+     * @param skipFactorIfNoChangesOccur Whether to skip adding the factor if there are no changes in outliers.
+     */
     fun addFactor(factor: Factor, skipFactorIfNoChangesOccur: Boolean = true) {
         when (this.operator) {
             Operator.OR -> {
@@ -49,8 +74,18 @@ data class Cover(
         }
     }
 
+    /**
+     * Calculates the precision of the cover based on the total values and outliers.
+     *
+     * @return The precision of the cover as a double value.
+     */
     fun getPrecision() = (totalValues - outliers.size).toDouble() / totalValues
 
+    /**
+     * Retrieves a boolean array representing the cover based on the operator and associated factors.
+     *
+     * @return A boolean array representing the cover.
+     */
     fun getCoverArray(): BooleanArray {
         val cover = BooleanArray(target.size) { !stateToReplace }
         when (operator) {
@@ -61,15 +96,19 @@ data class Cover(
             }
             Operator.AND ->{
                 cover.indices.forEach { index ->
-                    if (factors.all { it.cover[index % it.cover.size] }) cover[index] = true
+                    cover[index] = factors.all { it.get(index) }
                 }
             }
         }
         return cover
     }
 
+    /**
+     * Applies a Fourier transform to the factors to clean them of multiples.
+     * Clean factors of multiples, e.g. if 10 and 101110 are both factors, 10 and 000100 are considered clean factors.
+     */
     fun fourierTransform() {
-        //Clean factors of multiples, e.g. if 10 and 101110 are both factors, 10 and 000100 are considered clean factors.
+
         val factorIndex = factors.mapIndexed { index, factor -> factor.cover.size to index }.toMap()
         getMultiplesOfPeriods(factors.map { it.cover.size }).forEach { entry ->
             entry.value.forEach { multiple ->
@@ -78,13 +117,25 @@ data class Cover(
         }
     }
 
+    /**
+     * Cleans a factor by removing all values from the dirty factor which are also covered by the pure factor.
+     *
+     * @param pureFactor    The pure factor to remove from the dirty factor.
+     * @param dirtyFactor   The dirty factor to be cleaned.
+     * @return A cleaned boolean array representing the factor.
+     */
     fun cleanFactor(pureFactor: BooleanArray, dirtyFactor: BooleanArray): BooleanArray {
         val extendedPureFactor = BooleanArray(dirtyFactor.size) { !stateToReplace }
         extendedPureFactor.applyPeriod(pureFactor, stateToReplace)
         return dirtyFactor - extendedPureFactor
     }
 
-
+    /**
+     * Gets the multiples of periods from a list of periods.
+     *
+     * @param periods The list of periods to find multiples for.
+     * @return A map containing periods and their multiples as lists.
+     */
     private fun getMultiplesOfPeriods(periods: List<Int>): Map<Int, List<Int>> {
         val multiples = mutableMapOf<Int, MutableList<Int>>()
         periods.forEach { period ->
@@ -101,6 +152,12 @@ data class Cover(
         return multiples
     }
 
+    /**
+     * Checks if this `Cover` object is equal to another object.
+     *
+     * @param other The object to compare for equality.
+     * @return `true` if the objects are equal, `false` otherwise.
+     */
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -115,6 +172,11 @@ data class Cover(
         return factors == other.factors
     }
 
+    /**
+     * Computes the hash code for this `Cover` object.
+     *
+     * @return The hash code for the object.
+     */
     override fun hashCode(): Int {
         var result = target.contentHashCode()
         result = 31 * result + stateToReplace.hashCode()
