@@ -20,6 +20,8 @@ import org.jetbrains.letsPlot.intern.Plot
 import org.jetbrains.letsPlot.intern.toSpec
 import org.jetbrains.letsPlot.label.ggtitle
 import org.jetbrains.letsPlot.letsPlot
+import org.jetbrains.letsPlot.scale.scaleXContinuous
+import org.jetbrains.letsPlot.scale.scaleYContinuous
 import org.jetbrains.letsPlot.tooltips.tooltipsNone
 import java.awt.Desktop
 import java.io.File
@@ -165,7 +167,9 @@ class Visualizer {
 
             Logger.info("Generating plot...")
             Logger.info("PLOT DATA: $data")
-            return letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("% of Values covered by factor of size x") + geomPoint(size = 2.0) { x = xS; y = yS }
+            return letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("% of Values covered by factor of size x") +
+                    //scaleYContinuous(limits = Pair(0,1)) +
+                    geomPoint(size = 2.0) { x = xS; y = yS }
         }
 
         private fun expandToResultList(resultMap: Map<Double, List<Double>>): List<Pair<Double, Double>> {
