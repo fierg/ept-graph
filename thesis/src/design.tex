@@ -116,7 +116,17 @@ Since $\sim_d$ is coherent with $\sigma$, and therefore $L(A) \subseteq L(A_d)$.
 			(q_5) edge[bend right, above]  node {} (q_0);
 		\end{tikzpicture}		
 	\end{minipage}
-	\begin{minipage}[b]{0.49\textwidth}
+	\begin{minipage}[b]{0.39\textwidth}
+	\centering
+	\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+		\node[state,initial] (q_0)   {$q_0$}; 
+		\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+		\path[->] 
+		(q_0) edge  node {} (q_1)
+		(q_1) edge[bend right, above]  node {} (q_0);
+	\end{tikzpicture}
+\end{minipage}
+	\begin{minipage}[b]{0.59\textwidth}
 		\centering
 		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
 		\node[state,initial,accepting] (q_0)   {$q_0$}; 
@@ -128,16 +138,6 @@ Since $\sim_d$ is coherent with $\sigma$, and therefore $L(A) \subseteq L(A_d)$.
 		(q_2) edge[bend right, above]  node {} (q_0);
 
 \end{tikzpicture}
-	\end{minipage}
-	\begin{minipage}[b]{0.49\textwidth}
-		\centering
-		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
-		\node[state,initial] (q_0)   {$q_0$}; 
-		\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
-		\path[->] 
-		(q_0) edge  node {} (q_1)
-		(q_1) edge[bend right, above]  node {} (q_0);
-		\end{tikzpicture}
 	\end{minipage}
 	\caption{The DFA $A$ and its clean quotients $A_2$ and $A_3$}
 	\label{fig:clean-quotients-example}
@@ -166,20 +166,7 @@ TODO: explain factors vs quotients
 			(q_5) edge[bend right, above]  node {} (q_0);
 		\end{tikzpicture}		
 	\end{minipage}
-	\begin{minipage}[b]{0.49\textwidth}
-		\centering
-		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
-			\node[state,initial] (q_0)   {$q_0$}; 
-			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
-			\node[state](q_2) [right=of q_1] {$q_2$};
-			\path[->] 
-			(q_0) edge  node {} (q_1)
-			(q_1) edge  node {} (q_2)
-			(q_2) edge[bend right, above]  node {} (q_0);
-			
-		\end{tikzpicture}
-		\end{minipage}
-		\begin{minipage}[b]{0.49\textwidth}
+		\begin{minipage}[b]{0.39\textwidth}
 		\centering
 		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
 			\node[state,initial] (q_0)   {$q_0$}; 
@@ -190,6 +177,19 @@ TODO: explain factors vs quotients
 			
 		\end{tikzpicture}
 	\end{minipage}
+	\begin{minipage}[b]{0.59\textwidth}
+	\centering
+	\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+		\node[state,initial] (q_0)   {$q_0$}; 
+		\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+		\node[state](q_2) [right=of q_1] {$q_2$};
+		\path[->] 
+		(q_0) edge  node {} (q_1)
+		(q_1) edge  node {} (q_2)
+		(q_2) edge[bend right, above]  node {} (q_0);
+		
+	\end{tikzpicture}
+\end{minipage}
 	\caption{The DFA $A$ and its factors $A_2$ \& $A_3$}
 	\label{fig:factors-example}
 \end{figure}
@@ -237,9 +237,26 @@ TODO: outlier handling
 
 TODO: gather idea for 'explainablity' of a temporal or ept graph..
 
+Understanding and interpreting labels in edge periodic temporal graphs is essential for various applications, such as network analysis, system monitoring, and predictive modeling. However, assessing the ease with which humans can comprehend these labels presents a unique challenge. In this context, we propose a comprehensive metric to measure the "explainability" of such labels, taking into account multiple factors that influence their possibility to interpret. Our metric, denoted as Explainability, is defined as a weighted combination of the following components:
+
+\textbf{Label Size ($s$)}: The label size is a fundamental factor in assessing explainability. A smaller label, in terms of the number of bits or characters, often implies a more concise representation. A label that is more compact is generally easier for humans to understand, as it conveys information succinctly. Larger labels may overwhelm human observers with excessive detail.
+
+\textbf{Periodicity ($P$)}: Periodicity refers to the regularity of patterns in the label across different time steps. A label that exhibits a clear and consistent periodicity allows human observers to anticipate when changes in connectivity occur. This predictability aids in comprehending the temporal dynamics of the graph.
+
+\textbf{Label Structure ($LS$)}: The label structure takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels. Labels with multiple shorter segments may facilitate explanation, as they enable a more granular understanding of connectivity changes at different time steps. For example, dividing the label into daily or weekly segments could aid in interpreting temporal patterns.
+
+\textbf{Connectivity Change Rate ($CCR$)}: The connectivity change rate quantifies the frequency of transitions between 0 (indicating no connection) and 1 (indicating a connection) within the label. Labels with gradual transitions and fewer abrupt changes are generally easier to explain. Sudden, frequent changes in connectivity can be challenging to interpret.
+
+The overall \textbf{Explainability ($E$)} of a graph label is calculated as a weighted sum of these components, allowing for customization based on specific use cases and preferences. The composite metric is expressed as follows:
+
+\[
+E = w1 * LS + w2 * P + w3 * LS + w4 * CCR
+\]
+
+Here, $w1, w2, w3$, and $w4$ represent weight coefficients assigned to each component, determined based on the importance attributed to that factor in the context of the particular application. Assessing the explainability of graph labels in edge periodic temporal graphs is crucial for effective human interpretation and decision-making. This proposed metric offers a structured approach to measure explainability, allowing for customization and adaptability to diverse scenarios. By considering label size, periodicity, label structure, and connectivity change rate, it enables a more holistic evaluation of label interpretability and enhances the usability of edge periodic temporal graphs in practical applications.
+
 \subsection{Short Factors}
 Searching for a decomposition using only the maximal divisors of $|Q|$, provides good solutions in \LogSpace, but there are certain limitations. Consider for example the following trivial \DFA $A$ with its factors $A_2$ and $A_4$. Since for this \DFA, $|Q| = 8$, the only maximal divisor is 4 so the factor $A_4$ will be found be the original algorithm. In this particular example, there exists a smaller factor with size 2, $A_2$ which will only be found if checking all factors of $|Q|$ instead of only the maximal divisors.
-
 
 \begin{figure}[h]
 	\begin{minipage}[t]{\textwidth}
@@ -264,21 +281,7 @@ Searching for a decomposition using only the maximal divisors of $|Q|$, provides
 			(q_7) edge[bend right, above]  node {} (q_0);
 		\end{tikzpicture}		
 	\end{minipage}
-	\begin{minipage}[b]{0.49\textwidth}
-		\centering
-		\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
-			\node[state,initial] (q_0)   {$q_0$}; 
-			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
-			\node[state](q_2) [right=of q_1] {$q_2$};
-			\node[state,accepting](q_3) [right=of q_2] {$q_3$};
-			\path[->] 
-			(q_0) edge  node {} (q_1)
-			(q_1) edge  node {} (q_2)
-			(q_2) edge  node {} (q_3)
-			(q_3) edge[bend right, above]  node {} (q_0);
-		\end{tikzpicture}
-	\end{minipage}
-	\begin{minipage}[b]{0.49\textwidth}
+	\begin{minipage}[b]{0.39\textwidth}
 	\centering
 	\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
 		\node[state,initial] (q_0)   {$q_0$}; 
@@ -288,14 +291,27 @@ Searching for a decomposition using only the maximal divisors of $|Q|$, provides
 		(q_1) edge[bend right, above]  node {} (q_0);
 	\end{tikzpicture}
 \end{minipage}
+	\begin{minipage}[b]{0.59\textwidth}
+	\centering
+	\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
+		\node[state,initial] (q_0)   {$q_0$}; 
+		\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+		\node[state](q_2) [right=of q_1] {$q_2$};
+		\node[state,accepting](q_3) [right=of q_2] {$q_3$};
+		\path[->] 
+		(q_0) edge  node {} (q_1)
+		(q_1) edge  node {} (q_2)
+		(q_2) edge  node {} (q_3)
+		(q_3) edge[bend right, above]  node {} (q_0);
+	\end{tikzpicture}
+\end{minipage}
 	\caption{The DFA $A$ and its factors $A_4$ \& $A_2$}
 	\label{fig:short-factors}
 \end{figure}
 
 TODO: Complexity if all divisors are used instead of maximal divisors
 
-
-Given a positive integer $n$, let $d(n)$ denote the number of divisors of $n$ (including 1 and $n$), thus for instance $d(6)=4$, and more generally, if $n$ has a prime factorization $n = p_1^{a_1} \ldots p_k^{a_k}$ then by the fundamental theorem of arithmetic $d(n) = (a_1+1) \ldots (a_k+1)$. Clearly, $d(n) \leq n$ and therefore $d(n) = n^{o(1)}$.  
+Given a positive integer $n$, let $d(n)$ denote the number of divisors of $n$ including 1 and $n$, so for example $d(8)=4$. More generally, if $n$ has a prime factorization $n = p_1^{a_1} \ldots p_k^{a_k}$ then by the fundamental theorem of arithmetic $d(n) = (a_1+1) \ldots (a_k+1)$. Clearly, $d(n) \leq n$ and therefore $d(n) = n^{o(1)}$.  
 
 
 \subsection{Fourier Transform}
