@@ -3,7 +3,7 @@ package io.github.fierg.utils
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.DotEnvParser
 import io.github.fierg.data.F2FReader
-import io.github.fierg.model.options.CompositionMode
+import io.github.fierg.model.options.DecompositionMode
 import io.github.fierg.model.options.Options
 import io.github.fierg.model.result.Cover
 import io.github.fierg.model.result.Factor
@@ -86,7 +86,7 @@ class TestDecomposition {
     fun testDecompositionShortestPeriods() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposer(state = false, mode = CompositionMode.SHORTEST_PERIODS, threshold = 0.8)
+        val decomposition = Decomposer(state = false, mode = DecompositionMode.GREEDY_SHORT_FACTORS, threshold = 0.8)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
         decomposition.analyzeCover(cover)
 
@@ -97,7 +97,7 @@ class TestDecomposition {
     fun testDecompositionMaxDivisorsEdge() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposer(state = true, mode = CompositionMode.MAX_DIVISORS)
+        val decomposition = Decomposer(state = true, mode = DecompositionMode.MAX_DIVISORS)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
         Decomposer(state = true, threshold = 0.5).analyzeCover(cover)
 
@@ -107,21 +107,21 @@ class TestDecomposition {
     @Test
     fun testDecompositionMaxDivisorsGraph1() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
-        val decomposition = Decomposer(state = true, mode = CompositionMode.MAX_DIVISORS)
+        val decomposition = Decomposer(state = true, mode = DecompositionMode.MAX_DIVISORS)
         decomposition.findComposite(f2fGraph)
     }
 
     @Test
     fun testDecompositionMaxDivisorsGraph2() {
         val f2fGraph = F2FReader().getF2FNetwork(4)
-        val decomposition = Decomposer(state = true, mode = CompositionMode.MAX_DIVISORS)
+        val decomposition = Decomposer(state = true, mode = DecompositionMode.MAX_DIVISORS)
         decomposition.findComposite(f2fGraph)
     }
 
     @Test
     fun testDecompositionMaxDivisorsGraph3() {
         val f2fGraph = F2FReader().getF2FNetwork(4)
-        val decomposition = Decomposer(state = false, mode = CompositionMode.MAX_DIVISORS)
+        val decomposition = Decomposer(state = false, mode = DecompositionMode.MAX_DIVISORS)
         decomposition.findComposite(f2fGraph)
     }
 
@@ -129,7 +129,7 @@ class TestDecomposition {
     fun testDecompositionFourierEdge() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposer(state = true, mode = CompositionMode.FOURIER_TRANSFORM)
+        val decomposition = Decomposer(state = true, mode = DecompositionMode.FOURIER_TRANSFORM)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
         Decomposer(state = true, threshold = 0.5).analyzeCover(cover)
 
@@ -139,7 +139,7 @@ class TestDecomposition {
     @Test
     fun testDecompositionFourierGraph() {
         val f2fGraph = F2FReader().getF2FNetwork(4)
-        val decomposition = Decomposer(state = false, mode = CompositionMode.FOURIER_TRANSFORM)
+        val decomposition = Decomposer(state = false, mode = DecompositionMode.FOURIER_TRANSFORM)
         decomposition.findComposite(f2fGraph)
     }
 

@@ -5,8 +5,8 @@ import io.github.fierg.exceptions.NoCoverFoundException
 import io.github.fierg.extensions.*
 import io.github.fierg.graph.EPTGraph
 import io.github.fierg.logger.Logger
+import io.github.fierg.model.options.DecompositionMode
 import io.github.fierg.model.options.CompositionMode
-import io.github.fierg.model.options.Operator
 import io.github.fierg.model.options.Options
 import io.github.fierg.model.result.Factor
 import io.github.fierg.model.result.Cover
@@ -20,14 +20,15 @@ import kotlinx.coroutines.*
  * @param deltaWindowAlgo   The delta window algorithm used (default is `0`).
  * @param threshold         The coverage threshold for finding covers (default is `1.0`).
  */
-class Decomposer(state: Boolean = true, private val mode: CompositionMode = CompositionMode.SHORTEST_PERIODS, private val deltaWindowAlgo: Int = 0, private val threshold: Double = 1.0) {
+class Decomposer(state: Boolean = true, private val mode: DecompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS, private val deltaWindowAlgo: Int = 0, private val threshold: Double = 1.0,
+                 private val compositionMode: CompositionMode = CompositionMode.OR) {
 
     /**
      * Constructs a `Decomposer` object based on the provided `Options` object.
      *
      * @param options The `Options` object containing decomposition parameters.
      */
-    constructor(options: Options) : this(options.state, options.compositionMode, options.deltaWindowAlgo, options.threshold)
+    constructor(options: Options) : this(options.state, options.decompositionMode, options.deltaWindowAlgo, options.threshold, options.compositionMode)
 
     private val applyDeltaWindow = deltaWindowAlgo > 0
     private val stateToReplace = !state
@@ -123,9 +124,9 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
      * @return A `Cover` object representing the composite cover.
      */
     private fun getCover(input: BooleanArray, factorIndex: Map<Int, Int>, factors: Array<Factor>, periods: List<Int>): Cover {
-        val cover = Cover(input, stateToReplace, if (this.mode == CompositionMode.CLEAN_QUOTIENTS) Operator.AND else Operator.OR)
+        val cover = Cover(input, stateToReplace, compositionMode)
         when (mode) {
-            CompositionMode.MAX_DIVISORS -> {
+            DecompositionMode.MAX_DIVISORS -> {
                 periods.forEach { size ->
                     cover.addFactor(factors[factorIndex[size]!!])
                     if (cover.outliers.size == 0) return cover
@@ -133,7 +134,7 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
                 Logger.warn("No Exact Cover with max divisors only possible! Hard outliers (${cover.outliers.size})")
             }
 
-            CompositionMode.SHORTEST_PERIODS -> {
+            DecompositionMode.GREEDY_SHORT_FACTORS -> {
                 periods.forEach { size ->
                     cover.addFactor(factors[factorIndex[size]!!], skipFactorIfNoChangesOccur = true)
                     if (cover.getPrecision() >= threshold) return cover
@@ -141,7 +142,7 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
                 Logger.warn("No Exact Cover with threshold $threshold possible! Hard outliers (${cover.outliers.size})")
             }
 
-            CompositionMode.FOURIER_TRANSFORM -> {
+            DecompositionMode.FOURIER_TRANSFORM -> {
                 periods.forEach { size ->
                     cover.addFactor(factors[factorIndex[size]!!])
                     if (cover.outliers.size == 0) {
@@ -150,19 +151,6 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
                     }
                 }
                 Logger.warn("No Exact Cover possible! Hard outliers (${cover.outliers.size})")
-            }
-
-            CompositionMode.CLEAN_QUOTIENTS -> {
-                Logger.debug("Found Clean Quotients:")
-                factors.forEach { factor -> Logger.debug("${factor.array.map { if (it) "1" else "0" }}") }
-                periods.forEach { size ->
-                    if (size > 1) {
-                        cover.addFactor(factors[factorIndex[size]!!])
-                        if (cover.outliers.size == 0) {
-                            return cover
-                        }
-                    }
-                }
             }
         }
         return cover
@@ -181,9 +169,9 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
         val jobs = mutableListOf<Deferred<Unit>>()
 
         for (factor in periods) {
-            when (this.mode) {
-                CompositionMode.CLEAN_QUOTIENTS -> jobs.add(computeCleanQuotients(input, factor, factors, factorIndex[factor]!!))
-                else -> jobs.add(computeFactors(input, factor, factors, factorIndex[factor]!!))
+            when (this.compositionMode) {
+                CompositionMode.AND -> jobs.add(computeFactorWithAndOperator(input, factor, factors, factorIndex[factor]!!))
+                else -> jobs.add(computeFactorWithOrOperator(input, factor, factors, factorIndex[factor]!!))
             }
         }
         runBlocking { jobs.forEach { it.await() } }
@@ -199,7 +187,7 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
      * * @return An array of `Factor` objects representing the factors.
      */
     @OptIn(DelicateCoroutinesApi::class)
-    private fun computeCleanQuotients(input: BooleanArray, factorSize: Int, factors: Array<Factor>, factorIndex: Int) = GlobalScope.async {
+    private fun computeFactorWithAndOperator(input: BooleanArray, factorSize: Int, factors: Array<Factor>, factorIndex: Int) = GlobalScope.async {
         val coverArray = BooleanArray(factorSize) { !stateToReplace }
         for (index in input.indices) {
             val modIndex = index % factorSize
@@ -218,7 +206,7 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
      * @return An array of `Factor` objects representing the factors.
      */
     @OptIn(DelicateCoroutinesApi::class)
-    private fun computeFactors(input: BooleanArray, factorSize: Int, factors: Array<Factor>, factorIndex: Int) = GlobalScope.async {
+    private fun computeFactorWithOrOperator(input: BooleanArray, factorSize: Int, factors: Array<Factor>, factorIndex: Int) = GlobalScope.async {
         val coverArray = BooleanArray(factorSize) { !stateToReplace }
         for (index in 0 until factorSize) {
             if (input[index] == stateToReplace && isPeriodic(input, index, factorSize)) {
@@ -257,8 +245,8 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
      */
     private fun getFactorSequence(input: Int): Sequence<Int> {
         return when (mode) {
-            CompositionMode.SHORTEST_PERIODS, CompositionMode.FOURIER_TRANSFORM, CompositionMode.CLEAN_QUOTIENTS -> input.factors()
-            CompositionMode.MAX_DIVISORS -> input.maximalDivisors()
+            DecompositionMode.GREEDY_SHORT_FACTORS, DecompositionMode.FOURIER_TRANSFORM -> input.factors()
+            DecompositionMode.MAX_DIVISORS -> input.maximalDivisors()
         }
     }
 
@@ -268,10 +256,9 @@ class Decomposer(state: Boolean = true, private val mode: CompositionMode = Comp
     private fun logInfo() {
         Logger.info("Searching for composite... (Looking for $stateToReplace values while decomposing)")
         when (mode) {
-            CompositionMode.SHORTEST_PERIODS -> Logger.info("Trying to find cover with shortest possible factors with at least ${threshold * 100}% coverage.")
-            CompositionMode.MAX_DIVISORS -> Logger.info("Trying to find cover with only the max divisors.")
-            CompositionMode.FOURIER_TRANSFORM -> Logger.info("Trying to find most explainable factors using fourier transform.")
-            CompositionMode.CLEAN_QUOTIENTS -> Logger.info("Trying to find clean quotients.")
+            DecompositionMode.GREEDY_SHORT_FACTORS -> Logger.info("Trying to find cover with shortest possible factors with at least ${threshold * 100}% coverage.")
+            DecompositionMode.MAX_DIVISORS -> Logger.info("Trying to find cover with only the max divisors.")
+            DecompositionMode.FOURIER_TRANSFORM -> Logger.info("Trying to find most explainable factors using fourier transform.")
         }
     }
 

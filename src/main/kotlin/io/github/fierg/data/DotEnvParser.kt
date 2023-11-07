@@ -3,6 +3,7 @@ package io.github.fierg.data
 import io.github.cdimascio.dotenv.dotenv
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.CompositionMode
+import io.github.fierg.model.options.DecompositionMode
 import io.github.fierg.model.options.ENV
 import io.github.fierg.model.options.Options
 
@@ -26,19 +27,27 @@ class DotEnvParser {
             options.quiet = env[ENV.QUIET.name] == "true"
             options.threshold = env[ENV.THRESHOLD.name].toDouble()
 
-            options.compositionMode = when (env[ENV.MODE.name]) {
-                CompositionMode.FOURIER_TRANSFORM.name -> CompositionMode.FOURIER_TRANSFORM
-                CompositionMode.SHORTEST_PERIODS.name -> CompositionMode.SHORTEST_PERIODS
-                CompositionMode.MAX_DIVISORS.name -> CompositionMode.MAX_DIVISORS
-                CompositionMode.CLEAN_QUOTIENTS.name -> CompositionMode.CLEAN_QUOTIENTS
+            options.decompositionMode = when (env[ENV.DECOMPOSITION_MODE.name]) {
+                DecompositionMode.FOURIER_TRANSFORM.name -> DecompositionMode.FOURIER_TRANSFORM
+                DecompositionMode.GREEDY_SHORT_FACTORS.name -> DecompositionMode.GREEDY_SHORT_FACTORS
+                DecompositionMode.MAX_DIVISORS.name -> DecompositionMode.MAX_DIVISORS
                 else -> {
-                    if (env[ENV.MODE.name].isNullOrEmpty()) {
-                        Logger.warn("Composition Mode missing! Running with ${CompositionMode.SHORTEST_PERIODS.name}")
-                        CompositionMode.SHORTEST_PERIODS
+                    if (env[ENV.DECOMPOSITION_MODE.name].isNullOrEmpty()) {
+                        Logger.warn("Decomposition Mode missing! Running with ${DecompositionMode.GREEDY_SHORT_FACTORS.name}")
+                        DecompositionMode.GREEDY_SHORT_FACTORS
                     } else {
-                        Logger.warn("Composition Mode ${env[ENV.MODE.name]} not recognized! Running with ${CompositionMode.SHORTEST_PERIODS.name}")
-                        CompositionMode.SHORTEST_PERIODS
+                        Logger.warn("Decomposition Mode ${env[ENV.DECOMPOSITION_MODE.name]} not recognized! Running with ${DecompositionMode.GREEDY_SHORT_FACTORS.name}")
+                        DecompositionMode.GREEDY_SHORT_FACTORS
                     }
+                }
+            }
+
+            options.compositionMode = when (env[ENV.COMPOSITION_MODE.name]) {
+                CompositionMode.OR.name -> CompositionMode.OR
+                CompositionMode.AND.name -> CompositionMode.AND
+                else -> {
+                    Logger.warn("Composition mode ${env[ENV.COMPOSITION_MODE.name]} not recognized! Running with ${CompositionMode.OR.name}")
+                    CompositionMode.OR
                 }
             }
 
