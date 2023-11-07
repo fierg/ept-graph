@@ -1,7 +1,49 @@
 \chapter{Novel Approaches}
+TODO: motivation
 
-\subsection{Short Factors}
-Searching for a decomposition using only the maximal divisors of $|Q|$, provides good solutions in \LogSpace, but there are certain limitations. Consider for example figure \ref{fig:shor/t-factors} depicting the trivial \DFA $A$ with its factors $A_2$ and $A_4$. Since for this \DFA, $|Q| = 8$, the only maximal divisor is 4 so the factor $A_4$ will be found be the original algorithm. In this particular example, there exists a smaller factor with size 2, $A_2$ which will only be found if checking all factors of $|Q|$ instead of only the maximal divisors.
+TODO: outlier handling
+
+TODO: AND vs OR
+
+
+\section{Greedy Short Factors}
+Usually the algorithms and proofs are considering unary \DFAs consisting of a chain leading into a cycle of states. Since we obtain our \DFAs by transforming from a periodic label, we only have \DFAs with empty chains, therefore only considering unary permutation \DFA. This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683} as seen in Algorithm \ref{algo:composite} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$. Additional we are not only interested in answering the yes/no question of the composite problem but we actually want to collect the factors and continue our computation.
+
+\begin{algorithm}[H]
+	\label{algo:composite}
+	\DontPrintSemicolon
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{getComposite($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, integer k)}{
+		FactorList $\gets \emptyset$\; 
+		\ForEach{binaryString $\in \{0,1\}^{log|Q|}$ with $\leq k$ ones}{
+			\If{isFactor($A$,binaryString)}{FactorList.add(binaryString)}
+		}
+		\KwRet FactorList\;
+	}
+	
+	\Fn{isFactor($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, binaryString)}{
+		\ForEach{$q \in Q \setminus F$}{
+			\If{not cover(A,q,binaryString)}{\KwRet false}
+			\KwRet true
+		}
+	}
+	
+	\Fn{cover($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, binaryString, $q \in Q \setminus F$)}{
+		\ForEach{$i$ with wordCombination[i]=1}{
+			$p_1 \gets i$'th prime divisor of $|Q|$\;
+			\If{cover($A,q,\sigma(q,a^{|Q|/p_i})$)}{\KwRet true}
+		}
+		\KwRet false
+	}
+	
+	\caption{LOGSPACE-algorithm solving the Decomp problem for unary DFAs and returning the factors.}
+\end{algorithm}
+
+TODO: explain algo and difference to original
+
+
+
+Searching for a decomposition using only the maximal divisors of $|Q|$, provides good solutions in \LogSpace, but there are certain limitations. Consider for example figure \ref{fig:short-factors} depicting the trivial \DFA $A$ with its factors $A_2$ and $A_4$. Since for this \DFA, $|Q| = 8$, the only maximal divisor is 4 so the factor $A_4$ will be found be the original algorithm. In this particular example, there exists a smaller factor with size 2, $A_2$ which will only be found if checking all factors of $|Q|$ instead of only the maximal divisors.
 
 \begin{figure}[h]
 	\begin{minipage}[t]{\textwidth}
@@ -54,15 +96,8 @@ Searching for a decomposition using only the maximal divisors of $|Q|$, provides
 	\label{fig:short-factors}
 \end{figure}
 
-TODO: Complexity if all divisors are used instead of maximal divisors
+TODO: fix complexity thoughts
 
-Given a positive integer $n$, let $d(n)$ denote the number of divisors of $n$ including 1 and $n$, so for example $d(8)=4$. More generally, if $n$ has a prime factorization $n = p_1^{a_1} \ldots p_k^{a_k}$ then by the fundamental theorem of arithmetic $d(n) = (a_1+1) \ldots (a_k+1)$. Clearly, $d(n) \leq n$ and therefore $d(n) = n^{o(1)}$.  
-
-
-\subsection{Fourier Transform}
-TODO: describe idea
-
-\section{Modified Decomposition Problem}
 The original problem was solvable in \LogSpace, but extending the problem to e.g. the Fourier-transformed factors, we face a different problem. Finding all the factors is fast but choosing which factors are actually required in the decomposition, is not. This problem can be described as:
 
 Given an input $u = 101101\dots$ as binary word, and integer $k$ and the set of found factors $w_1, w_2, \dots, w_n$ with $l(u) > l(w_n) ~\forall n$ and $\#1(w_n) = 1 ~\forall n$. Find indices $i_1, i_2 \dots i_k$ such that
@@ -78,3 +113,15 @@ If the Set Cover problem finds a cover of size $k$, it means there is a set of i
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{proof-sketches/Screenshot[2]-01.png}
 \end{figure}
+
+
+
+\section{Fourier Transform}
+TODO: describe idea
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "thesis"
+%%% End: 

@@ -9,19 +9,16 @@ A natural number $n > 1$ is called \textit{composite} if it is the product of tw
 
 \textit{A deterministic finite automaton} ($\DFA$) is a 5-tuple $A = \lbrace\Sigma, Q, q_I , \sigma, F\rbrace$, where $\Sigma$ is a finite non-empty alphabet, $Q$ is a finite set of states, $\sigma : Q \times \Sigma \rightarrow Q$ is a transition function, $q_I \in Q$ is the initial state, and $F \subseteq Q$ is a set of accepting states. The states in $Q \backslash F$ are called rejecting states. The transition function $\sigma$ is expanded to words by defining it recursively $\sigma : Q \times \Sigma^* \rightarrow Q$ is $\sigma(q, \epsilon) = q$ and $\sigma(q, w_1, w_2 \dots w_n ) = \sigma(\sigma(q, w_1 w_2 \dots w_{n-1} ), w_n )$. The \textit{run} of $A$ on a word $w = w_1 \dots w_n$ is the sequence of states $s_0 , s_1 , \dots , s_n$ such that $s_0 = q_I$ and for each $1 \leq i \leq n$ it holds that $\sigma(s_{i-1} , w_i ) = s_i$ . Note that $s_n = \sigma(q_I , w)$. The $\DFA$ A \textit{accepts} $w$ iff $\sigma(q_I , w) \in F$. Otherwise, $A$ \textit{rejects} $w$. The set of words accepted by $A$ is denoted $L(A)$ and is called the \textit{language} of $A$. A language accepted by some $\DFA$ is called a \textit{regular language}. We refer to the size of a $\DFA$ $A$, denoted $|A|$, as the number of states in $A$. A $\DFA$ $A$ is \textit{minimal} if every $\DFA B$ such that $L(B) = L(A)$ satisfies $|B| \geq |A|$.
 
+We say that an equivalence relation $\sim \subseteq Q \times Q$ is coherent with $\sigma$ if for every two states $p, q \in Q$, if $p \sim q$ then $\sigma(p, a) \sim \sigma(q, a)$ for all $a \in \Sigma$. Then, the quotient $A'$ of $A$ by $\sim$ is the DFA obtained by merging the states of $A$ that are equivalent with respect to $\sim$. Formally, $A' = \{\Sigma, Q' , [q_I], \sigma' , F'\}$, where $Q'$ is the set of equivalence classes $[p]$ of the states $p \in Q$, the transition function $\sigma'$ is such that for all $a \in \Sigma$ we have that $\sigma' ([p], a) = [\sigma(p, a)]$, and $F'$ is composed of the classes $[p]$ such that there is $q \in F$ such that $p \sim q$ and $A'$ is called a \textit{clean quotient} of $A$.
+
 We call a $\DFA$ $A$ \textit{composite} if there exists a family $(B_i)_{1 \leq i \leq k}$ of DFAs with $|B_i| < |A|$ for all $1 \leq i \leq k$ such that $L(A) = \cup_{1\leq i \leq k} L(B_i)$ and call the family $(B_i)_{1\leq i \leq k}$ a \textit{decomposition} of $A$. Note that, all $B_i$ in the decomposition satisfy $|B_i| < |A|$ and $L(A) \subseteq L(B_i)$. Such DFAs are called \textit{factors} of $A$, and $(B_i)_{1\leq i \leq k}$ is also called a $k$-factor decomposition of $A$. The
 width of $A$ is the smallest $k$ for which there is a $k$-factor decomposition of $A$, and we say that $A$ is $k$-factor composite iff $width(A) \leq k$. We call a DFA $A$ prime if it is not composite.
 
-We say that an equivalence relation $\sim \subseteq Q \times Q$ is coherent with $\sigma$ if for every two states $p, q \in Q$, if $p \sim q$ then $\sigma(p, a) \sim \sigma(q, a)$ for all $a \in \Sigma$. Then, the quotient $A'$ of $A$ by $\sim$ is the DFA obtained by merging the states of $A$ that are equivalent with respect to $\sim$. Formally, $A' = \{\Sigma, Q' , [q_I], \sigma' , F'\}$, where $Q'$ is the set of equivalence classes $[p]$ of the states $p \in Q$, the transition function $\sigma'$ is such that for all $a \in \Sigma$ we have that $\sigma' ([p], a) = [\sigma(p, a)]$, and $F'$ is composed of the classes $[p]$ such that there is $q \in F$ such that $p \sim q$ and $A'$ is called a \textit{clean quotient} of $A$.
+When analyzing a decomposition family $(B_i)_{1 \leq i \leq k}$, a partial decomposition up to $j < k$ might have words which are accepted by $A$ but not by $(B_i)_{1 \leq i \leq j}$, those are called \enquote{outliers} with $\text{out}_{\{A_1,A_2, \dots, A_j\}} = $ words not covered by the decomposition up to $j$. 
 
-%An \textit{orbit-\DFA} $A^U$ of a \DFA $A$ is the \DFA obtained by fixing a set of states $U$ of $A$ as the initial state, and letting the transition function $\sigma$ of $A$ act over it, therefore the states of $A^U$ are subsets of the state space of $A$.
+TODO: numbers for unary dfas
 
 An edge periodic temporal graph, $G = (V, E, \tau)$ (see also \cite{erlebach2020game}) consists of a graph $G = (V, E)$ called the underlying graph and a function $\tau : E \rightarrow \{0, 1\}$ where $\tau$ maps each edge $e$ to a string $\tau(e) \in \{0, 1\}^*$, such that $e$ exists in a time step $t \geq 0$ if and only if $\tau(e)[t] = 1$, where $\tau(e)[t] := \tau(e)[t~ mod~ |\tau(e)|]$. We denote the subgraph of $G$ in time step $t$ with $G(t)$.
-
-TODO: Outliers OF a set of factors
-
-$\text{out}_{\{A_2,A_3\}}$
-
 
 \section{State of the art}
 \begin{figure}[b]
