@@ -1,0 +1,19 @@
+\chapter{Explainability metrics \& measurement}
+TODO: fix naming
+
+
+Understanding and interpreting labels in edge periodic temporal graphs is essential for various applications, such as network analysis, system monitoring, and predictive modeling. However, assessing the ease with which humans can comprehend these labels presents a unique challenge. In this context, we propose a comprehensive metric to measure the \enquote{explainability} of such labels, taking into account multiple factors that influence their possibility to interpret. Our metric Explainability, denoted as $\mathcal{E}$, is defined as a weighted combination of the following components:
+
+\textbf{Label Size ($s = \sum_{factors} s_i \frac{\text{factor size}}{\text{original size}} \cdot w_\text{covered values}$) }: The label size is a fundamental factor in assessing explainability. A smaller label, in relation to the original size, often implies a more concise representation. A label that is more compact is generally easier for humans to understand, as it conveys information succinctly. Larger labels may overwhelm human observers with excessive detail.
+
+\textbf{Periodicity ($P = \frac{|\text{outliers}|}{|\text{values to cover}|}$)}: Periodicity refers to the regularity of patterns in the label across different time steps. A label that exhibits a clear and consistent periodicity allows human observers to anticipate when changes in connectivity occur. This predictability aids in comprehending the temporal dynamics of the graph. Few outliers which cannot be covered by any factor imply a high periodicity.
+
+\textbf{Label Structure ($LS = |\text{factors of decomposition}|$)}: The label structure takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels. Labels with multiple shorter segments may facilitate explanation, as they enable a more granular understanding of connectivity changes at different time steps. For example, dividing the label into daily or weekly segments could aid in interpreting temporal patterns. This generally implies more factors is better that few factors.
+
+The overall \textbf{Explainability ($\mathcal{E}$)} of a graph label is calculated as a weighted sum of these components, allowing for customization based on specific use cases and preferences. The composite metric is expressed as follows:
+
+\[
+\mathcal{E} = w1 * \frac{1}{s} + w2 * P + w3 * LS
+\]
+
+Here, $w1, w2$ and $w3$ represent weight coefficients assigned to each component, determined based on the importance attributed to that factor in the context of the particular application. Assessing the explainability of graph labels in edge periodic temporal graphs is crucial for effective human interpretation and decision-making. This proposed metric offers a structured approach to measure explainability, allowing for customization and adaptability to diverse scenarios. By considering label size, periodicity, label structure, and connectivity change rate, it enables a more holistic evaluation of label interpretability and enhances the usability of edge periodic temporal graphs in practical applications.
