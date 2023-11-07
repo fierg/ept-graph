@@ -91,7 +91,7 @@ To transform a temporal graph, a shortest possible string $w'$ which is equal to
 	\caption{Equivalence of binary strings and unary permutation \DFAs}
 \end{figure}
 
-A DFA $\mathcal{A}$ is composite if its language $L(\mathcal{A})$ can be decomposed into an intersection $\cup^k_{i=1} L(\mathcal{A}_i)$ of languages of smaller DFAs. Otherwise, $\mathcal{A}$ is prime. This notion of \textit{primality} was introduced by Kupferman and Mosheiff in \cite{prime-languages}, and they proved that we can decide whether a DFA is composite in ExpSpace and later in \cite{unara-prime-languages}, the decomposition question for unary DFAs was proven to be in \LogSpace. In the paper~\cite{DBLP:journals/corr/abs-2107-04683} by Jecker, Mazzocchi and Wolf, they provided a \LogSpace algorithm for commutative permutation DFAs, if the alphabet size is fixed, which also puts the bounded $k$-composite question for unary DFAs in the \LogSpace complexity class, see \ref{tab:dfa-decomp-complexity} for further reference. The decomposition of unary \DFAs are usually characterized by means of clean quotients. Let  $A = \lbrace\Sigma, Q, q_I , \sigma, F\rbrace$ be a unary-DFA. A clean quotient $A_d$ of $A$ is a DFA obtained by folding its cycle of length $l$ to a cycle of length $d$, for some strict divisor $d$ of $l$. Formally, $A_d$ is induced by the equivalence relation $\sim_d$ defined by
+A DFA $\mathcal{A}$ is composite if its language $L(\mathcal{A})$ can be decomposed into an intersection $\cup^k_{i=1} L(\mathcal{A}_i)$ of languages of smaller DFAs. Otherwise, $\mathcal{A}$ is prime. This notion of \textit{primality} was introduced by Kupferman and Mosheiff in \cite{prime-languages}, and they proved that we can decide whether a DFA is composite in \ExpSpace and later in \cite{unara-prime-languages}, the decomposition question for unary DFAs was proven to be in \LogSpace. In the paper~\cite{DBLP:journals/corr/abs-2107-04683} by Jecker, Mazzocchi and Wolf, they provided a \LogSpace algorithm for commutative permutation DFAs, if the alphabet size is fixed, which also puts the bounded $k$-composite question for unary DFAs in the \LogSpace complexity class, see \ref{tab:dfa-decomp-complexity} for further reference. The decomposition of unary \DFAs are usually characterized by means of clean quotients. Let  $A = \lbrace\Sigma, Q, q_I , \sigma, F\rbrace$ be a unary-DFA. A clean quotient $A_d$ of $A$ is a DFA obtained by folding its cycle of length $l$ to a cycle of length $d$, for some strict divisor $d$ of $l$. Formally, $A_d$ is induced by the equivalence relation $\sim_d$ defined by
 
 \[ q_i \sim_d q_j ~\text{if and only if}~i \equiv j ~mod~ d \]
 
@@ -143,53 +143,45 @@ Since $\sim_d$ is coherent with $\sigma$, and therefore $L(A) \subseteq L(A_d)$.
 	\label{fig:clean-quotients-example}
 \end{figure}
 
-In the example in figure \ref{fig:clean-quotients-example}, the \DFA $A$ with final states $q_1$ and $q_3$ can be replaced by the clean quotients $A_2$ and $A_3$ as there is no $q_i \in F$ in $A$ where both clean quotients $A_d$ are not in a final state $q_{i ~mod~ d}$. Note that the coherency of $\sim$ with respect to $\sigma$ guarantees that the definition of $\sigma'$ is independent of the choice of the state $p$ in $[p]$. On the other hand, we do not require states related by $\sim$ to agree on membership in $F$, and define $F_d$ so that the language of $A_d$ over-approximates that of $A$. Formally, $L(A) \subseteq L(A_d)$, as every accepting run of $A$ induces an accepting run of $A_d$. In this example this is visible and there is a state $q_0$ in $A$ where the clean quotient $A_2$ is in a final state but $A_3$ is not and only the combination of both clean quotients is required to fully decompose the original \DFA. Finding clean quotients is trivial but the number of potential quotients rises linear with the number of states or the length of the edge label.
+In the example in figure \ref{fig:clean-quotients-example}, the \DFA $A$ with final states $q_1$ and $q_3$ can be replaced by the clean quotients $A_2$ and $A_3$ as there is no $q_i \in F$ in $A$ where both clean quotients $A_d$ are not in a final state $q_{i ~mod~ d}$. Note that the coherency of $\sim$ with respect to $\sigma$ guarantees that the definition of $\sigma'$ is independent of the choice of the state $p$ in $[p]$. On the other hand, we do not require states related by $\sim$ to agree on membership in $F$, and define $F_d$ so that the language of $A_d$ over-approximates that of $A$. Formally, $L(A) \subseteq L(A_d)$, as every accepting run of $A$ induces an accepting run of $A_d$. In this example this is visible and there is a state $q_0$ in $A$ where the clean quotient $A_2$ is in a final state but $A_3$ is not and only the combination of both clean quotients is able to fully decompose the original \DFA. Finding clean quotients is trivial but the number of potential quotients rises linear with the number of states or the length of the edge label. Given a positive integer $n$, let $d(n)$ denote the number of divisors of $n$ including 1 and $n$, so for example $d(8)=4$. More generally, if $n$ has a prime factorization $n = p_1^{a_1} \ldots p_k^{a_k}$ then by the fundamental theorem of arithmetic $d(n) = (a_1+1) \cdot \ldots \cdot (a_k+1)$. Clearly, $d(n) \leq n$ and therefore $d(n) = n^{o(1)}$. As already mentioned, this can be avoided by considering only maximal divisors, which will be described in the next chapter.
 
-\subsection{Decomposing using maximal divisors}
-TODO: explain factors vs quotients
-\begin{figure}[h]
-	\begin{minipage}[t]{\textwidth}
-		\centering
-		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
-			\node[state,initial] (q_0)   {$q_0$}; 
-			\node[state,accepting] (q_1) [ right=of q_0] {$q_1$}; 
-			\node[state] (q_2) [ right=of q_1] {$q_2$}; 
-			\node[state,accepting] (q_3) [ right=of q_2] {$q_3$};
-			\node[state,accepting](q_4) [ right=of q_3] {$q_4$};
-			\node[state,accepting] (q_5) [ right=of q_4] {$q_5$};
-			\path[->] 
-			(q_0) edge  node {} (q_1)
-			(q_1) edge  node {} (q_2)
-			(q_2) edge  node {} (q_3)
-			(q_3) edge  node {} (q_4)
-			(q_4) edge  node {} (q_5)
-			(q_5) edge[bend right, above]  node {} (q_0);
-		\end{tikzpicture}		
-	\end{minipage}
-	\begin{minipage}[b]{0.39\textwidth}
-		\centering
-		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
-			\node[state,initial] (q_0)   {$q_0$}; 
-			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
-			\path[->] 
-			(q_0) edge  node {} (q_1)
-			(q_1) edge[bend right, above]  node {} (q_0);
-			
-		\end{tikzpicture}
-	\end{minipage}
-	\begin{minipage}[b]{0.59\textwidth}
-		\centering
-		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
-			\node[state,initial] (q_0)   {$q_0$}; 
-			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
-			\node[state](q_2) [right=of q_1] {$q_2$};
-			\path[->] 
-			(q_0) edge  node {} (q_1)
-			(q_1) edge  node {} (q_2)
-			(q_2) edge[bend right, above]  node {} (q_0);
-			
-		\end{tikzpicture}
-	\end{minipage}
-	\caption{The DFA $A$ and its factors $A_2$ \& $A_3$}
-	\label{fig:factors-example}
-\end{figure}
+\section{Decomposition with only maximal divisors}
+The idea from \cite{prime-languages} was greatly improved by \cite{DBLP:journals/corr/abs-2107-04683} by limiting the the potential factors to maximal divisors instead of strict divisors of $d$.
+
+TODO: elaborate
+
+\begin{algorithm}[H]
+	\label{algo:original-composite}
+	\DontPrintSemicolon
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{isBoundedComposite($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, integer k)}{
+		\ForEach{binaryString $\in \{0,1\}^{log|Q|}$ with $\leq k$ ones}{
+			\If{testCombination($A$,binaryString)}{\KwRet true}
+			}
+			\KwRet false
+		}
+		
+		\Fn{testCombination($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, binaryString)}{
+			\ForEach{$q \in Q \setminus F$}{
+				\If{not cover(A,q,binaryString)}{\KwRet false}
+				\KwRet true
+			}
+		}
+		
+		\Fn{cover($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, binaryString, $q \in Q \setminus F$)}{
+			\ForEach{$i$ with wordCombination[i]=1}{
+				$p_i \gets i$'th prime divisor of $|Q|$\;
+				\If{cover($A,q,\sigma(q,a^{|Q|/p_i})$)}{\KwRet true}
+			}
+			\KwRet false
+		}
+		
+		\caption{Algorithm solving the Decomp problem for unary DFAs}
+\end{algorithm}
+
+Given 2 divisors $i^1$ and $i^2$ of $|Q|$, with $i^1 < i^2 <|Q|$ and $i^1$ divides $i^2$, then all states covered by $a^{i1}$ are also covered by $a^{i2}$. Therefore we now only consider words of the form $a^i$ where $i$ is a maximal divisor of $|Q|$ as potential candidates for the decomposition. Now, let $p_1^{j1} \cdot p_2^{j2} \cdot ~ \dots ~\cdot p_m^{jm} = |Q|$ be the prime factor decomposition of $|Q|$. Since $|Q|$ is given in unary we can compute the prime factor decomposition of $|Q|$ in space logarithmic in $|Q|$. $A$ is $k$-factor composite if and only if a selection of $k$ words from the set $W = \{a^{|Q|/p_i} | 1 \leq i \leq m\}$ cover all the rejecting states of $A$.  As $|W| = m$ is logarithmic in $|Q|$, we can iterate over all sets in $2^W$ of size at most $k$ in \LogSpace. By Lemma 6 from \cite{DBLP:journals/corr/abs-2107-04683}, checking whether a state $q \in Q$ is covered by the current collection of $k$ words can also be done in \LogSpace.
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "thesis"
+%%% End: 

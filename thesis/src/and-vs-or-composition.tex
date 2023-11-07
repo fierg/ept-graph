@@ -1,4 +1,100 @@
-\chapter{And vs or decomposition}
+\chapter{AND vs OR decomposition}
+
+\begin{figure}[h]
+	\begin{minipage}[t]{\textwidth}
+		\centering
+		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+			\node[state,initial] (q_0)   {$q_0$}; 
+			\node[state,accepting] (q_1) [ right=of q_0] {$q_1$}; 
+			\node[state] (q_2) [ right=of q_1] {$q_2$}; 
+			\node[state,accepting] (q_3) [ right=of q_2] {$q_3$};
+			\node[state](q_4) [ right=of q_3] {$q_4$};
+			\node[state](q_5) [ right=of q_4] {$q_5$};
+			\path[->] 
+			(q_0) edge  node {} (q_1)
+			(q_1) edge  node {} (q_2)
+			(q_2) edge  node {} (q_3)
+			(q_3) edge  node {} (q_4)
+			(q_4) edge  node {} (q_5)
+			(q_5) edge[bend right, above]  node {} (q_0);
+		\end{tikzpicture}		
+	\end{minipage}
+	\begin{minipage}[b]{0.39\textwidth}
+		\centering
+		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+			\node[state,initial] (q_0)   {$q_0$}; 
+			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+			\path[->] 
+			(q_0) edge  node {} (q_1)
+			(q_1) edge[bend right, above]  node {} (q_0);
+		\end{tikzpicture}
+	\end{minipage}
+	\begin{minipage}[b]{0.59\textwidth}
+		\centering
+		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+			\node[state,initial,accepting] (q_0)   {$q_0$}; 
+			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+			\node[state](q_2) [right=of q_1] {$q_2$};
+			\path[->] 
+			(q_0) edge  node {} (q_1)
+			(q_1) edge  node {} (q_2)
+			(q_2) edge[bend right, above]  node {} (q_0);
+			
+		\end{tikzpicture}
+	\end{minipage}
+	\caption{The DFA $A$ and its clean quotients $A_2$ and $A_3$}
+	\label{fig:clean-quotients-example}
+\end{figure}
+
+
+
+
+\begin{figure}[h]
+	\begin{minipage}[t]{\textwidth}
+		\centering
+		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+			\node[state,initial] (q_0)   {$q_0$}; 
+			\node[state,accepting] (q_1) [ right=of q_0] {$q_1$}; 
+			\node[state] (q_2) [ right=of q_1] {$q_2$}; 
+			\node[state,accepting] (q_3) [ right=of q_2] {$q_3$};
+			\node[state,accepting](q_4) [ right=of q_3] {$q_4$};
+			\node[state,accepting] (q_5) [ right=of q_4] {$q_5$};
+			\path[->] 
+			(q_0) edge  node {} (q_1)
+			(q_1) edge  node {} (q_2)
+			(q_2) edge  node {} (q_3)
+			(q_3) edge  node {} (q_4)
+			(q_4) edge  node {} (q_5)
+			(q_5) edge[bend right, above]  node {} (q_0);
+		\end{tikzpicture}		
+	\end{minipage}
+	\begin{minipage}[b]{0.39\textwidth}
+		\centering
+		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+			\node[state,initial] (q_0)   {$q_0$}; 
+			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+			\path[->] 
+			(q_0) edge  node {} (q_1)
+			(q_1) edge[bend right, above]  node {} (q_0);
+			
+		\end{tikzpicture}
+	\end{minipage}
+	\begin{minipage}[b]{0.59\textwidth}
+		\centering
+		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+			\node[state,initial] (q_0)   {$q_0$}; 
+			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+			\node[state](q_2) [right=of q_1] {$q_2$};
+			\path[->] 
+			(q_0) edge  node {} (q_1)
+			(q_1) edge  node {} (q_2)
+			(q_2) edge[bend right, above]  node {} (q_0);
+			
+		\end{tikzpicture}
+	\end{minipage}
+	\caption{The DFA $A$ and its factors $A_2$ \& $A_3$}
+	\label{fig:factors-example}
+\end{figure}
 
 %%% Local Variables: 
 %%% mode: latex
