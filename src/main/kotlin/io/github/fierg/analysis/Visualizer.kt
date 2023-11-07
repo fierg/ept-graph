@@ -20,8 +20,6 @@ import org.jetbrains.letsPlot.intern.Plot
 import org.jetbrains.letsPlot.intern.toSpec
 import org.jetbrains.letsPlot.label.ggtitle
 import org.jetbrains.letsPlot.letsPlot
-import org.jetbrains.letsPlot.scale.scaleXContinuous
-import org.jetbrains.letsPlot.scale.scaleYContinuous
 import org.jetbrains.letsPlot.tooltips.tooltipsNone
 import java.awt.Desktop
 import java.io.File
@@ -115,7 +113,27 @@ class Visualizer {
             }
         }
 
-        fun createCoverByFactorPlot(covers: List<Cover>, useAverage: Boolean = false): Plot {
+        fun createCoverByFactorPlot(covers: List<Cover>): Plot {
+            val xS = "Rel Factor Size"
+            val yS = "Rel amount of values covered"
+            Logger.info("Collecting values to plot...")
+            val resultMap = mutableMapOf<Double, Pair<Int, Int>>()
+            covers.forEach { cover ->
+                cover.factors.forEach { factor ->
+                    val size = factor.getRelativeSize(cover)
+                    if (resultMap[size] == null) {
+                        resultMap[size] = Pair(cover.totalValues - factor.outliers.size, cover.totalValues)
+                    } else {
+                        resultMap[size] = Pair(resultMap[size]!!.first + cover.totalValues - factor.outliers.size, resultMap[size]!!.second + cover.totalValues)
+
+                    }
+                }
+            }
+
+            return generatePointPlot(resultMap, xS, yS)
+        }
+
+        fun createCoverByFactorPlotNormalized(covers: List<Cover>, useAverage: Boolean = false): Plot {
             val xS = "Rel Factor Size"
             val yS = "Rel amount of values covered"
             Logger.info("Collecting values to plot...")
@@ -131,7 +149,7 @@ class Visualizer {
                 }
             }
 
-            return generatePointPlot(resultMap, xS, yS, useAverage)
+            return generatePointPlotForNormalized(resultMap, xS, yS, useAverage)
         }
 
         fun createCoverByDecompositionPlot(covers: List<Cover>, useAverage: Boolean = false): Plot {
@@ -148,10 +166,10 @@ class Visualizer {
                 }
             }
 
-            return generatePointPlot(resultMap, xS, yS, useAverage)
+            return generatePointPlotForNormalized(resultMap, xS, yS, useAverage)
         }
 
-        private fun generatePointPlot(resultMap: Map<Double, List<Double>>, xS: String, yS: String, useAverage: Boolean): Plot {
+        private fun generatePointPlotForNormalized(resultMap: Map<Double, List<Double>>, xS: String, yS: String, useAverage: Boolean): Plot {
             val data = if (useAverage) {
                 mapOf(
                     xS to resultMap.keys.toList(),
@@ -167,9 +185,32 @@ class Visualizer {
 
             Logger.info("Generating plot...")
             Logger.info("PLOT DATA: $data")
-            return letsPlot(data) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("% of Values covered by factor of size x") +
+            return letsPlot(data) +
+                    ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+                    ggtitle("% of Values covered by factor of size x") +
                     //scaleYContinuous(limits = Pair(0,1)) +
                     geomPoint(size = 2.0) { x = xS; y = yS }
+            //geomBoxplot { x = xS; y = yS }  +
+            //geomSmooth(se = FALSE, method = "gam") +
+        }
+
+        private fun generatePointPlot(resultMap: Map<Double, Pair<Int, Int>>, xS: String, yS: String): Plot {
+            val sortedMap = resultMap.toSortedMap()
+            val maxValue = sortedMap.values.maxBy { it.second }.second
+            val data = mapOf(
+                xS to sortedMap.keys.toList(),
+                yS to sortedMap.values.map { it.first.toDouble()  }
+            )
+
+            Logger.info("Generating plot...")
+            Logger.info("PLOT DATA: ${data}")
+            return letsPlot(data) +
+                    ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+                    ggtitle("% of Values covered by factor of size x") +
+                    //scaleYContinuous(limits = Pair(0,1)) +
+                    geomPoint(size = 2.0) { x = xS; y = yS }
+            //geomBoxplot { x = xS; y = yS }  +
+            //geomSmooth(se = FALSE, method = "gam") +
         }
 
         private fun expandToResultList(resultMap: Map<Double, List<Double>>): List<Pair<Double, Double>> {
@@ -180,6 +221,19 @@ class Visualizer {
                 }
             }
             return result
+        }
+
+        fun createCoverByFactorLinesPlot(evalResult: List<Cover>): Plot {
+            val coverMap = mutableMapOf<Cover, List<Pair<Double, Double>>>()
+            evalResult.forEach { cover ->
+                val resultList = mutableListOf<Pair<Double, Double>>()
+                cover.factors.forEach { factor ->
+                    resultList.add(Pair(factor.getRelativeSize(cover), (cover.totalValues - factor.outliers.size).toDouble() / cover.totalValues))
+                }
+                coverMap[cover] = resultList
+            }
+            TODO()
+            //return generateLinePlot(evalResult, coverMap)
         }
 
     }

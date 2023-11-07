@@ -3,7 +3,7 @@ package io.github.fierg.model.result
 import io.github.fierg.extensions.applyPeriod
 import io.github.fierg.extensions.minus
 import io.github.fierg.extensions.removeIfNotIncludedIn
-import io.github.fierg.model.options.Operator
+import io.github.fierg.model.options.CompositionMode
 
 /**
  * The `Cover` class represents a cover with various properties, including a target state, state to replace,
@@ -15,7 +15,7 @@ import io.github.fierg.model.options.Operator
  * @param size              The size of the cover.
  * @param outliers          A mutable list of integer indices representing outliers in the cover.
  * @param factors           A list of associated factors affecting the cover.
- * @param operator          The logical operator used for combining factors (default is Operator.OR).
+ * @param compositionMode          The logical operator used for combining factors (default is Operator.OR).
  */
 data class Cover(
     val target: BooleanArray,
@@ -24,7 +24,7 @@ data class Cover(
     var size: Int,
     var outliers: MutableList<Int>,
     val factors: MutableList<Factor>,
-    val operator: Operator = Operator.OR
+    val compositionMode: CompositionMode = CompositionMode.OR
 ) {
 
     private var lastOutlierSize = outliers.size
@@ -34,16 +34,16 @@ data class Cover(
      *
      * @param input             The boolean array representing the cover.
      * @param stateToReplace    The boolean value to replace in the cover.
-     * @param operator          The logical operator used for combining factors (default is Operator.OR).
+     * @param compositionMode          The logical operator used for combining factors (default is Operator.OR).
      */
-    constructor(input: BooleanArray, stateToReplace: Boolean, operator: Operator = Operator.OR) : this(
+    constructor(input: BooleanArray, stateToReplace: Boolean, compositionMode: CompositionMode = CompositionMode.OR) : this(
         input,
         stateToReplace,
         input.count { it == stateToReplace },
         0,
         input.mapIndexed { index, b -> if (b == stateToReplace) index else -1 }.filter { it != -1 }.toMutableList(),
         mutableListOf(),
-        operator
+        compositionMode
     )
 
     /**
@@ -54,8 +54,8 @@ data class Cover(
      * @param skipFactorIfNoChangesOccur Whether to skip adding the factor if there are no changes in outliers.
      */
     fun addFactor(factor: Factor, skipFactorIfNoChangesOccur: Boolean = true) {
-        when (this.operator) {
-            Operator.OR -> {
+        when (this.compositionMode) {
+            CompositionMode.OR -> {
                 if (!skipFactorIfNoChangesOccur || factor.outliers.size < lastOutlierSize) {
                     factors.add(factor)
                     size = factor.array.size
@@ -63,8 +63,7 @@ data class Cover(
                     outliers.removeIfNotIncludedIn(factor.outliers)
                 }
             }
-
-            Operator.AND -> {
+            CompositionMode.AND -> {
                 if (!skipFactorIfNoChangesOccur || !outliers.any { factor.outliers.contains(it) }) {
                     factors.add(factor)
                     size = factor.array.size
@@ -88,13 +87,13 @@ data class Cover(
      */
     fun getCoverArray(): BooleanArray {
         val cover = BooleanArray(target.size) { !stateToReplace }
-        when (operator) {
-            Operator.OR -> {
+        when (compositionMode) {
+            CompositionMode.OR -> {
                 factors.forEach { factor ->
                     cover.applyPeriod(factor.array, stateToReplace)
                 }
             }
-            Operator.AND ->{
+            CompositionMode.AND ->{
                 cover.indices.forEach { index ->
                     cover[index] = factors.all { it.get(index) }
                 }

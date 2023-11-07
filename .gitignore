@@ -46,3 +46,6 @@ thesis/*.pdf
 #Plots
 
 plots/
+data/stanford/
+old_plots/
+test-plots/

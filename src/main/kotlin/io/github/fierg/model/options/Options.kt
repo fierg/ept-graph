@@ -4,6 +4,7 @@ data class Options(
     var dotenv: Boolean,
     var input: Int,
     var state: Boolean,
+    var decompositionMode: DecompositionMode,
     var compositionMode: CompositionMode,
     var skipSelfEdges: Boolean,
     var debug: Boolean,
@@ -16,7 +17,8 @@ data class Options(
         fun emptyOptions(): Options {
             return Options(false,0,
                 state = false,
-                compositionMode = CompositionMode.SHORTEST_PERIODS,
+                decompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS,
+                compositionMode = CompositionMode.OR,
                 skipSelfEdges = false,
                 debug = false,
                 quiet = false,

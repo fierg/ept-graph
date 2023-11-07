@@ -5,6 +5,7 @@ import io.github.fierg.extensions.factors
 import io.github.fierg.extensions.maximalDivisors
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.CompositionMode
+import io.github.fierg.model.options.DecompositionMode
 import io.github.fierg.model.options.Options
 import org.junit.Test
 
@@ -14,7 +15,9 @@ class TestPaperQuotientExamples {
     init {
         options.state = false
         options.skipSelfEdges = true
-        options.compositionMode = CompositionMode.CLEAN_QUOTIENTS
+        options.decompositionMode = DecompositionMode.MAX_DIVISORS
+        options.threshold = 1.0
+        options.compositionMode = CompositionMode.AND
     }
 
     @Test
