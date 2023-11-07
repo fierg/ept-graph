@@ -1,48 +1,7 @@
 \chapter{Novel Approaches}
-TODO: motivation
-
-TODO: outlier handling
-
-TODO: AND vs OR
-
+We now have a concept of what an \enquote{explainable} edge label looks like, so we propose new ideas for decomposing \DFAs such that the resulting decomposition has a good structure, periodicity and width, resulting in good labels, understandable for humans. Additionally, we want the algorithm able to handle outliers of a given decomposition, which might result in even shorter labels. If we e.g. have a decomposition where a small factor covers most of the original \DFA, but not all of it, we need either a larger factor or remember the uncovered values, which could increase explainability. Additionally, all theoretical results so far used the \textit{and-composite} with the complement over all factors. This idea is easy expandable to the \textit{or-composite}, where the union over all factors $B_i$ results in the original language, $L(A) = \cup_{1\leq i \leq k} L(B_i)$. Which this change, a single factor implies certain final states, whereas with the composite, all factors have to be considered in order to know whether a given state $s$ is final in $A$. The implications of this change are considered in chapter \ref{chap:and-vs-or}.
 
 \section{Greedy Short Factors}
-Usually the algorithms and proofs are considering unary \DFAs consisting of a chain leading into a cycle of states. Since we obtain our \DFAs by transforming from a periodic label, we only have \DFAs with empty chains, therefore only considering unary permutation \DFA. This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683} as seen in Algorithm \ref{algo:composite} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$. Additional we are not only interested in answering the yes/no question of the composite problem but we actually want to collect the factors and continue our computation.
-
-\begin{algorithm}[H]
-	\label{algo:composite}
-	\DontPrintSemicolon
-	\SetKwProg{Fn}{Function}{:}{}
-	\Fn{getComposite($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, integer k)}{
-		FactorList $\gets \emptyset$\; 
-		\ForEach{binaryString $\in \{0,1\}^{log|Q|}$ with $\leq k$ ones}{
-			\If{isFactor($A$,binaryString)}{FactorList.add(binaryString)}
-		}
-		\KwRet FactorList\;
-	}
-	
-	\Fn{isFactor($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, binaryString)}{
-		\ForEach{$q \in Q \setminus F$}{
-			\If{not cover(A,q,binaryString)}{\KwRet false}
-			\KwRet true
-		}
-	}
-	
-	\Fn{cover($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, binaryString, $q \in Q \setminus F$)}{
-		\ForEach{$i$ with wordCombination[i]=1}{
-			$p_1 \gets i$'th prime divisor of $|Q|$\;
-			\If{cover($A,q,\sigma(q,a^{|Q|/p_i})$)}{\KwRet true}
-		}
-		\KwRet false
-	}
-	
-	\caption{LOGSPACE-algorithm solving the Decomp problem for unary DFAs and returning the factors.}
-\end{algorithm}
-
-TODO: explain algo and difference to original
-
-
-
 Searching for a decomposition using only the maximal divisors of $|Q|$, provides good solutions in \LogSpace, but there are certain limitations. Consider for example figure \ref{fig:short-factors} depicting the trivial \DFA $A$ with its factors $A_2$ and $A_4$. Since for this \DFA, $|Q| = 8$, the only maximal divisor is 4 so the factor $A_4$ will be found be the original algorithm. In this particular example, there exists a smaller factor with size 2, $A_2$ which will only be found if checking all factors of $|Q|$ instead of only the maximal divisors.
 
 \begin{figure}[h]
@@ -95,6 +54,40 @@ Searching for a decomposition using only the maximal divisors of $|Q|$, provides
 	\caption{The DFA $A$ and its factors $A_4$ \& $A_2$}
 	\label{fig:short-factors}
 \end{figure}
+
+Usually the algorithms and proofs are considering unary \DFAs consisting of a chain leading into a cycle of states. Since we obtain our \DFAs by transforming from a periodic label, we only have \DFAs with empty chains, therefore only considering unary permutation \DFA. This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683} as seen in Algorithm \ref{algo:composite} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$. Additional we are not only interested in answering the yes/no question of the composite problem but we actually want to collect the factors and continue our computation.
+
+\begin{algorithm}[H]
+	\label{algo:composite}
+	\DontPrintSemicolon
+	\SetKwProg{Fn}{Function}{:}{}
+	\Fn{getComposite($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, integer k)}{
+		FactorList $\gets \emptyset$\; 
+		\ForEach{binaryString $\in \{0,1\}^{log|Q|}$ with $\leq k$ ones}{
+			\If{isFactor($A$,binaryString)}{FactorList.add(binaryString)}
+		}
+		\KwRet FactorList\;
+	}
+	
+	\Fn{isFactor($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, binaryString)}{
+		\ForEach{$q \in Q \setminus F$}{
+			\If{not cover(A,q,binaryString)}{\KwRet false}
+			\KwRet true
+		}
+	}
+	
+	\Fn{cover($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, binaryString, $q \in Q \setminus F$)}{
+		\ForEach{$i$ with wordCombination[i]=1}{
+			$p_1 \gets i$'th prime divisor of $|Q|$\;
+			\If{cover($A,q,\sigma(q,a^{|Q|/p_i})$)}{\KwRet true}
+		}
+		\KwRet false
+	}
+	
+	\caption{LOGSPACE-algorithm solving the Decomp problem for unary DFAs and returning the factors.}
+\end{algorithm}
+
+TODO: explain algo and difference to original
 
 TODO: fix complexity thoughts
 

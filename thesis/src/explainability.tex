@@ -6,9 +6,16 @@
 
 Understanding and interpreting labels in edge periodic temporal graphs is essential for various applications, such as network analysis, system monitoring, and predictive modeling. However, assessing the ease with which humans can comprehend these labels presents a unique challenge. In this context, we propose a comprehensive metric to measure the \enquote{explainability} of such labels, taking into account multiple factors that influence their possibility to interpret. For this purpose, we investigate the following measurements, the decomposition structure, periodicity and the width of the decomposition.
 
-\textbf{Decomposition Structure} ($DS = \sum\limits_{factor~ s_i}\frac{|s_i|}{\text{original size}} \cdot \frac{out_{\{s_1,\dots,s_i\}}}{\#1(original)}$): The label size is a fundamental factor in assessing explainability. A smaller label, in relation to the original size, often implies a more concise representation. A label that is more compact is generally easier for humans to understand, as it conveys information succinctly. Larger labels may overwhelm human observers with excessive detail.
+\textbf{Decomposition Structure} ($DS = \sum\limits_{factor~ s_i}\frac{|s_i|}{\text{|A|}} \cdot \frac{out_{\{s_1,\dots,s_i\}}}{|F_A|}$)
 
-\textbf{Periodicity} ($p = \frac{out_{\{s_1,\dots,s_k\}}}{\#1(original)}$): Periodicity refers to the regularity of patterns in the label across different time steps. A label that exhibits a clear and consistent periodicity allows human observers to anticipate when changes in connectivity occur. This predictability aids in comprehending the temporal dynamics of the graph. Few outliers which cannot be covered by any factor imply a high periodicity.
+The label size is a fundamental factor in assessing explainability. A smaller label, in relation to the original size, often implies a more concise representation. A label that is more compact is generally easier for humans to understand, as it conveys information succinctly. Larger labels may overwhelm human observers with excessive detail.
 
-\textbf{Width} ($w = width(A)$): The label structure takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels. Labels with multiple shorter segments may facilitate explanation, as they enable a more granular understanding of connectivity changes at different time steps. For example, dividing the label into daily or weekly segments could aid in interpreting temporal patterns. This generally implies more factors is better that few factors.
+\textbf{Periodicity} ($p = \frac{out_{\{s_1,\dots,s_k\}}}{|F_A|}$)
+
+Periodicity refers to the regularity of patterns in the label across different time steps. A label that exhibits a clear and consistent periodicity allows human observers to anticipate when changes in connectivity occur. This predictability aids in comprehending the temporal dynamics of the graph. Few outliers which cannot be covered by any factor imply a high periodicity.
+
+\textbf{Width} ($width(A)$)
+
+The label structure takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels. Labels with multiple shorter segments may facilitate explanation, as they enable a more granular understanding of connectivity changes at different time steps. For example, dividing the label into daily or weekly segments could aid in interpreting temporal patterns. This generally implies more factors are easier to understand than few factors.
+
 
