@@ -15,14 +15,17 @@ import org.jetbrains.letsPlot.annotations.layerLabels
 import org.jetbrains.letsPlot.export.ggsave
 import org.jetbrains.letsPlot.geom.geomPie
 import org.jetbrains.letsPlot.geom.geomPoint
+import org.jetbrains.letsPlot.geom.geomSmooth
 import org.jetbrains.letsPlot.ggsize
 import org.jetbrains.letsPlot.intern.Plot
 import org.jetbrains.letsPlot.intern.toSpec
 import org.jetbrains.letsPlot.label.ggtitle
 import org.jetbrains.letsPlot.letsPlot
+import org.jetbrains.letsPlot.scale.scaleYContinuous
 import org.jetbrains.letsPlot.tooltips.tooltipsNone
 import java.awt.Desktop
 import java.io.File
+import java.lang.Boolean.FALSE
 
 
 class Visualizer {
@@ -115,7 +118,7 @@ class Visualizer {
 
         fun createCoverByFactorPlot(covers: List<Cover>): Plot {
             val xS = "Rel Factor Size"
-            val yS = "Rel amount of values covered"
+            val yS = "Sum of covered values"
             Logger.info("Collecting values to plot...")
             val resultMap = mutableMapOf<Double, Pair<Int, Int>>()
             covers.forEach { cover ->
@@ -196,21 +199,22 @@ class Visualizer {
 
         private fun generatePointPlot(resultMap: Map<Double, Pair<Int, Int>>, xS: String, yS: String): Plot {
             val sortedMap = resultMap.toSortedMap()
-            val maxValue = sortedMap.values.maxBy { it.second }.second
+            val maxValue = sortedMap.values.fold(0) { acc, pair -> acc + pair.second }
+            val sumList = sortedMap.values.runningReduce { acc, pair -> Pair(pair.first + acc.first, maxValue) }.toMutableList()
+            sumList[0] = Pair(sumList[0].first, maxValue)
+6
             val data = mapOf(
                 xS to sortedMap.keys.toList(),
-                yS to sortedMap.values.map { it.first.toDouble()  }
+                yS to sumList.map { it.first }
             )
-
             Logger.info("Generating plot...")
-            Logger.info("PLOT DATA: ${data}")
+            Logger.info("PLOT DATA: $data")
             return letsPlot(data) +
                     ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
-                    ggtitle("% of Values covered by factor of size x") +
-                    //scaleYContinuous(limits = Pair(0,1)) +
-                    geomPoint(size = 2.0) { x = xS; y = yS }
-            //geomBoxplot { x = xS; y = yS }  +
-            //geomSmooth(se = FALSE, method = "gam") +
+                    ggtitle("Sum of Values covered by factor of size x") +
+                    scaleYContinuous(limits = Pair(0, sumList.last().first)) +
+                    geomPoint(size = 2.0) { x = xS; y = yS } +
+                    geomSmooth(se = FALSE, method = "loess")
         }
 
         private fun expandToResultList(resultMap: Map<Double, List<Double>>): List<Pair<Double, Double>> {
