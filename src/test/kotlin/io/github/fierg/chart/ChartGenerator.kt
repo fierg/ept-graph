@@ -46,7 +46,7 @@ class ChartGenerator {
             .forEach { compositionMode ->
                 Logger.info("Analyzing all graphs, reading options from .env file, using composition mode ${compositionMode.name}")
                 Logger.setLogLevelToQuiet()
-                val upTo = 2
+                val upTo = 61
                 val options = DotEnvParser.readDotEnv()
                 options.decompositionMode = compositionMode
                 val decomposer = Decomposer(options)
