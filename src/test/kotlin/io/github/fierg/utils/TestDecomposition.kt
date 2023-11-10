@@ -101,7 +101,7 @@ class TestDecomposition {
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
         Decomposer(state = true, threshold = 0.5).analyzeCover(cover)
 
-        assert(cover.getPrecision() < 1.0)
+        assert(cover.getPeriodicity() < 1.0)
     }
 
     @Test
@@ -133,7 +133,7 @@ class TestDecomposition {
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
         Decomposer(state = true, threshold = 0.5).analyzeCover(cover)
 
-        assert(cover.getPrecision() == 1.0)
+        assert(cover.getPeriodicity() == 1.0)
     }
 
     @Test
