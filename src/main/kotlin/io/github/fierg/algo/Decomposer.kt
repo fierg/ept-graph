@@ -98,14 +98,10 @@ class Decomposer(state: Boolean = true, private val mode: DecompositionMode = De
      */
     fun analyzeCover(result: Cover) {
         Logger.info(
-            "Found decomposition with ${String.format("%${nrDigits}d", (result.size.toDouble() / result.target.size * 100).toInt())}% original size (${
-                String.format(
-                    "%${nrDigits}d",
-                    result.size
-                )
-            }), " +
+            "Found decomposition with largest factor ${String.format("%${nrDigits}d", (result.size.toDouble() / result.target.size * 100).toInt())}% original size (${String.format("%${nrDigits}d", result.size)}), " +
                     "covered ${String.format("%${nrDigits}d", (result.totalValues - result.outliers.size))}/${String.format("%${nrDigits}d", result.totalValues)} values, " +
-                    "resulting in ${String.format("%${nrDigits}d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)."
+                    "resulting in ${String.format("%${nrDigits}d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)." +
+                    " Metrics: w=${result.getWidth()}, p=${result.getPeriodicity()}, ds=${result.getDecompositionStructure()}"
         )
         Logger.debug("Target:\t ${result.target.getBinaryString()}")
         Logger.debug("Cover:\t ${result.getCoverArray().getBinaryString()}")
@@ -137,7 +133,7 @@ class Decomposer(state: Boolean = true, private val mode: DecompositionMode = De
             DecompositionMode.GREEDY_SHORT_FACTORS -> {
                 periods.forEach { size ->
                     cover.addFactor(factors[factorIndex[size]!!], skipFactorIfNoChangesOccur = true)
-                    if (cover.getPrecision() >= threshold) return cover
+                    if (cover.getPeriodicity() >= threshold) return cover
                 }
                 Logger.warn("No Exact Cover with threshold $threshold possible! Hard outliers (${cover.outliers.size})")
             }

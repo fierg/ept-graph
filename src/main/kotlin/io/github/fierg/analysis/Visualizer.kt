@@ -214,7 +214,7 @@ class Visualizer {
                     ggtitle("Sum of Values covered by factor of size x") +
                     scaleYContinuous(limits = Pair(0, sumList.last().first)) +
                     geomPoint(size = 2.0) { x = xS; y = yS } +
-                    geomSmooth(se = FALSE, method = "loess")
+                    geomSmooth(method = "loess")
         }
 
         private fun expandToResultList(resultMap: Map<Double, List<Double>>): List<Pair<Double, Double>> {

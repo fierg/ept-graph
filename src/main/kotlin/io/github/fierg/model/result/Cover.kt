@@ -63,6 +63,7 @@ data class Cover(
                     outliers.removeIfNotIncludedIn(factor.outliers)
                 }
             }
+
             CompositionMode.AND -> {
                 if (!skipFactorIfNoChangesOccur || !outliers.any { factor.outliers.contains(it) }) {
                     factors.add(factor)
@@ -74,11 +75,28 @@ data class Cover(
     }
 
     /**
-     * Calculates the precision of the cover based on the total values to cover and outliers.
+     * Calculates the periodicity of the cover based on the total values to cover and outliers.
      *
      * @return The precision of the cover as a double value.
      */
-    fun getPrecision() = (totalValues - outliers.size).toDouble() / totalValues
+    fun getPeriodicity() = (totalValues - outliers.size).toDouble() / totalValues
+
+    /**
+     * Calculates the width of the cover based on the total number of factors.
+     *
+     * @return The precision of the cover as a double value.
+     */
+    fun getWidth() = factors.size
+
+    /**
+     * Calculates the decomposition structure of the cover based on the total values to cover,
+     * each factors size and outliers, according to the described metric.
+     *
+     * @return The precision of the cover as a double value.
+     */
+    fun getDecompositionStructure() = factors.fold(0.0) { acc, factor ->
+        acc + (factor.array.size.toDouble() / target.size) * (factor.outliers.size.toDouble() / totalValues)
+    }
 
     /**
      * Retrieves a boolean array representing the cover based on the operator and associated factors.
@@ -93,7 +111,8 @@ data class Cover(
                     cover.applyPeriod(factor.array, stateToReplace)
                 }
             }
-            CompositionMode.AND ->{
+
+            CompositionMode.AND -> {
                 cover.indices.forEach { index ->
                     cover[index] = factors.all { it.get(index) }
                 }
@@ -187,6 +206,6 @@ data class Cover(
     }
 
     fun getRelativeCoveredValues(outliers: MutableList<Int> = this.outliers): Double {
-        return  ((totalValues - outliers.size).toDouble() / totalValues)
+        return ((totalValues - outliers.size).toDouble() / totalValues)
     }
 }
