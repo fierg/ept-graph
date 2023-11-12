@@ -96,10 +96,9 @@ Usually the algorithms and proofs are considering unary \DFAs consisting of a ch
 	\caption{Algorithm solving the Decomp problem for unary DFAs and returning a greedy composite from all factors.}
 \end{algorithm}
 
-TODO: explain algo and difference to original
+This algorithm finds more factors than actually required, since it also finds the multiples of the maximal divisors. In contrast, not all found factors are required to form the composite and we only want to add factors, which change the decomposition. In our example Figure \ref{fig:short-factors} we find $A_2$ and $A_4$, but $A_2$ is fully sufficient for decomposing the \DFA $A$. Additionally we want to keep track of the outliers of each factor and the composite itself. Regarding the explainability, it should be of preference, to have a small factor but a couple outliers, in comparison to a long factor and even have a decomposition with hard outliers, e.g. values that cannot be covered by a decomposition. In this case, a decomposition including outliers is also preferred.
 
-
-The original problem was solvable in \LogSpace, but extending the problem to finding the shortest possible factors, we face a different problem. Finding all the factors is fast but choosing which factors are actually required in the decomposition, is not. This problem can be described as:
+The original problem was solvable in \LogSpace, but extending the problem to finding the shortest possible factors, we face a different problem. Finding all the factors is fast but choosing which factors are actually required in the decomposition, is not. This problem can be formalized as follows:
 
 Given an input $u = 101101\dots$ as binary word, and integer $k$ and a set of words $w_1, w_2, \dots, w_n$ with $l(u) > l(w_n) ~\forall n$ and $l(w)$ is a strict divisor of $l(u) ~ \forall w$. Find indices $i_1, i_2 \dots i_k$ such that
 
