@@ -15,7 +15,8 @@ data class Options(
 ){
     companion object{
         fun emptyOptions(): Options {
-            return Options(false,0,
+            return Options(false,
+                0,
                 state = false,
                 decompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS,
                 compositionMode = CompositionMode.OR,
