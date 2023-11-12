@@ -62,7 +62,15 @@ Usually the algorithms and proofs are considering unary \DFAs consisting of a ch
 	\label{algo:composite}
 	\DontPrintSemicolon
 	\SetKwProg{Fn}{Function}{:}{}
-	\Fn{getComposite($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, integer k)}{
+	\Fn{getGreedyComposite($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, integer k)}{
+		CompositeList $\gets \emptyset$\; 
+		\ForEach{factor $\in$ getAllFactors($A,k$)}{
+			\If{factorChangesComposite($A$,binaryString)}{CompositeList.add(binaryString)}
+		}
+		\KwRet CompositeList\;
+	}
+	
+	\Fn{getAllFactors($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, integer k)}{
 		FactorList $\gets \emptyset$\; 
 		\ForEach{binaryString $\in \{0,1\}^{log|Q|}$ with $\leq k$ ones}{
 			\If{isFactor($A$,binaryString)}{FactorList.add(binaryString)}
@@ -85,30 +93,21 @@ Usually the algorithms and proofs are considering unary \DFAs consisting of a ch
 		\KwRet false
 	}
 	
-	\caption{LOGSPACE-algorithm solving the Decomp problem for unary DFAs and returning the factors.}
+	\caption{Algorithm solving the Decomp problem for unary DFAs and returning a greedy composite from all factors.}
 \end{algorithm}
 
 TODO: explain algo and difference to original
 
-TODO: fix complexity thoughts
 
-The original problem was solvable in \LogSpace, but extending the problem to e.g. the Fourier-transformed factors, we face a different problem. Finding all the factors is fast but choosing which factors are actually required in the decomposition, is not. This problem can be described as:
+The original problem was solvable in \LogSpace, but extending the problem to finding the shortest possible factors, we face a different problem. Finding all the factors is fast but choosing which factors are actually required in the decomposition, is not. This problem can be described as:
 
-Given an input $u = 101101\dots$ as binary word, and integer $k$ and the set of found factors $w_1, w_2, \dots, w_n$ with $l(u) > l(w_n) ~\forall n$ and $\#1(w_n) = 1 ~\forall n$. Find indices $i_1, i_2 \dots i_k$ such that
+Given an input $u = 101101\dots$ as binary word, and integer $k$ and a set of words $w_1, w_2, \dots, w_n$ with $l(u) > l(w_n) ~\forall n$ and $l(w)$ is a strict divisor of $l(u) ~ \forall w$. Find indices $i_1, i_2 \dots i_k$ such that
+
 \[
-\underbrace{w_{i_1}, w_{i_1}, \dots, w_{i_1}}_{l(u)} \cup_k = u
+\underbrace{w_{i_1}, w_{i_1}, \dots, w_{i_1}}_{l(u)} \cup \dots \cup \underbrace{w_{i_k}, w_{i_k}, \dots, w_{i_k}}_{l(u)} = u
 \]
 
-To reduce the problem you described to the Set Cover problem, we'll create a Set Cover instance as follows. The universe $U$ will consist of all possible $k$-length binary words that can be formed. There are $2^k$ such words.
-For each word $w_i$ in the given set of words $w$, create a corresponding subset $C_i$ of $U$. This subset contains all $k$-length binary words that can be formed by choosing $k$ indices $i_1, i_2 \dots i_k$. The Set Cover problem now involves finding the minimum number of subsets from $C$ that cover the entire universe $U$. Now, the goal is to show that if we can efficiently solve the Set Cover problem for this constructed instance, we can efficiently solve the original problem.
-
-If the Set Cover problem finds a cover of size $k$, it means there is a set of indices $i_1, i_2, \dots, i_k$ that chooses from the words $w_i$ such that $w_{i_1}, w_{i_2}, \dots, w_{i_k}$ can form the same binary word as $u$, which satisfies the original problem. Conversely, if you can efficiently solve the original problem and find a set of indices $i_1, i_2, \dots, i_k$ that chooses from the words $w_i$ to form $u$, then the corresponding subsets $C_i$ in the constructed Set Cover instance cover the entire universe $U$. This means you've found a Set Cover of size $k$. This reduction demonstrates that solving the original problem is at least as hard as solving the Set Cover problem. Therefore, if you can efficiently solve Set Cover, you can also efficiently solve the original problem, and vice versa.
-
-\begin{figure}[h]
-	\includegraphics[width=\linewidth]{proof-sketches/Screenshot[2]-01.png}
-\end{figure}
-
-
+To reduce the Set Cover problem to our novel problem, we'll create a instance as follows. For the universe $U$ we will construct a binary string $u$, where $u[i] = 1$ iff $i \in U$. For each subset $C_n$ of $U$ we create a word $w_n$ in the given set of words $w$ correspondingly. For each subset, there will be a word $w$, with $w[i] = 1$ iff $i \in C_n$. The Set Cover problem now involves finding the minimum number of subsets from $C$ that cover the entire universe $U$. The goal is to show that if we can efficiently solve the Set Cover problem for this constructed instance, we can efficiently solve the original problem. If the Set Cover problem finds a cover of size $k$, it means there is a set of indices $i_1, i_2, \dots, i_k$ that chooses from the words $w_i$ such that $w_{i_1}, w_{i_2}, \dots, w_{i_k}$ can form the same binary word as $u$, which satisfies the original problem. Conversely, if you can efficiently solve the original problem and find a set of indices $i_1, i_2, \dots, i_k$ that chooses from the words $w_i$ to form $u$, then the corresponding subsets $C_i$ in the constructed Set Cover instance cover the entire universe $U$. This means you've found a Set Cover of size $k$. This reduction demonstrates that solving the original problem is at least as hard as solving the Set Cover problem.
 
 \section{Fourier Transform}
 TODO: describe idea

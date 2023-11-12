@@ -180,6 +180,7 @@ The idea of folding \DFAs from \cite{prime-languages} was greatly improved by by
 
 This also implies the complexity since given 2 divisors $i^1$ and $i^2$ of $|Q|$, with $i^1 < i^2 <|Q|$ and $i^1$ divides $i^2$, then all states covered by $a^{i1}$ are also covered by $a^{i2}$. Therefore the algorithm from \cite{DBLP:journals/corr/abs-2107-04683} only considers words of the form $a^i$ where $i$ is a maximal divisor of $|Q|$ as potential candidates for the decomposition. Now, let $p_1^{j1} \cdot p_2^{j2} \cdot ~ \dots ~\cdot p_m^{jm} = |Q|$ be the prime factor decomposition of $|Q|$. Since $|Q|$ is given in unary we can compute the prime factor decomposition of $|Q|$ in space logarithmic in $|Q|$. $A$ is $k$-factor composite if and only if a selection of $k$ words from the set $W = \{a^{|Q|/p_i} | 1 \leq i \leq m\}$ cover all the rejecting states of $A$.  As $|W| = m$ is logarithmic in $|Q|$, we can iterate over all sets in $2^W$ of size at most $k$ in \LogSpace. By Lemma 6 from \cite{DBLP:journals/corr/abs-2107-04683}, checking whether a state $q \in Q$ is covered by the current collection of $k$ words can also be done in \LogSpace.
 
+
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: "thesis"
