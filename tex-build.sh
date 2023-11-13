@@ -2,4 +2,4 @@
 
 echo "Building from bash script..."
 cd thesis
-latexmk thesis.tex -f
+latexmk -pdf thesis.tex -f
