@@ -23,3 +23,9 @@ jobs:
         with:
           working_directory: thesis
           entrypoint: ./tex-build.sh
+
+      - name: Upload PDF file
+        uses: actions/upload-artifact@v3
+        with:
+          name: PDF
+          path: thesis/thesis.pdf
