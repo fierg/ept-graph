@@ -18,11 +18,28 @@ jobs:
       - name: Set up Git repository
         uses: actions/checkout@v3
 
-      - name: Build tex from bash
+      - name: pdflatex prebuild
         uses: dante-ev/latex-action@latest
         with:
+          root_file: thesis.tex
+          compiler: pdflatex
+          args: -interaction=nonstopmode -shell-escape
           working_directory: thesis
-          entrypoint: ./tex-build.sh
+
+      - name: bibtex main
+        uses: dante-ev/latex-action@latest
+        with:
+          root_file: thesis.aux
+          compiler: bibtex
+          working_directory: thesis
+
+      - name: pdflatex main final
+        uses: dante-ev/latex-action@latest
+        with:
+          root_file: thesis.tex
+          compiler: pdflatex
+          args: -interaction=nonstopmode -shell-escape
+          working_directory: thesis
 
       - name: Upload PDF file
         uses: actions/upload-artifact@v3
