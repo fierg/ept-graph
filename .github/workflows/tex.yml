@@ -21,7 +21,6 @@ jobs:
       - name: Build tex from bash
         uses: dante-ev/latex-action@latest
         with:
-          working_directory: thesis
           entrypoint: ./tex-build.sh
 
       - name: Upload PDF file
