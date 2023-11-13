@@ -8,6 +8,8 @@ name: Build Latex Document
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build_latex:
@@ -16,20 +18,22 @@ jobs:
       - name: Set up Git repository
         uses: actions/checkout@v3
 
-      - name: pdflatex main
+      - name: pdflatex prebuild
         uses: dante-ev/latex-action@latest
         with:
           root_file: thesis.tex
           compiler: pdflatex
           args: -interaction=nonstopmode -shell-escape
           working_directory: thesis
+
       - name: bibtex main
         uses: dante-ev/latex-action@latest
         with:
           root_file: thesis.aux
           compiler: bibtex
           working_directory: thesis
-      - name: pdflatex main
+
+      - name: pdflatex main final
         uses: dante-ev/latex-action@latest
         with:
           root_file: thesis.tex
