@@ -98,15 +98,28 @@ Usually the algorithms and proofs are considering unary \DFAs consisting of a ch
 
 This algorithm finds more factors than actually required, since it also finds the multiples of the maximal divisors. In contrast, not all found factors are required to form the composite and we only want to add factors, which change the decomposition. In our example Figure \ref{fig:short-factors} we find $A_2$ and $A_4$, but $A_2$ is fully sufficient for decomposing the \DFA $A$. Additionally we want to keep track of the outliers of each factor and the composite itself. Regarding the explainability, it should be of preference, to have a small factor but a couple outliers, in comparison to a long factor and even have a decomposition with hard outliers, e.g. values that cannot be covered by a decomposition. In this case, a decomposition including outliers is also preferred.
 
-The original problem was solvable in \LogSpace, but extending the problem to finding the shortest possible factors, we face a different problem. Finding all the factors is fast but choosing which factors are actually required in the decomposition, is not. This problem can be formalized as follows:
+The original problem was solvable in \LogSpace, but extending the problem to finding the shortest possible factors, we face a different problem. Finding a valid decomposition is in \LogSpace but selecting a minimal amount of given factors needed to be a valid decomposition is not. This problem can be formalized as follows:
 
-Given an input $u = 101101\dots$ as binary word, and integer $k$ and a set of words $w_1, w_2, \dots, w_n$ with $l(u) > l(w_n) ~\forall n$ and $l(w)$ is a strict divisor of $l(u) ~ \forall w$. Find indices $i_1, i_2 \dots i_k$ such that
+\begin{definition}[\sc{Min Factors Decomposition}]{\ \\}
+	Input: an integer $k$, a binary string $u$ with $\ell(u)= l$ and binary strings $w_1, w_2, \dots, w_n$ with $\ell(w_i) < l$ and $\ell(w_i)$ divides $l$ for $1 \leq i \leq n$\\
+	Question: Exists indices $i_1, i_2, \dots i_k$ such that
+	$$w_{i_1}^{l / \ell(w_{i_1})} \circ w_{i_2}^{l / \ell(w_{i_2})} ~\dots~ \circ w_{i_k}^{l / \ell(w_{i_k})} = u $$
+\end{definition}
 
-\[
-\underbrace{w_{i_1}, w_{i_1}, \dots, w_{i_1}}_{l(u)} \cup \dots \cup \underbrace{w_{i_k}, w_{i_k}, \dots, w_{i_k}}_{l(u)} = u
-\]
+TODO: explain plan
 
-To reduce the Set Cover problem to our novel problem, we'll create a instance as follows. For the universe $U$ we will construct a binary string $u$, where $u[i] = 1$ iff $i \in U$. For each subset $C_n$ of $U$ we create a word $w_n$ in the given set of words $w$ correspondingly. For each subset, there will be a word $w_n$, with $w[i] = 1$ iff $i \in C_n$. The Set Cover problem now involves finding the minimum number of subsets from $C$ that cover the entire universe $U$. The goal is to show that if we can efficiently solve the Set Cover problem for this constructed instance, we can efficiently solve the original problem. If the Set Cover problem finds a cover of size $k$, it means there is a set of indices $i_1, i_2, \dots, i_k$ that chooses from the words $w_i$ such that $w_{i_1}, w_{i_2}, \dots, w_{i_k}$ can form the same binary word as $u$, which satisfies the original problem. Conversely, if you can efficiently solve the original problem and find a set of indices $i_1, i_2, \dots, i_k$ that chooses from the words $w_i$ to form $u$, then the corresponding subsets $C_i$ in the constructed Set Cover instance cover the entire universe $U$. This means you've found a Set Cover of size $k$. This reduction demonstrates that solving the original problem is at least as hard as solving the Set Cover problem.
+\begin{definition}[\sc{Set Cover}]{\ \\}
+	Input: A set of elements $U = \{u_1, u_2, \dots , u_n\}$. A set $C = \{C_1, C_2, \dots , C_m\}$ where $\forall~ i ~C_i \subseteq U$.\\
+	Question: Exists a set $O \subseteq C$ of minimum size such that $\bigcup_{C_i \in O} C_i = U$
+\end{definition}
+
+
+To reduce the Set Cover problem to our novel problem, we'll create a instance as follows. For the universe $U$ we will construct a binary string $u$ with length equal to the largest element in $U$, where $u[i] = 1$ iff $i \in U$. For each subset $C_n$ of $U$ we create a word $w_n$ in the given set of words $w$ correspondingly. For each subset, there will be a word $w_n$, with $w[i] = 1$ iff $i \in C_n$. The length of $w_n$ will be the next largest divisor of $l(u)$ which is at least as large as the largest element in $C_n$. The Set Cover problem now involves finding the minimum number of subsets from $C$ that cover the entire universe $U$. The goal is to show that if we can efficiently solve the Set Cover problem for this constructed instance, we can efficiently solve the original problem. If the Set Cover problem finds a cover of size $k$, it means there is a set of indices $i_1, i_2, \dots, i_k$ that chooses from the words $w_i$ such that $w_{i_1}, w_{i_2}, \dots, w_{i_k}$ can form the same binary word as $u$, which satisfies the original problem. Conversely, if you can solve the original problem and find a set of indices $i_1, i_2, \dots, i_k$ that chooses from the words $w_i$ to form $u$, then the corresponding subsets $C_i$ in the constructed Set Cover instance cover the entire universe $U$. This means we found a Set Cover of size $k$. This reduction demonstrates that solving the original problem is as hard as solving the Set Cover problem.
+
+TODO 
+$(w_i) = |U|, l(u) = 2|U|, u= 1^{2|U|} U = {u_1, u_2, \dots, u_n}$, set $\mathcal{C} = \{C_1, C_2, \dots, C_m\}$
+
+For each subset $C_i \in \mathcal{C}$ we create a word $w_i$ such that $w_i[j] = 1$ iff $u_j \in C_i$
 
 \section{Fourier Transform}
 TODO: describe idea
