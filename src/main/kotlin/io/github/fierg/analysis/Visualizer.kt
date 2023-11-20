@@ -25,7 +25,6 @@ import org.jetbrains.letsPlot.scale.scaleYContinuous
 import org.jetbrains.letsPlot.tooltips.tooltipsNone
 import java.awt.Desktop
 import java.io.File
-import java.lang.Boolean.FALSE
 
 
 class Visualizer {
@@ -202,7 +201,7 @@ class Visualizer {
             val maxValue = sortedMap.values.fold(0) { acc, pair -> acc + pair.second }
             val sumList = sortedMap.values.runningReduce { acc, pair -> Pair(pair.first + acc.first, maxValue) }.toMutableList()
             sumList[0] = Pair(sumList[0].first, maxValue)
-6
+            6
             val data = mapOf(
                 xS to sortedMap.keys.toList(),
                 yS to sumList.map { it.first }
@@ -227,17 +226,47 @@ class Visualizer {
             return result
         }
 
-        fun createCoverByFactorLinesPlot(evalResult: List<Cover>): Plot {
-            val coverMap = mutableMapOf<Cover, List<Pair<Double, Double>>>()
-            evalResult.forEach { cover ->
-                val resultList = mutableListOf<Pair<Double, Double>>()
+        fun createCoverByFactorPlotNormalizedByCover(covers: List<Cover>): Plot {
+            val xS = "Rel Factor Size"
+            val yS = "Sum of covered values"
+            Logger.info("Collecting values to plot...")
+            val resultMap = mutableMapOf<Double, Int>()
+            var totalValuesToCover = 0
+            covers.forEach { cover ->
                 cover.factors.forEach { factor ->
-                    resultList.add(Pair(factor.getRelativeSize(cover), (cover.totalValues - factor.outliers.size).toDouble() / cover.totalValues))
+                    val size = factor.getRelativeSize(cover)
+                    if (resultMap[size] == null) resultMap[size] = 0
                 }
-                coverMap[cover] = resultList
             }
-            TODO()
-            //return generateLinePlot(evalResult, coverMap)
+
+            covers.forEach { cover ->
+                totalValuesToCover += cover.totalValues
+                cover.factors.forEach { factor ->
+                    val size = factor.getRelativeSize(cover)
+                    val value = factor.getCoveredValuesUntilThisFactor(cover)
+                    resultMap.keys.filter { it >= size }.forEach { size ->
+                        resultMap[size] = resultMap[size]!! + value
+                    }
+                }
+            }
+
+            return generatePointPlotNormalizedByCover(resultMap, totalValuesToCover, xS, yS)
+        }
+
+        private fun generatePointPlotNormalizedByCover(resultMap: MutableMap<Double, Int>, totalValuesToCover: Int, xS: String, yS: String): Plot {
+            val sortedMap = resultMap.toSortedMap()
+            val data = mapOf(
+                xS to sortedMap.keys.toList(),
+                yS to sortedMap.values.toList()
+            )
+            Logger.info("Generating plot...")
+            Logger.info("PLOT DATA: $data")
+            return letsPlot(data) +
+                    ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+                    ggtitle("Sum of Values covered by factor of size x") +
+                    //scaleYContinuous(limits = Pair(0, totalValuesToCover)) +
+                    geomPoint(size = 2.0) { x = xS; y = yS } +
+                    geomSmooth(method = "loess")
         }
 
     }

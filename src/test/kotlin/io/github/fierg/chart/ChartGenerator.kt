@@ -55,6 +55,8 @@ class ChartGenerator {
 
                 val factorPlot = Visualizer.createCoverByFactorPlot(evalResult.flatten())
                 Visualizer.savePlotToFile("${options.decompositionMode.name}-all-values-by-factor-size.png", factorPlot)
+                val factorPlot2 = Visualizer.createCoverByFactorPlotNormalizedByCover(evalResult.flatten())
+                Visualizer.savePlotToFile("${options.decompositionMode.name}-all-values-by-factor-size-normalized-by-cover.png", factorPlot2)
             }
         Logger.info("Done.")
     }
