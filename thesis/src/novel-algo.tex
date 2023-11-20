@@ -56,7 +56,7 @@ Searching for a decomposition using only the maximal divisors of $|Q|$, provides
 	\label{fig:short-factors}
 \end{figure}
 
-Usually the algorithms and proofs are considering unary \DFAs consisting of a chain leading into a cycle of states. Since we obtain our \DFAs by transforming from a periodic label, we only have \DFAs with empty chains, therefore only considering unary permutation \DFA. This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683} as seen in Algorithm \ref{algo:composite} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$. Additional we are not only interested in answering the yes/no question of the composite problem but we actually want to collect the factors and continue our computation.
+Usually the algorithms and proofs are considering unary \DFAs consisting of a chain leading into a cycle of states. Since we obtain our \DFAs by transforming from a periodic label, we only have \DFAs with empty chains, therefore only considering unary permutation \DFA. This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683} as seen in Algorithm \ref{algo:composite} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$. Additional we are not only interested in answering the yes/no question of the composite problem but we actually want to collect the factors and continue our computation. After all possible factors are computed, they are added greedily to the composite until no further changes occur.
 
 \begin{algorithm}[H]
 	\label{algo:composite}
@@ -98,7 +98,7 @@ Usually the algorithms and proofs are considering unary \DFAs consisting of a ch
 
 This algorithm finds more factors than actually required, since it also finds the multiples of the maximal divisors. In contrast, not all found factors are required to form the composite and we only want to add factors, which change the decomposition. In our example Figure \ref{fig:short-factors} we find $A_2$ and $A_4$, but $A_2$ is fully sufficient for decomposing the \DFA $A$. Additionally we want to keep track of the outliers of each factor and the composite itself. Regarding the explainability, it should be of preference, to have a small factor but a couple outliers, in comparison to a long factor and even have a decomposition with hard outliers, e.g. values that cannot be covered by a decomposition. In this case, a decomposition including outliers is also preferred.
 
-The original problem was solvable in \LogSpace, but extending the problem to finding the shortest possible factors, we face a different problem. Finding a valid decomposition is in \LogSpace but selecting a minimal amount of given factors needed to be a valid decomposition is not. This problem can be formalized as follows:
+The original problem was solvable in \LogSpace, but extending the problem to finding the shortest possible factors, we face a different problem. Due to our modification of allowing any factor, we face a different challenge. Finding a valid decomposition is in \LogSpace but selecting a minimal amount of given factors needed to be a valid decomposition is not. This problem can be formalized as follows:
 
 \begin{definition}[\sc{Min Factors Decomposition}]{\ \\}
 	Input: an integer $k$, a binary string $u$ with $\ell(u)= l$ and a set of binary strings $\mathcal{W}=\{w_1, w_2, \dots, w_n\}$ with $\ell(w_i) < l$ and $\ell(w_i)$ divides $l$ for $1 \leq i \leq n$\\
@@ -109,25 +109,99 @@ The original problem was solvable in \LogSpace, but extending the problem to fin
 TODO: explain plan
 
 \begin{definition}[\sc{Set Cover}]{\ \\}
-	Input: A set of elements $U = \{u_1, u_2, \dots , u_n\}$. A set $\mathcal{C} = \{C_1, C_2, \dots , C_m\}$ where $\forall~ i ~C_i \subseteq U$.\\
-	Question: Exists a set $\mathcal{O} \subseteq \mathcal{C}$ of minimum size such that $\bigcup_{C_i \in \mathcal{O}} C_i = U$
+	Input: A set of elements $U = \{u_1, u_2, \dots , u_n\}$. A set $\mathcal{C} = \{C_1, C_2, \dots , C_m\}$ where $C_i \subseteq U ~\forall~ C_i \in \mathcal{C}$.\\
+	Question: Exists a set $\mathcal{O} \subseteq \mathcal{C}$ of minimum size such that $\underset{C_i \in \mathcal{O}}{\bigcup}C_i = U$
 \end{definition}
-
 
 To reduce the Set Cover problem to our novel problem, we create an instance as follows. For the universe $U = \{u_1, u_2, \dots, u_n\}$ we will construct a binary string $u= 1^{2|U|}$ with length $\ell(u) = 2|U|$. For each subset of $\mathcal{C} = \{C_1, C_2, \dots, C_m\}$ we create a word $w_i$ such that $w_i[j] = 1$ iff $u_j \in C_i$. 
 
 A solution to the original problem $i_1, i_2, \dots, i_k$ that chooses from the words $w_i$ to form $u$, then the corresponding subsets $C_{i_1}, C_{i_2}, \dots, C_{i_k}$ in the constructed Set Cover instance cover the entire universe $U$. Assume there exists an element $u_x \in U$ with $u_x \not \in C_{i_k} ~\forall~ i_1, i_2, \dots, i_k$. This implies that there is no $w_{i_k} ~\forall~ i_1, i_2, \dots, i_k$ with $w_{i_k}[x]=1$ which is in contradiction to the found solution with $w_{i_1}^{l / \ell(w_{i_1})} \circ w_{i_2}^{l / \ell(w_{i_2})} ~\dots~ \circ w_{i_k}^{l / \ell(w_{i_k})} = u $. This means that $u_x$ cannot exist and we found a Set Cover of size $k$.
 
-If the Set Cover problem finds a cover $\mathcal{O} \subseteq \mathcal{C}, |\mathcal{O}|=k$ with $\bigcup_{C_i \in O} C_i = U$, it means there is a set of indices $i_1, i_2, \dots, i_k$ that chooses from the words $w_i$ such that $w_{i_1}, w_{i_2}, \dots, w_{i_k}$ can form the same binary word as $u$, which satisfies the original problem. 
-
-This reduction demonstrates that solving the original problem is as hard as solving the Set Cover problem.
-
+If the Set Cover problem has a solution $\mathcal{O} \subseteq \mathcal{C}, |\mathcal{O}|=k$ with $\bigcup_{C_i \in O} C_i = U$. Assume $w_{i_1}^{l / \ell(w_{i_1})} \circ w_{i_2}^{l / \ell(w_{i_2})} ~\dots~ \circ w_{i_k}^{l / \ell(w_{i_k})} \not = u$, that implies there is at least one position $x$ where $(w_{i_1}^{l / \ell(w_{i_1})} \circ w_{i_2}^{l / \ell(w_{i_2})} ~\dots~ \circ w_{i_k}^{l / \ell(w_{i_k})})[x] \not= u[x] $. This is in contradiction to the construction as there has to be a $C_{i_x} \in \mathcal{O}$ with $u_x \in C_{i_x}$ and therefore a word $w_{i_x}[x]=1$. This reduction demonstrates that solving the original problem is as hard as solving the Set Cover problem.
 
 
 \section{Fourier Transform}
-TODO: describe idea
+Finding shorter factors that just the maximal divisors should already increase the explainability but consider the following example from Figure \ref{fig:fourier-transform-a}. Factor $A_4$ alone would suffice to cover the original \DFA $A$ but most of the final states are already covered by the smaller factor $A_2$. We now can remove all the states from $A_4$ which are already covered by $A_2$ and this results in 2 Factors with each having just one final state.
 
+\begin{figure}[h]
+	\begin{minipage}[t]{\textwidth}
+		\centering
+		\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
+			\node[state,initial] (q_0)   {$q_0$}; 
+			\node[state,accepting] (q_1) [ right=of q_0] {$q_1$}; 
+			\node[state,accepting] (q_2) [ right=of q_1] {$q_2$}; 
+			\node[state,accepting] (q_3) [ right=of q_2] {$q_3$};
+			\node[state](q_4) [ right=of q_3] {$q_4$};
+			\node[state,accepting] (q_5) [ right=of q_4] {$q_5$};
+			\node[state,accepting] (q_6) [ right=of q_5] {$q_6$};
+			\node[state,accepting] (q_7) [ right=of q_6] {$q_7$};
+			\path[->] 
+			(q_0) edge  node {} (q_1)
+			(q_1) edge  node {} (q_2)
+			(q_2) edge  node {} (q_3)
+			(q_3) edge  node {} (q_4)
+			(q_4) edge  node {} (q_5)
+			(q_5) edge  node {} (q_6)
+			(q_6) edge  node {} (q_7)
+			(q_7) edge[bend right, above]  node {} (q_0);
+		\end{tikzpicture}		
+	\end{minipage}
+	\begin{minipage}[b]{0.39\textwidth}
+		\centering
+		\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
+			\node[state,initial] (q_0)   {$q_0$}; 
+			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+			\path[->] 
+			(q_0) edge  node {} (q_1)
+			(q_1) edge[bend right, above]  node {} (q_0);
+		\end{tikzpicture}
+	\end{minipage}
+	\begin{minipage}[b]{0.59\textwidth}
+		\centering
+		\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
+			\node[state,initial] (q_0)   {$q_0$}; 
+			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+			\node[state,accepting](q_2) [right=of q_1] {$q_2$};
+			\node[state,accepting](q_3) [right=of q_2] {$q_3$};
+			\path[->] 
+			(q_0) edge  node {} (q_1)
+			(q_1) edge  node {} (q_2)
+			(q_2) edge  node {} (q_3)
+			(q_3) edge[bend right, above]  node {} (q_0);
+		\end{tikzpicture}
+	\end{minipage}
+	\caption{The DFA $A$ and its factors $A_2$ \& $A_4$}
+	\label{fig:fourier-transform-a}
+\end{figure}
 
+\begin{figure}
+\begin{minipage}[b]{0.39\textwidth}
+	\centering
+	\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
+		\node[state,initial] (q_0)   {$q_0$}; 
+		\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+		\path[->] 
+		(q_0) edge  node {} (q_1)
+		(q_1) edge[bend right, above]  node {} (q_0);
+	\end{tikzpicture}
+\end{minipage}
+\begin{minipage}[b]{0.59\textwidth}
+	\centering
+	\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
+		\node[state,initial] (q_0)   {$q_0$}; 
+		\node[state] (q_1) [right=of q_0] {$q_1$}; 
+		\node[state,accepting](q_2) [right=of q_1] {$q_2$};
+		\node[state](q_3) [right=of q_2] {$q_3$};
+		\path[->] 
+		(q_0) edge  node {} (q_1)
+		(q_1) edge  node {} (q_2)
+		(q_2) edge  node {} (q_3)
+		(q_3) edge[bend right, above]  node {} (q_0);
+	\end{tikzpicture}
+\end{minipage}
+\caption{The Fourier transformed factors $A_2$ \& $A_4$}
+\label{fig:fourier-transform-b}
+\end{figure}
 
 %%% Local Variables: 
 %%% mode: latex

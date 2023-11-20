@@ -7,11 +7,11 @@
 Understanding and interpreting labels in edge periodic temporal graphs is essential for various applications, such as network analysis, system monitoring, and predictive modeling. However, assessing the ease with which humans can comprehend these labels presents a unique challenge. In this context, we propose a comprehensive metric to measure the \enquote{explainability} of such labels, taking into account multiple factors that influence their possibility to interpret. 
 
 \section{Explainability Metric}
-The comprehensive nature of the proposed metric is crucial. By considering factors like decomposition structure, periodicity, and decomposition width, it offers a holistic evaluation of label explainability. This approach ensures a thorough assessment, acknowledging the multi-faceted aspects influencing human interpretation. Moreover, a standardized metric facilitates comparative analysis across different graphs or models. This comparison allows for the selection of models that are not only accurate but also easily understandable by humans.
+The comprehensive nature of the proposed metric is crucial. By considering factors like decomposition structure, periodicity, and decomposition width, it offers a holistic evaluation of label explainability. A standardized metric facilitates comparative analysis across different graphs and so this comparison allows for the selection of methods and different parameters in the algorithm to make it more understandable by humans.
 
 \textbf{Decomposition Structure} ($DS = \sum\limits_{factor~ s_i}\frac{|s_i|}{\text{|A|}} \cdot \frac{out_{\{s_1,\dots,s_i\}}}{|F_A|}$)
 
-The label size is a fundamental factor in assessing explainability. A smaller label, in relation to the original size, often implies a more concise representation. A label that is more compact is generally easier for humans to understand, as it conveys information succinctly. Larger labels may overwhelm human observers with excessive detail.
+The decomposition structure takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels. Labels with multiple shorter segments may facilitate explanation, as they enable a more granular understanding of connectivity changes at different time steps. For example, dividing the label into daily or weekly segments could aid in interpreting temporal patterns. This generally implies more factors are easier to understand than few factors.
 
 \textbf{Periodicity} ($p = \frac{|F_A| - out_{\{s_1,\dots,s_k\}}}{|F_A|}$)
 
@@ -19,8 +19,9 @@ Periodicity refers to the regularity of patterns in the label across different t
 
 \textbf{Width} ($width(A)$)
 
-The label structure takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels. Labels with multiple shorter segments may facilitate explanation, as they enable a more granular understanding of connectivity changes at different time steps. For example, dividing the label into daily or weekly segments could aid in interpreting temporal patterns. This generally implies more factors are easier to understand than few factors.
+The decomposition width is a fundamental factor in assessing explainability. A highly decomposed label, often implies a more concise representation. A collection of labels with distinct information is generally easier for humans to understand, as it conveys information succinctly. Very long labels may overwhelm human observers with excessive detail.
+
 
 \section{Explainability Measurement}
 
-To measure the proposed explainability metric for edge periodic temporal graphs, a systematic approach is employed, utilizing real-world data from face-to-face (f2f) graphs and a combination of existing and novel algorithms. The collected data is then transformed into an edge periodic temporal graph representation. Existing algorithms as well as novel approaches designed for edge periodic temporal graph construction are used and the resulting decompositions are evaluated using the described metrics.
+To measure the proposed explainability metric for edge periodic temporal graphs, a systematic approach is employed, utilizing real-world data from face-to-face (f2f) graphs. Existing algorithms as well as novel approaches designed for edge periodic temporal graph construction are used and the resulting decompositions are evaluated using the described metrics.
