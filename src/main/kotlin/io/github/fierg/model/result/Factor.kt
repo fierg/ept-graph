@@ -85,4 +85,17 @@ class Factor(var array: BooleanArray, val outliers: List<Int>) {
         if (!array.contentEquals(other.array)) return false
         return outliers == other.outliers
     }
+
+    fun getOutliersOfCoverUntilThisFactor(cover: Cover): Int {
+        val outliers = cover.target.indices.filter { cover.target[it] == cover.stateToReplace }.toMutableList()
+        val outliersOfFactors = cover.factors.subList(0, cover.factors.indexOf(this) + 1).map { it.outliers }
+        outliersOfFactors.forEach { outliersList ->
+            outliers.removeIfNotIncludedIn(outliersList)
+        }
+        return outliers.size
+    }
+
+
+    fun getCoveredValuesUntilThisFactor(cover: Cover) = cover.totalValues - getOutliersOfCoverUntilThisFactor(cover)
+
 }
