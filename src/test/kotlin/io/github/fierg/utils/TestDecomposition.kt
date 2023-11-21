@@ -148,7 +148,7 @@ class TestDecomposition {
         val array = arrayOf(true, false, false, true, true, false).toBooleanArray()
         val state = false
         val periods = Decomposer(state = state, threshold = 0.5).findCover(array)
-        val expectedFactors = mutableListOf(Factor(arrayOf(true, false, false), listOf(4)))
+        val expectedFactors = mutableListOf(Factor(arrayOf(true, false, false), mutableListOf(4)))
         val expectedPeriods = Cover(array, !state, 3, 3, mutableListOf(4), expectedFactors)
         Decomposer(state = state, threshold = 0.5).analyzeCover(periods)
         assert(periods == expectedPeriods)
@@ -160,8 +160,8 @@ class TestDecomposition {
         val state = false
         val periods = Decomposer(state = state).findCover(array)
         val expectedFactors = mutableListOf(
-            Factor(arrayOf(true, false, false), listOf(4)),
-            Factor(arrayOf(true, false, false, true, true, false), listOf())
+            Factor(arrayOf(true, false, false), mutableListOf(4)),
+            Factor(arrayOf(true, false, false, true, true, false), mutableListOf())
         )
         val expectedPeriods = Cover(array, !state, 3, 6, mutableListOf(), expectedFactors)
         Decomposer(state = state, threshold = 0.5).analyzeCover(periods)
@@ -173,7 +173,7 @@ class TestDecomposition {
     fun testDecomposition4a() {
         val input = BooleanArray(16) { true }
         val cover = Decomposer(state = false).findCover(input)
-        val expectedFactors = mutableListOf(Factor(arrayOf(true), listOf()))
+        val expectedFactors = mutableListOf(Factor(arrayOf(true), mutableListOf()))
         Decomposer(state = false, threshold = 0.5).analyzeCover(cover)
 
         assert(cover == Cover(input, true, 16, 1, mutableListOf(), expectedFactors))

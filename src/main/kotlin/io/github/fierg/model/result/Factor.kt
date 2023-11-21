@@ -9,14 +9,14 @@ import io.github.fierg.extensions.removeIfNotIncludedIn
  * @param array     The array of boolean values representing the factor.
  * @param outliers  The list of indices representing outliers in the factor.
  */
-class Factor(var array: BooleanArray, val outliers: List<Int>) {
+class Factor(var array: BooleanArray, val outliers: MutableList<Int>) {
     /**
      * Constructs a `Factor` object using a boolean array to represent the cover and a list of outliers.
      *
      * @param cover     The array of boolean values representing the factor.
      * @param outliers  The list of indices representing outliers in the factor.
      */
-    constructor(cover: Array<Boolean>, outliers: List<Int>) : this(array = cover.toBooleanArray(), outliers)
+    constructor(cover: Array<Boolean>, outliers: MutableList<Int>) : this(array = cover.toBooleanArray(), outliers)
 
     companion object {
 

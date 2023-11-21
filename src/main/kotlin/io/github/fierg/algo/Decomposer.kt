@@ -84,11 +84,11 @@ class Decomposer(state: Boolean = true, private val mode: DecompositionMode = De
      * @param cover The cover to identify outliers.
      * @return A list of outlier indices.
      */
-    fun getOutliers(input: BooleanArray, cover: BooleanArray): List<Int> {
+    fun getOutliers(input: BooleanArray, cover: BooleanArray): MutableList<Int> {
         val expandedCover = BooleanArray(input.size) { !stateToReplace }
         expandedCover.applyPeriod(cover, stateToReplace)
 
-        return expandedCover.indices.filter { input[it] == stateToReplace && expandedCover[it] != stateToReplace }
+        return expandedCover.indices.filter { input[it] == stateToReplace && expandedCover[it] != stateToReplace }.toMutableList()
     }
 
     /**
@@ -161,7 +161,7 @@ class Decomposer(state: Boolean = true, private val mode: DecompositionMode = De
      * @return An array of `Factor` objects representing the factors.
      */
     private fun getFactors(input: BooleanArray, factorIndex: Map<Int, Int>, periods: List<Int>): Array<Factor> {
-        val factors = Array(factorIndex.size) { Factor(BooleanArray(0), emptyList()) }
+        val factors = Array(factorIndex.size) { Factor(BooleanArray(0), mutableListOf()) }
         val jobs = mutableListOf<Deferred<Unit>>()
 
         for (factor in periods) {

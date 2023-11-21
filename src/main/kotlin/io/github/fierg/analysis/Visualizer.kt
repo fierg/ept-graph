@@ -115,63 +115,7 @@ class Visualizer {
             }
         }
 
-        fun createCoverByFactorPlot(covers: List<Cover>): Plot {
-            val xS = "Rel Factor Size"
-            val yS = "Sum of covered values"
-            Logger.info("Collecting values to plot...")
-            val resultMap = mutableMapOf<Double, Pair<Int, Int>>()
-            covers.forEach { cover ->
-                cover.factors.forEach { factor ->
-                    val size = factor.getRelativeSize(cover)
-                    if (resultMap[size] == null) {
-                        resultMap[size] = Pair(cover.totalValues - factor.outliers.size, cover.totalValues)
-                    } else {
-                        resultMap[size] = Pair(resultMap[size]!!.first + cover.totalValues - factor.outliers.size, resultMap[size]!!.second + cover.totalValues)
-
-                    }
-                }
-            }
-
-            return generatePointPlot(resultMap, xS, yS)
-        }
-
-        fun createCoverByFactorPlotNormalized(covers: List<Cover>, useAverage: Boolean = false): Plot {
-            val xS = "Rel Factor Size"
-            val yS = "Rel amount of values covered"
-            Logger.info("Collecting values to plot...")
-            val resultMap = mutableMapOf<Double, MutableList<Double>>()
-            covers.forEach { cover ->
-                cover.factors.forEach { factor ->
-                    val size = factor.getRelativeSize(cover)
-                    if (resultMap[size].isNullOrEmpty()) {
-                        resultMap[size] = mutableListOf(factor.getRelativeCoveredValues(cover))
-                    } else {
-                        resultMap[size]!!.add(factor.getRelativeCoveredValues(cover))
-                    }
-                }
-            }
-
-            return generatePointPlotForNormalized(resultMap, xS, yS, useAverage)
-        }
-
-        fun createCoverByDecompositionPlot(covers: List<Cover>, useAverage: Boolean = false): Plot {
-            val xS = "Rel Cover Size"
-            val yS = "Rel amount of values covered"
-            Logger.info("Collecting values to plot...")
-            val resultMap = mutableMapOf<Double, MutableList<Double>>()
-            covers.forEach { cover ->
-                val size = cover.size.toDouble() / cover.target.size
-                if (resultMap[size].isNullOrEmpty()) {
-                    resultMap[size] = mutableListOf(cover.getRelativeCoveredValues())
-                } else {
-                    resultMap[size]!!.add(cover.getRelativeCoveredValues())
-                }
-            }
-
-            return generatePointPlotForNormalized(resultMap, xS, yS, useAverage)
-        }
-
-        private fun generatePointPlotForNormalized(resultMap: Map<Double, List<Double>>, xS: String, yS: String, useAverage: Boolean): Plot {
+        fun generatePointPlotForNormalized(resultMap: Map<Double, List<Double>>, xS: String, yS: String, useAverage: Boolean): Plot {
             val data = if (useAverage) {
                 mapOf(
                     xS to resultMap.keys.toList(),
@@ -196,12 +140,12 @@ class Visualizer {
             //geomSmooth(se = FALSE, method = "gam") +
         }
 
-        private fun generatePointPlot(resultMap: Map<Double, Pair<Int, Int>>, xS: String, yS: String): Plot {
+        fun generatePointPlot(resultMap: Map<Double, Pair<Int, Int>>, xS: String, yS: String): Plot {
             val sortedMap = resultMap.toSortedMap()
             val maxValue = sortedMap.values.fold(0) { acc, pair -> acc + pair.second }
             val sumList = sortedMap.values.runningReduce { acc, pair -> Pair(pair.first + acc.first, maxValue) }.toMutableList()
             sumList[0] = Pair(sumList[0].first, maxValue)
-            6
+
             val data = mapOf(
                 xS to sortedMap.keys.toList(),
                 yS to sumList.map { it.first }
@@ -226,34 +170,8 @@ class Visualizer {
             return result
         }
 
-        fun createCoverByFactorPlotNormalizedByCover(covers: List<Cover>): Plot {
-            val xS = "Rel Factor Size"
-            val yS = "Sum of covered values"
-            Logger.info("Collecting values to plot...")
-            val resultMap = mutableMapOf<Double, Int>()
-            var totalValuesToCover = 0
-            covers.forEach { cover ->
-                cover.factors.forEach { factor ->
-                    val size = factor.getRelativeSize(cover)
-                    if (resultMap[size] == null) resultMap[size] = 0
-                }
-            }
 
-            covers.forEach { cover ->
-                totalValuesToCover += cover.totalValues
-                cover.factors.forEach { factor ->
-                    val size = factor.getRelativeSize(cover)
-                    val value = factor.getCoveredValuesUntilThisFactor(cover)
-                    resultMap.keys.filter { it >= size }.forEach { size ->
-                        resultMap[size] = resultMap[size]!! + value
-                    }
-                }
-            }
-
-            return generatePointPlotNormalizedByCover(resultMap, totalValuesToCover, xS, yS)
-        }
-
-        private fun generatePointPlotNormalizedByCover(resultMap: MutableMap<Double, Int>, totalValuesToCover: Int, xS: String, yS: String): Plot {
+        fun generatePointPlotNormalizedByCover(resultMap: MutableMap<Double, Int>, totalValuesToCover: Int, xS: String, yS: String): Plot {
             val sortedMap = resultMap.toSortedMap()
             val data = mapOf(
                 xS to sortedMap.keys.toList(),
@@ -268,6 +186,5 @@ class Visualizer {
                     geomPoint(size = 2.0) { x = xS; y = yS } +
                     geomSmooth(method = "loess")
         }
-
     }
 }
