@@ -34,23 +34,6 @@ class Analyzer {
             return Visualizer.generatePointPlotNormalizedByCover(resultMap, totalValuesToCover, xS, yS)
         }
 
-        fun createCoverByDecompositionPlot(covers: List<Cover>, useAverage: Boolean = false): Plot {
-            val xS = "Rel Cover Size"
-            val yS = "Rel amount of values covered"
-            Logger.info("Collecting values to plot...")
-            val resultMap = mutableMapOf<Double, MutableList<Double>>()
-            covers.forEach { cover ->
-                val size = cover.size.toDouble() / cover.target.size
-                if (resultMap[size].isNullOrEmpty()) {
-                    resultMap[size] = mutableListOf(cover.getRelativeCoveredValues())
-                } else {
-                    resultMap[size]!!.add(cover.getRelativeCoveredValues())
-                }
-            }
-
-            return Visualizer.generatePointPlotForNormalized(resultMap, xS, yS, useAverage)
-        }
-
         fun createCoverByFactorPlotNormalized(covers: List<Cover>, useAverage: Boolean = false): Plot {
             val xS = "Rel Factor Size"
             val yS = "Rel amount of values covered"
