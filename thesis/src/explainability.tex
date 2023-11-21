@@ -7,15 +7,15 @@
 Understanding and interpreting labels in edge periodic temporal graphs is essential for various applications, such as network analysis, system monitoring, and predictive modeling. However, assessing the ease with which humans can comprehend these labels presents a unique challenge. In this context, we propose a comprehensive metric to measure the \enquote{explainability} of such labels, taking into account multiple factors that influence their possibility to interpret.
 
 \section{Explainability Metric}
-The comprehensive nature of the proposed metric is crucial. By considering factors like decomposition structure, periodicity, and decomposition width, it offers a holistic evaluation of label explainability. A standardized metric facilitates comparative analysis across different graphs and so this comparison allows for the selection of methods and different parameters in the algorithm to make it more understandable by humans. For a \DFA $A$, and a decomposition $(B_i)_{1 \leq i \leq k}$, we consider:
+The comprehensive nature of the proposed metric is crucial. By considering factors like decomposition structure, periodicity, and decomposition width, it offers a holistic evaluation of label explainability. A standardized metric facilitates comparative analysis across different graphs and so this comparison allows for the selection of methods and different parameters in the algorithm to make it more understandable by humans. For a \DFA $A$, and its decomposition $(B_i)_{1 \leq i \leq k}$, we consider:
 
-\textbf{Decomposition Structure} ($DS = \sum\limits_{factor~ s_i}\frac{|s_i|}{\text{|A|}} \cdot \frac{out_{\{s_1,\dots,s_i\}}}{|F_A|}$)
+\textbf{Decomposition Structure} ($DS = \sum\limits_{factor~ B_i}\frac{|B_i|}{\text{|A|}} \cdot \frac{out_{\{B_1,\dots,B_i\}}}{|F_A|}$)
 
 The decomposition structure takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels. Labels with multiple shorter segments may facilitate explanation, as they enable a more granular understanding of connectivity changes at different time steps. For example, dividing the label into daily or weekly segments could aid in interpreting temporal patterns. This generally implies more factors are easier to understand than few factors.
 
-\textbf{Periodicity} ($p = \frac{|F_A| - out_{\{s_1,\dots,s_k\}}}{|F_A|}$)
+\textbf{Precision} ($precision = \frac{|F_A| - out_{\{B_1,\dots,B_k\}}}{|F_A|}$)
 
-Periodicity refers to the regularity of patterns in the label across different time steps. A label that exhibits a clear and consistent periodicity allows human observers to anticipate when changes in connectivity occur. This predictability aids in comprehending the temporal dynamics of the graph. Few outliers which cannot be covered by any factor imply a high periodicity.
+Precision refers to the regularity of patterns in the label across different time steps. A label that exhibits a clear and consistent periodicity allows human observers to anticipate when changes in connectivity occur. This precision aids in comprehending the temporal dynamics of the graph. Few outliers which cannot be covered by any factor imply a high precision.
 
 \textbf{Size} ($k$)
 
