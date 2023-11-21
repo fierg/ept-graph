@@ -1,5 +1,7 @@
 package io.github.fierg.extensions
 
+import kotlin.random.Random
+
 fun BooleanArray.contentEqualsWithDelta(other: BooleanArray, width: Int, state: Boolean): Boolean {
     if (this.size != other.size) {
         return false // Arrays must have the same length
@@ -77,4 +79,13 @@ operator fun BooleanArray.minus(other: BooleanArray): BooleanArray {
 
 fun BooleanArray.getBinaryString(): String {
     return this.map { if (it) "1" else "0" }.toString()
+}
+
+fun getRandomArray(size: Int): BooleanArray {
+    val random = Random.Default
+    val arr = BooleanArray(size)
+    for (i in 0 until size) {
+        arr[i] = random.nextBoolean()
+    }
+    return arr
 }

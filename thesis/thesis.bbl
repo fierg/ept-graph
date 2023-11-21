@@ -1,0 +1,98 @@
+\begin{thebibliography}{10}
+
+\bibitem{erlebach2020game}
+Erlebach, T. and Spooner, J.~T.,
+\newblock A game of cops and robbers on graphs with periodic edge-connectivity,
+\newblock in {\em SOFSEM 2020: Theory and Practice of Computer Science: 46th
+  International Conference on Current Trends in Theory and Practice of
+  Informatics, SOFSEM 2020, Limassol, Cyprus, January 20--24, 2020,
+  Proceedings}, pages 64--75, Springer, 2020.
+
+\bibitem{prime-languages}
+Kupferman, O. and Mosheiff, J.,
+\newblock Prime languages,
+\newblock volume 240, 2014.
+
+\bibitem{DBLP:journals/corr/abs-2107-04683}
+Jecker, I., Mazzocchi, N., and Wolf, P.,
+\newblock CoRR {\bf abs/2107.04683} (2021).
+
+\bibitem{unara-prime-languages}
+Jecker, I., Kupferman, O., and Mazzocchi, N.,
+\newblock {Unary Prime Languages},
+\newblock in {\em 45th International Symposium on Mathematical Foundations of
+  Computer Science (MFCS 2020)}, edited by Esparza, J. and Kr{\'a}ľ, D.,
+  volume 170 of {\em Leibniz International Proceedings in Informatics
+  (LIPIcs)}, pages 51:1--51:12, Dagstuhl, Germany, 2020, Schloss
+  Dagstuhl--Leibniz-Zentrum f{\"u}r Informatik.
+
+\bibitem{Holme_2012}
+Holme, P. and Saramäki, J.,
+\newblock Physics Reports {\bf 519} (2012) 97.
+
+\bibitem{DBLP:journals/corr/Erlebach0K15}
+Erlebach, T., Hoffmann, M., and Kammer, F.,
+\newblock CoRR {\bf abs/1504.07976} (2015).
+
+\bibitem{DBLP:journals/corr/Michail15}
+Michail, O.,
+\newblock CoRR {\bf abs/1503.00278} (2015).
+
+\bibitem{arrighi2022multiparameter}
+Arrighi, E., Grüttemeier, N., Morawietz, N., Sommer, F., and Wolf, P.,
+\newblock Multi-parameter analysis of finding minors and subgraphs in edge
+  periodic temporal graphs, 2022.
+
+\bibitem{temporalLinkPrediction}
+Dunlavy, D.~M., Kolda, T.~G., and Acar, E.,
+\newblock ACM Trans. Knowl. Discov. Data {\bf 5} (2011).
+
+\bibitem{temporalClusterCoefficient}
+Cui, J., Zhang, Y.-Q., and Li, X.,
+\newblock On the clustering coefficients of temporal networks and epidemic
+  dynamics,
+\newblock pages 2299--2302, 2013.
+
+\bibitem{temporalEvolution}
+Fu, D., Fang, L., Maciejewski, R., Torvik, V.~I., and He, J.,
+\newblock Meta-learned metrics over multi-evolution temporal graphs,
+\newblock in {\em Proceedings of the 28th ACM SIGKDD Conference on Knowledge
+  Discovery and Data Mining}, KDD '22, page 367–377, New York, NY, USA, 2022,
+  Association for Computing Machinery.
+
+\bibitem{kerracher2014design}
+Kerracher, N., Kennedy, J., and Chalmers, K.,
+\newblock (2014).
+
+\bibitem{tang2009temporal}
+Tang, J., Musolesi, M., Mascolo, C., and Latora, V.,
+\newblock Temporal distance metrics for social network analysis,
+\newblock in {\em Proceedings of the 2nd ACM workshop on Online social
+  networks}, pages 31--36, 2009.
+
+\bibitem{fu2022dppin}
+Fu, D. and He, J.,
+\newblock Dppin: A biological repository of dynamic protein-protein interaction
+  network data,
+\newblock in {\em 2022 IEEE International Conference on Big Data (Big Data)},
+  pages 5269--5277, IEEE, 2022.
+
+\bibitem{dibrita2022temporal}
+DiBrita, N.~S., Eledlebi, K., Hildmann, H., Culley, L., and Isakovic, A.~F.,
+\newblock Applied Sciences {\bf 12} (2022) 1315.
+
+\bibitem{f2f-bai2019predicting}
+Bai, C. et~al.,
+\newblock Predicting the visual focus of attention in multi-person discussion
+  videos,
+\newblock in {\em IJCAI 2019}, International Joint Conferences on Artificial
+  Intelligence, 2019.
+
+\bibitem{f2f-kumar2021deception}
+Kumar, S., Bai, C., Subrahmanian, V., and Leskovec, J.,
+\newblock Deception detection in group video conversations using dynamic
+  interaction networks,
+\newblock in {\em ICWSM 2021}, International AAAI Conference on Web and Social
+  Media, 2021.
+
+\end{thebibliography}

@@ -194,6 +194,16 @@ data class Cover(
         return multiples
     }
 
+    fun getAbsoluteResultMapFromCover(): Map<Double, Int> {
+        val map = mutableMapOf<Double,Int>()
+        this.factors.forEach { factor ->
+            val size = factor.getRelativeSize(this)
+            val coveredValues = factor.getCoveredValuesUntilThisFactor(this)
+            map[size] = coveredValues
+        }
+        return map
+    }
+
     /**
      * Checks if this `Cover` object is equal to another object.
      *
