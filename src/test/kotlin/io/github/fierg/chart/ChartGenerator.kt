@@ -1,6 +1,7 @@
 package io.github.fierg.chart
 
 import io.github.fierg.algo.Decomposer
+import io.github.fierg.analysis.Analyzer
 import io.github.fierg.analysis.Visualizer
 import io.github.fierg.data.DotEnvParser
 import io.github.fierg.logger.Logger
@@ -27,10 +28,10 @@ class ChartGenerator {
                 val evalResult = decomposer.analyzeAllGraphs(upTo)
                 Logger.setLogLevelToDebug()
 
-                val factorPlot1 = Visualizer.createCoverByFactorPlotNormalized(evalResult.flatten())
+                val factorPlot1 = Analyzer.createCoverByFactorPlotNormalized(evalResult.flatten())
                 Visualizer.savePlotToFile("${options.decompositionMode.name}-all-relative-values-by-factor-size.png", factorPlot1)
 
-                val coverPlot1 = Visualizer.createCoverByDecompositionPlot(evalResult.flatten())
+                val coverPlot1 = Analyzer.createCoverByDecompositionPlot(evalResult.flatten())
                 Visualizer.savePlotToFile("${options.decompositionMode.name}-all-relative-values-by-cover-size.png", coverPlot1)
             }
         Logger.info("Done.")
@@ -53,9 +54,9 @@ class ChartGenerator {
                 val evalResult = decomposer.analyzeAllGraphs(upTo)
                 Logger.setLogLevelToDebug()
 
-                val factorPlot = Visualizer.createCoverByFactorPlot(evalResult.flatten())
+                val factorPlot = Analyzer.createCoverByFactorPlot(evalResult.flatten())
                 Visualizer.savePlotToFile("${options.decompositionMode.name}-all-values-by-factor-size.png", factorPlot)
-                val factorPlot2 = Visualizer.createCoverByFactorPlotNormalizedByCover(evalResult.flatten())
+                val factorPlot2 = Analyzer.createCoverByFactorPlotNormalizedByCover(evalResult.flatten())
                 Visualizer.savePlotToFile("${options.decompositionMode.name}-all-values-by-factor-size-normalized-by-cover.png", factorPlot2)
             }
         Logger.info("Done.")
