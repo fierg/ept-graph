@@ -1,7 +1,6 @@
-package io.github.fierg.algo
+package io.github.fierg.analysis
 
-import io.github.fierg.analysis.Analyzer
-import io.github.fierg.analysis.Visualizer
+import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.DotEnvParser
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.DecompositionMode
