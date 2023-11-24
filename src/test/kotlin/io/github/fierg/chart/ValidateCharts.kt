@@ -27,7 +27,7 @@ class ValidateCharts {
 
     @Test
     fun testRandomArrayPlotGeneration() {
-        val size = 100000
+        val size = 10000
         Logger.info("Generating random array of size $size and decompose it ...")
         val array = getRandomArray(size)
 

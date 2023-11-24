@@ -28,7 +28,7 @@ class Factor(var array: BooleanArray, val outliers: MutableList<Int>) {
          * @param factors         A collection of boolean arrays representing factors.
          * @return A mutable list of integer indices representing outliers.
          */
-        fun getOutliersForCleanQuotients(target: BooleanArray, stateToReplace: Boolean, factors: Collection<BooleanArray>): MutableList<Int> {
+        fun recalculateOutliers(target: BooleanArray, stateToReplace: Boolean, factors: Collection<BooleanArray>): MutableList<Int> {
             val outliers = mutableListOf<Int>()
             target.forEachIndexed { index, state ->
                 if (state == stateToReplace) {

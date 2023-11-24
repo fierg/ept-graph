@@ -140,7 +140,7 @@ class Visualizer {
             //geomSmooth(se = FALSE, method = "gam") +
         }
 
-        fun generatePointPlot(resultMap: Map<Double, Pair<Int, Int>>, xS: String, yS: String): Plot {
+        fun generatePointPlot1(resultMap: Map<Double, Pair<Int, Int>>, xS: String, yS: String): Plot {
             val sortedMap = resultMap.toSortedMap()
             val maxValue = sortedMap.values.fold(0) { acc, pair -> acc + pair.second }
             val sumList = sortedMap.values.runningReduce { acc, pair -> Pair(pair.first + acc.first, maxValue) }.toMutableList()
@@ -171,19 +171,29 @@ class Visualizer {
         }
 
 
-        fun generatePointPlotNormalizedByCover(resultMap: MutableMap<Double, Int>, totalValuesToCover: Int, xS: String, yS: String): Plot {
+        fun generatePointPlot(resultMap: MutableMap<Double, Int>, totalValuesToCover: Int, xS: String, yS: String, normalized: Boolean, byFactorNr: Boolean): Plot {
             val sortedMap = resultMap.toSortedMap()
-            val data = mapOf(
-                xS to sortedMap.keys.toList(),
-                yS to sortedMap.values.toList()
-            )
+            val data = when {
+                normalized -> mapOf(
+                    xS to sortedMap.keys.toList(),
+                    yS to sortedMap.values.toList().map { (it.toDouble() / sortedMap.values.last()) * 100 }
+                )
+                byFactorNr -> mapOf(
+                    xS to sortedMap.keys.toList().indices.toList(),
+                    yS to sortedMap.values.toList()
+                )
+                else -> mapOf(
+                    xS to sortedMap.keys.toList(),
+                    yS to sortedMap.values.toList()
+                )
+            }
             Logger.info("Generating plot...")
             Logger.info("PLOT DATA: $data")
             return letsPlot(data) +
                     ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
-                    ggtitle("Sum of Values covered by factor of size x") +
+                    //ggtitle("Sum of Values covered by factor of size x") +
                     //scaleYContinuous(limits = Pair(0, totalValuesToCover)) +
-                    geomPoint(size = 2.0) { x = xS; y = yS } +
+                    geomPoint(size = 2.0, showLegend = false) { x = xS; y = yS } +
                     geomSmooth(method = "loess")
         }
     }

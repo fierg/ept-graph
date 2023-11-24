@@ -139,10 +139,10 @@ class Decomposer(state: Boolean = true, private val mode: DecompositionMode = De
             }
 
             DecompositionMode.FOURIER_TRANSFORM -> {
-                periods.forEach { size ->
-                    cover.addFactor(factors[factorIndex[size]!!])
+                val fourierTransformedFactors = cover.fourierTransform(factors.toMutableList())
+                fourierTransformedFactors.forEach { factor ->
+                    cover.addFactor(factor, skipFactorIfNoChangesOccur = true)
                     if (cover.outliers.size == 0) {
-                        cover.fourierTransform()
                         return cover
                     }
                 }
@@ -189,7 +189,7 @@ class Decomposer(state: Boolean = true, private val mode: DecompositionMode = De
             val modIndex = index % factorSize
             if (input[index] == stateToReplace) coverArray[modIndex] = stateToReplace
         }
-        factors[factorIndex] = Factor(coverArray, Factor.getOutliersForCleanQuotients(input, stateToReplace, listOf(coverArray)))
+        factors[factorIndex] = Factor(coverArray, Factor.recalculateOutliers(input, stateToReplace, listOf(coverArray)))
         return@async
     }
 

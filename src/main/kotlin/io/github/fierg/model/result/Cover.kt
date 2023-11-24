@@ -68,7 +68,7 @@ data class Cover(
                 if (!skipFactorIfNoChangesOccur || !outliers.any { factor.outliers.contains(it) }) {
                     factors.add(factor)
                     size = factor.array.size
-                    outliers = Factor.getOutliersForCleanQuotients(target, stateToReplace, factors.map { it.array })
+                    outliers = Factor.recalculateOutliers(target, stateToReplace, factors.map { it.array })
                 }
             }
         }
@@ -125,7 +125,7 @@ data class Cover(
      * Applies a Fourier transform to the factors to clean them of multiples.
      * Clean factors of multiples, e.g. if 10 and 101110 are both factors, 10 and 000100 are considered clean factors.
      */
-    fun fourierTransform(singleStateMode: Boolean = false) {
+    fun fourierTransform(factors: MutableList<Factor>, singleStateMode: Boolean = false): MutableList<Factor> {
         val factorIndex = factors.mapIndexed { index, factor -> factor.array.size to index }.toMap()
         getMultiplesOfPeriods(factors.map { it.array.size }).forEach { entry ->
             entry.value.forEach { multiple ->
@@ -143,10 +143,11 @@ data class Cover(
                     newArray[position] = stateToReplace
 
                     factor.outliers.addAll(getNewOutliers(position, factor.array.size, this.target.size))
-                    newCleanFactors.add(Factor(newArray, Factor.getOutliersForCleanQuotients(this.target, stateToReplace, listOf(newArray))))
+                    newCleanFactors.add(Factor(newArray, Factor.recalculateOutliers(this.target, stateToReplace, listOf(newArray))))
                 }
             }
         }
+        return factors
     }
 
     private fun getNewOutliers(position: Int, factorSize: Int, coverSize: Int): Collection<Int> {
