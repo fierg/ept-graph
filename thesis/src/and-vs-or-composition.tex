@@ -95,10 +95,8 @@ As we defined the \orDecomp as a conceptual counterpart to the \andDecomp, we co
 	\label{fig:factors-or-example}
 \end{figure}
 
-To prove that there exists words which are and-decomposable but not or-decomposable and vice versa, we need a bit of background. For this purpose we have:
+To prove that there exists words which are and-decomposable but not or-decomposable and vice versa, we need a bit of background. For this purpose we have extended the logic operators $\lor$ and $\land$ to binary words such that $a = b \lor c \implies a[i] = b[i] \lor c[i]$.
 
-
-TODO: rename fact 
 \begin{fact}
 	$$A \land B = \overbar{\overbar{A} \lor \overbar{B}}$$
 \end{fact}
@@ -108,19 +106,24 @@ TODO: rename fact
 \end{theorem}
 
 \begin{proof}
-	Assume $\overbar{w}$ is not and-decomposable and $w = v_1 \lor v_2 \lor \dots \lor v_k$. Using the Lemma 1, we obtain $w = \overbar{\overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}}$ which is equal to $\overbar{w} = \overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}$. This implies $w$ is not or-decomposable via contradiction.
+	Assume $\overbar{w}$ is not and-decomposable and $w = v_1 \lor v_2 \lor \dots \lor v_k$. Using the Fact 1, we obtain $w = \overbar{\overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}}$ which is equal to $\overbar{w} = \overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}$. This implies $w$ is not or-decomposable via contradiction.
 \end{proof}
 
 
 \begin{theorem}
-	$$ \exists ~w~ \text{s.t.} ~w~ \text{is or decomposable but not and-decomposable}$$
+	There exists a word $w$ such that $w$ is or decomposable but not and-decomposable
 \end{theorem}
 
-TODO: proof
+\begin{proof}
+	Assume $\overbar{w}$ is not or-decomposable and $w = v_1 \land v_2 \land \dots \land v_k$.Using the Fact 1, we obtain $w = \overbar{\overbar{v_1} \lor \overbar{v_2} \lor \dots \lor \overbar{v_k}}$ which is equal to $\overbar{w} = \overbar{v_1} \lor \overbar{v_2} \lor \dots \lor \overbar{v_k}$. This implies $w$ is not and-decomposable via contradiction.
+\end{proof}
 
 \begin{corollary}
 	The set of or-decomposable strings and the set of and-decomposable string is not comparable.
 \end{corollary}
+
+
+TODO: implications..
 
 
 %%% Local Variables: 
