@@ -97,12 +97,14 @@ As we defined the \orDecomp as a conceptual counterpart to the \andDecomp, we co
 
 To prove that there exists words which are and-decomposable but not or-decomposable and vice versa, we need a bit of background. For this purpose we have:
 
-\begin{lemma}
-	$$ w  = A \land B = \overbar{\overbar{A} \lor \overbar{B}}$$
-\end{lemma}
+
+TODO: rename fact 
+\begin{fact}
+	$$A \land B = \overbar{\overbar{A} \lor \overbar{B}}$$
+\end{fact}
 
 \begin{theorem}
-	$$ \exists ~w~ \text{s.t.} ~w~ \text{is and-decomposable but not or-decomposable}$$
+	There exists a word $w \in \{0,1\}^*$ such that $w$ is and-decomposable but not or-decomposable
 \end{theorem}
 
 \begin{proof}
@@ -114,32 +116,12 @@ To prove that there exists words which are and-decomposable but not or-decomposa
 	$$ \exists ~w~ \text{s.t.} ~w~ \text{is or decomposable but not and-decomposable}$$
 \end{theorem}
 
+TODO: proof
+
 \begin{corollary}
-	The Set of or-decomposable strings and the set of and-decomposable string is not comparable.
+	The set of or-decomposable strings and the set of and-decomposable string is not comparable.
 \end{corollary}
 
-\begin{figure}[h]
-	\centering
-	\begin{tikzpicture}[fill=gray]
-		% left hand
-		\scope
-		\clip (-2,-2) rectangle (2,2)
-		(1,0) circle (1);
-		\fill (0,0) circle (1);
-		\endscope
-		% right hand
-		\scope
-		(0,0) circle (1);
-		\fill (1,0) circle (1);
-		\endscope
-		% outline
-		\draw (0,0) circle (1) (0,1)  node [text=black,above] {$A$}
-		(1,0) circle (1) (1,1)  node [text=black,above] {$B$}
-		(-2,-2) rectangle (3,2) node [text=black,above] {$H$};
-	\end{tikzpicture}
-\label{fig:set-of-and-and-or-decomposable-words}
-\caption{TODO}
-\end{figure}
 
 %%% Local Variables: 
 %%% mode: latex
