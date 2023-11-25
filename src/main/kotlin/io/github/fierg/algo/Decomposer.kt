@@ -20,18 +20,20 @@ import kotlinx.coroutines.*
  * @param deltaWindowAlgo   The delta window algorithm used (default is `0`).
  * @param threshold         The coverage threshold for finding covers (default is `1.0`).
  */
-class Decomposer(state: Boolean = true, private val mode: DecompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS, private val deltaWindowAlgo: Int = 0, private val threshold: Double = 1.0,
-                 private val compositionMode: CompositionMode = CompositionMode.OR) {
+class Decomposer(
+    private val mode: DecompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS, private val deltaWindowAlgo: Int = 0, private val threshold: Double = 1.0,
+    private val compositionMode: CompositionMode = CompositionMode.OR
+) {
 
     /**
      * Constructs a `Decomposer` object based on the provided `Options` object.
      *
      * @param options The `Options` object containing decomposition parameters.
      */
-    constructor(options: Options) : this(options.state, options.decompositionMode, options.deltaWindowAlgo, options.threshold, options.compositionMode)
+    constructor(options: Options) : this(options.decompositionMode, options.deltaWindowAlgo, options.threshold, options.compositionMode)
 
     private val applyDeltaWindow = deltaWindowAlgo > 0
-    private val stateToReplace = !state
+    private val stateToReplace = getStateToReplaceFromCompositionMode(this.compositionMode)
     private var singleDebugLog = true
     private var nrDigits = 3
 
@@ -71,6 +73,7 @@ class Decomposer(state: Boolean = true, private val mode: DecompositionMode = De
         if (singleDebugLog) {
             logInfo()
             Logger.debug("Using ${periods.size} periods: $periods")
+            Logger.info("Using composition mode $compositionMode and looking for $stateToReplace values to replace")
             singleDebugLog = false
         }
 
@@ -98,7 +101,12 @@ class Decomposer(state: Boolean = true, private val mode: DecompositionMode = De
      */
     fun analyzeCover(result: Cover) {
         Logger.info(
-            "Found decomposition with largest factor ${String.format("%${nrDigits}d", (result.size.toDouble() / result.target.size * 100).toInt())}% original size (${String.format("%${nrDigits}d", result.size)}), " +
+            "Found decomposition with largest factor ${String.format("%${nrDigits}d", (result.size.toDouble() / result.target.size * 100).toInt())}% original size (${
+                String.format(
+                    "%${nrDigits}d",
+                    result.size
+                )
+            }), " +
                     "covered ${String.format("%${nrDigits}d", (result.totalValues - result.outliers.size))}/${String.format("%${nrDigits}d", result.totalValues)} values, " +
                     "resulting in ${String.format("%${nrDigits}d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)." +
                     " Metrics: w=${result.getWidth()}, p=${result.getPeriodicity()}, ds=${result.getDecompositionStructure()}"
@@ -142,9 +150,7 @@ class Decomposer(state: Boolean = true, private val mode: DecompositionMode = De
                 val fourierTransformedFactors = cover.fourierTransform(factors.toMutableList())
                 fourierTransformedFactors.forEach { factor ->
                     cover.addFactor(factor, skipFactorIfNoChangesOccur = true)
-                    if (cover.outliers.size == 0) {
-                        return cover
-                    }
+                    if (cover.getPeriodicity() >= threshold) return cover
                 }
                 Logger.warn("No Exact Cover possible! Hard outliers (${cover.outliers.size})")
             }
@@ -164,10 +170,10 @@ class Decomposer(state: Boolean = true, private val mode: DecompositionMode = De
         val factors = Array(factorIndex.size) { Factor(BooleanArray(0), mutableListOf(), compositionMode) }
         val jobs = mutableListOf<Deferred<Unit>>()
 
-        for (factor in periods) {
+        for (period in periods) {
             when (this.compositionMode) {
-                CompositionMode.AND -> jobs.add(computeFactorWithAndOperator(input, factor, factors, factorIndex[factor]!!))
-                CompositionMode.OR -> jobs.add(computeFactorWithOrOperator(input, factor, factors, factorIndex[factor]!!))
+                CompositionMode.AND -> jobs.add(computeFactorWithAndOperator(input, period, factors, factorIndex[period]!!))
+                CompositionMode.OR -> jobs.add(computeFactorWithOrOperator(input, period, factors, factorIndex[period]!!))
             }
         }
         runBlocking { jobs.forEach { it.await() } }
@@ -184,10 +190,10 @@ class Decomposer(state: Boolean = true, private val mode: DecompositionMode = De
      */
     @OptIn(DelicateCoroutinesApi::class)
     private fun computeFactorWithAndOperator(input: BooleanArray, factorSize: Int, factors: Array<Factor>, factorIndex: Int) = GlobalScope.async {
-        val coverArray = BooleanArray(factorSize) { !stateToReplace }
+        val coverArray = BooleanArray(factorSize) { stateToReplace }
         for (index in input.indices) {
             val modIndex = index % factorSize
-            if (input[index] == stateToReplace) coverArray[modIndex] = stateToReplace
+            if (input[index] != stateToReplace) coverArray[modIndex] = !stateToReplace
         }
         factors[factorIndex] = Factor(coverArray, Factor.recalculateOutliers(input, stateToReplace, listOf(coverArray)), compositionMode)
         return@async
@@ -272,5 +278,13 @@ class Decomposer(state: Boolean = true, private val mode: DecompositionMode = De
         }
 
         return result
+    }
+
+    companion object{
+        fun getStateToReplaceFromCompositionMode(compositionMode: CompositionMode) =
+            when (compositionMode) {
+                CompositionMode.OR -> true
+                CompositionMode.AND -> false
+            }
     }
 }

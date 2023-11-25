@@ -15,7 +15,6 @@ class TestDecomposition {
     private val options = Options.emptyOptions()
 
     init {
-        options.state = true
         options.skipSelfEdges = true
     }
 
@@ -23,7 +22,7 @@ class TestDecomposition {
     fun testDecomposition1() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposer(state = false)
+        val decomposition = Decomposer()
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
         decomposition.analyzeCover(cover)
 
@@ -36,7 +35,7 @@ class TestDecomposition {
         val edge = f2fGraph.edges.elementAt(6)
         options.compositionMode = CompositionMode.AND
         options.decompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS
-        val decomposition = Decomposer(state = false)
+        val decomposition = Decomposer()
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
         decomposition.analyzeCover(cover)
 
@@ -47,7 +46,7 @@ class TestDecomposition {
     fun testDecomposition1b() {
         val f2fGraph = F2FReader().getF2FNetwork(6)
         val edge = f2fGraph.edges.elementAt(1)
-        val decomposition = Decomposer(state = true, threshold = 0.75)
+        val decomposition = Decomposer(threshold = 0.75)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
         decomposition.analyzeCover(cover)
     }
@@ -62,14 +61,14 @@ class TestDecomposition {
     @Test
     fun testDecomposition4() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
-        val decomposition = Decomposer(state = true, threshold = 0.8)
+        val decomposition = Decomposer(threshold = 0.8)
         decomposition.findComposite(f2fGraph)
     }
 
     @Test
     fun testDecomposition5() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
-        val decomposition = Decomposer(state = true, threshold = 0.6)
+        val decomposition = Decomposer(threshold = 0.6)
         decomposition.findComposite(f2fGraph)
     }
 
@@ -100,7 +99,7 @@ class TestDecomposition {
     fun testDecompositionShortestPeriods() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposer(state = false, mode = DecompositionMode.GREEDY_SHORT_FACTORS, threshold = 0.8)
+        val decomposition = Decomposer(mode = DecompositionMode.GREEDY_SHORT_FACTORS, threshold = 0.8)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
         decomposition.analyzeCover(cover)
 
@@ -111,9 +110,9 @@ class TestDecomposition {
     fun testDecompositionMaxDivisorsEdge() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposer(state = true, mode = DecompositionMode.MAX_DIVISORS)
+        val decomposition = Decomposer(mode = DecompositionMode.MAX_DIVISORS)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
-        Decomposer(state = true, threshold = 0.5).analyzeCover(cover)
+        Decomposer(threshold = 0.5).analyzeCover(cover)
 
         assert(cover.getPeriodicity() < 1.0)
     }
@@ -121,21 +120,21 @@ class TestDecomposition {
     @Test
     fun testDecompositionMaxDivisorsGraph1() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
-        val decomposition = Decomposer(state = true, mode = DecompositionMode.MAX_DIVISORS)
+        val decomposition = Decomposer(mode = DecompositionMode.MAX_DIVISORS)
         decomposition.findComposite(f2fGraph)
     }
 
     @Test
     fun testDecompositionMaxDivisorsGraph2() {
         val f2fGraph = F2FReader().getF2FNetwork(4)
-        val decomposition = Decomposer(state = true, mode = DecompositionMode.MAX_DIVISORS)
+        val decomposition = Decomposer(mode = DecompositionMode.MAX_DIVISORS)
         decomposition.findComposite(f2fGraph)
     }
 
     @Test
     fun testDecompositionMaxDivisorsGraph3() {
         val f2fGraph = F2FReader().getF2FNetwork(4)
-        val decomposition = Decomposer(state = false, mode = DecompositionMode.MAX_DIVISORS)
+        val decomposition = Decomposer(mode = DecompositionMode.MAX_DIVISORS)
         decomposition.findComposite(f2fGraph)
     }
 
@@ -143,9 +142,9 @@ class TestDecomposition {
     fun testDecompositionFourierEdge() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
-        val decomposition = Decomposer(state = true, mode = DecompositionMode.FOURIER_TRANSFORM)
+        val decomposition = Decomposer(mode = DecompositionMode.FOURIER_TRANSFORM)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
-        Decomposer(state = true, threshold = 0.5).analyzeCover(cover)
+        Decomposer(threshold = 0.5).analyzeCover(cover)
 
         assert(cover.getPeriodicity() == 1.0)
     }
@@ -153,7 +152,7 @@ class TestDecomposition {
     @Test
     fun testDecompositionFourierGraph() {
         val f2fGraph = F2FReader().getF2FNetwork(4)
-        val decomposition = Decomposer(state = false, mode = DecompositionMode.FOURIER_TRANSFORM)
+        val decomposition = Decomposer(mode = DecompositionMode.FOURIER_TRANSFORM)
         decomposition.findComposite(f2fGraph)
     }
 
@@ -161,10 +160,10 @@ class TestDecomposition {
     fun testDecomposition3x() {
         val array = arrayOf(true, false, false, true, true, false).toBooleanArray()
         val state = false
-        val periods = Decomposer(state = state, threshold = 0.5).findCover(array)
+        val periods = Decomposer(threshold = 0.5).findCover(array)
         val expectedFactors = mutableListOf(Factor(arrayOf(true, false, false), mutableListOf(4), options.compositionMode))
         val expectedPeriods = Cover(array, !state, 3, 3, mutableListOf(4), expectedFactors)
-        Decomposer(state = state, threshold = 0.5).analyzeCover(periods)
+        Decomposer(threshold = 0.5).analyzeCover(periods)
         assert(periods == expectedPeriods)
     }
 
@@ -172,13 +171,13 @@ class TestDecomposition {
     fun testDecomposition3y() {
         val array = arrayOf(true, false, false, true, true, false).toBooleanArray()
         val state = false
-        val periods = Decomposer(state = state).findCover(array)
+        val periods = Decomposer().findCover(array)
         val expectedFactors = mutableListOf(
             Factor(arrayOf(true, false, false), mutableListOf(4), CompositionMode.OR),
             Factor(arrayOf(true, false, false, true, true, false), mutableListOf(), CompositionMode.OR)
         )
         val expectedPeriods = Cover(array, !state, 3, 6, mutableListOf(), expectedFactors)
-        Decomposer(state = state, threshold = 0.5).analyzeCover(periods)
+        Decomposer(threshold = 0.5).analyzeCover(periods)
 
         assert(periods == expectedPeriods)
     }
@@ -186,9 +185,9 @@ class TestDecomposition {
     @Test
     fun testDecomposition4a() {
         val input = BooleanArray(16) { true }
-        val cover = Decomposer(state = false).findCover(input)
+        val cover = Decomposer().findCover(input)
         val expectedFactors = mutableListOf(Factor(arrayOf(true), mutableListOf(), CompositionMode.OR))
-        Decomposer(state = false, threshold = 0.5).analyzeCover(cover)
+        Decomposer(threshold = 0.5).analyzeCover(cover)
 
         assert(cover == Cover(input, true, 16, 1, mutableListOf(), expectedFactors))
     }
@@ -197,7 +196,7 @@ class TestDecomposition {
     fun getOutliersFalse() {
         val array = arrayOf(true, false, false, true, false, false).toBooleanArray()
         val cover = arrayOf(true, false, false, true, true, false).toBooleanArray()
-        val outliers = Decomposer(state = true).getOutliers(array, cover = cover)
+        val outliers = Decomposer(compositionMode = CompositionMode.AND).getOutliers(array, cover = cover)
         val expectedOutliers = listOf(4)
 
         assert(outliers == expectedOutliers)
@@ -207,7 +206,7 @@ class TestDecomposition {
     fun getOutliersTrue() {
         val array = arrayOf(true, false, false, true, true, false).toBooleanArray()
         val cover = arrayOf(true, false, false, true, false, false).toBooleanArray()
-        val outliers = Decomposer(state = false).getOutliers(array, cover = cover)
+        val outliers = Decomposer(compositionMode = CompositionMode.OR).getOutliers(array, cover = cover)
         val expectedOutliers = listOf(4)
 
         assert(outliers == expectedOutliers)

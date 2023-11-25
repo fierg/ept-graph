@@ -20,7 +20,6 @@ class ValidateCharts {
     private val options = Options.emptyOptions()
 
     init {
-        options.state = false
         options.skipSelfEdges = true
         options.decompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS
     }

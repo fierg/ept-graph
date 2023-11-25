@@ -10,7 +10,6 @@ class TestPaperFactorExamples {
 
     private val options = Options.emptyOptions()
     init {
-        options.state = false
         options.skipSelfEdges = true
         options.decompositionMode = DecompositionMode.MAX_DIVISORS
     }

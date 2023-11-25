@@ -3,7 +3,6 @@ package io.github.fierg.model.options
 data class Options(
     var dotenv: Boolean,
     var input: Int,
-    var state: Boolean,
     var decompositionMode: DecompositionMode,
     var compositionMode: CompositionMode,
     var skipSelfEdges: Boolean,
@@ -17,7 +16,6 @@ data class Options(
         fun emptyOptions(): Options {
             return Options(false,
                 0,
-                state = false,
                 decompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS,
                 compositionMode = CompositionMode.OR,
                 skipSelfEdges = false,

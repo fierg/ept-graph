@@ -5,6 +5,8 @@ import io.github.fierg.extensions.minus
 import io.github.fierg.extensions.removeIfNotIncludedIn
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.CompositionMode
+import io.github.fierg.model.result.Factor.Companion.recalculateOutliers
+import java.util.Collections
 
 /**
  * The `Cover` class represents a cover with various properties, including a target state, state to replace,
@@ -57,21 +59,21 @@ data class Cover(
     fun addFactor(factor: Factor, skipFactorIfNoChangesOccur: Boolean = true) {
         when (this.compositionMode) {
             CompositionMode.OR -> {
-                if (!skipFactorIfNoChangesOccur || factor.outliers.size < lastOutlierSize) {
+                val newOutliers = outliers.toMutableList()
+                newOutliers.removeIfNotIncludedIn(factor.outliers)
+                if (!skipFactorIfNoChangesOccur || newOutliers.size < lastOutlierSize) {
                     factors.add(factor)
                     size = factor.array.size
-                    lastOutlierSize = factor.outliers.size
-                    outliers.removeIfNotIncludedIn(factor.outliers)
+                    lastOutlierSize = newOutliers.size
+                    outliers = newOutliers
                 }
             }
 
             CompositionMode.AND -> {
-                if (factor.array.any { value -> value != stateToReplace }) {
-                    if (!skipFactorIfNoChangesOccur || !outliers.any { factor.outliers.contains(it) }) {
-                        factors.add(factor)
-                        size = factor.array.size
-                        outliers = Factor.recalculateOutliers(target, stateToReplace, factors.map { it.array })
-                    }
+                if (!skipFactorIfNoChangesOccur || factor.array.any { value -> value != stateToReplace }) {
+                    factors.add(factor)
+                    size = factor.array.size
+                    outliers = recalculateOutliers(target, stateToReplace, factors.map { it.array })
                 } else {
                     Logger.debug("Skipping empty factor of size: ${factor.array.size}")
                 }
@@ -148,7 +150,7 @@ data class Cover(
                     newArray[position] = stateToReplace
 
                     factor.outliers.addAll(getNewOutliers(position, factor.array.size, this.target.size))
-                    newCleanFactors.add(Factor(newArray, Factor.recalculateOutliers(this.target, stateToReplace, listOf(newArray)), compositionMode))
+                    newCleanFactors.add(Factor(newArray, recalculateOutliers(this.target, stateToReplace, listOf(newArray)), compositionMode))
                 }
             }
         }
@@ -246,6 +248,9 @@ data class Cover(
     }
 
     fun getRelativeCoveredValues(outliers: MutableList<Int> = this.outliers): Double {
-        return ((totalValues - outliers.size).toDouble() / totalValues)
+        if (totalValues < outliers.size) {
+            totalValues
+            return 0.0
+        } else return ((totalValues - outliers.size).toDouble() / totalValues)
     }
 }

@@ -128,12 +128,11 @@ class TestCharts {
     @Test
     fun testAndPlots(){
         Logger.setLogLevelToDebug()
-        val upTo = 61
+        val upTo = 10
         val options = DotEnvParser.readDotEnv()
 
-        options.decompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS
+        options.decompositionMode = DecompositionMode.MAX_DIVISORS
         options.compositionMode = CompositionMode.AND
-        options.state = true
         val decomposer = Decomposer(options)
         Logger.info("Analyzing all graphs, reading options from .env file, using decomposition mode ${options.decompositionMode.name} and composition mode ${options.compositionMode.name}")
         Logger.setLogLevelToQuiet()

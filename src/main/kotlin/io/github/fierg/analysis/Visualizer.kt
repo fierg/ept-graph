@@ -1,5 +1,6 @@
 package io.github.fierg.analysis
 
+import io.github.fierg.algo.Decomposer
 import io.github.fierg.extensions.reversed
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.Options
@@ -97,7 +98,7 @@ class Visualizer {
             }
 
             Logger.debug("PLOT DATA: $mappedData")
-            val basePlot = letsPlot(mappedData) + defaultPieCharConfig + ggtitle("Values covered by periods (state: ${!options.state})") + ggsize(width, DEFAULT_HEIGHT)
+            val basePlot = letsPlot(mappedData) + defaultPieCharConfig + ggtitle("Values covered by periods (state: ${Decomposer.getStateToReplaceFromCompositionMode(options.compositionMode)})") + ggsize(width, DEFAULT_HEIGHT)
 
             return when (style) {
                 PieChartStyle.PERCENT_AND_NAME -> basePlot + geomPie(
@@ -133,7 +134,7 @@ class Visualizer {
             Logger.info("PLOT DATA: $data")
             return letsPlot(data) +
                     ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
-                    ggtitle("% of Values covered by factor of size x") +
+                    //ggtitle("% of Values covered by factor of size x") +
                     //scaleYContinuous(limits = Pair(0,1)) +
                     geomPoint(size = 2.0) { x = xS; y = yS }
             //geomBoxplot { x = xS; y = yS }  +

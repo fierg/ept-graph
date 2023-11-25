@@ -5,6 +5,7 @@ import io.github.fierg.data.DotEnvParser
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.model.options.DecompositionMode
+import jetbrains.letsPlot.stat.statBin
 
 class ChartGenerator {
 
@@ -17,12 +18,14 @@ class ChartGenerator {
         CompositionMode.values().forEach { compositionMode ->
             DecompositionMode.values().forEach { decompositionMode ->
                 Logger.info("Analyzing all graphs, reading options from .env file, using decomposition mode ${decompositionMode.name} and composition mode ${compositionMode.name}")
-                Logger.setLogLevelToQuiet()
-                val upTo = 61
 
+                val upTo = 61
                 options.decompositionMode = decompositionMode
                 options.compositionMode = compositionMode
+
                 val decomposer = Decomposer(options)
+
+                Logger.setLogLevelToQuiet()
                 val evalResult = decomposer.analyzeAllGraphs(upTo)
                 Logger.setLogLevelToDebug()
 

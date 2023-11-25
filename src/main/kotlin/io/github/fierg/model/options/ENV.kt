@@ -1,7 +1,6 @@
 package io.github.fierg.model.options
 
 enum class ENV {
-    STATE,
     THRESHOLD,
     DECOMPOSITION_MODE,
     COMPOSITION_MODE,

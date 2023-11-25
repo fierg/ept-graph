@@ -33,7 +33,7 @@ class Factor(var array: BooleanArray, val outliers: MutableList<Int>, val compos
             val outliers = mutableListOf<Int>()
             target.forEachIndexed { index, state ->
                 if (state == stateToReplace) {
-                    if (factors.any { factor -> factor[index % factor.size] != stateToReplace })
+                    if (factors.all { factor -> factor[index % factor.size] != stateToReplace })
                         outliers.add(index)
                 } else {
                     if (factors.all { factor -> factor[index % factor.size] == stateToReplace })
@@ -82,7 +82,7 @@ class Factor(var array: BooleanArray, val outliers: MutableList<Int>, val compos
         return outliers == other.outliers
     }
 
-    private fun getOutliersOfCoverUntilThisFactor(cover: Cover): MutableList<Int> {
+    fun getOutliersOfCoverUntilThisFactor(cover: Cover): MutableList<Int> {
         return when (this.compositionMode) {
             CompositionMode.OR -> {
                 val outliers = cover.target.indices.filter { cover.target[it] == cover.stateToReplace }.toMutableList()
@@ -101,8 +101,6 @@ class Factor(var array: BooleanArray, val outliers: MutableList<Int>, val compos
 
     }
 
-
-    fun getCoveredValuesUntilThisFactor(cover: Cover) =
-        cover.totalValues - getOutliersOfCoverUntilThisFactor(cover).size
+    fun getCoveredValuesUntilThisFactor(cover: Cover) = cover.totalValues - getOutliersOfCoverUntilThisFactor(cover).size
 
 }

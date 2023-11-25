@@ -9,7 +9,6 @@ class IntegrationTest {
     private val options = Options.emptyOptions()
 
     init {
-        options.state = true
         options.skipSelfEdges = true
         options.deltaWindowAlgo = 0
     }

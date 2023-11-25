@@ -13,7 +13,6 @@ class TestAndComposition {
     private val options = Options.emptyOptions()
 
     init {
-        options.state = false
         options.skipSelfEdges = true
         options.compositionMode = CompositionMode.AND
         options.decompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS

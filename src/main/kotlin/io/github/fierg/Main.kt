@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
 
     val f2fGraph = F2FReader().getF2FNetwork(options.input, options.skipSelfEdges)
     if (options.deltaWindowPreprocessing > 0)
-        Preprocessor.applyDeltaWindow(f2fGraph, options.deltaWindowPreprocessing, options.state)
+        Preprocessor.applyDeltaWindow(f2fGraph, options.deltaWindowPreprocessing, Decomposer.getStateToReplaceFromCompositionMode(options.compositionMode))
 
     Decomposer(options).findComposite(f2fGraph)
 }

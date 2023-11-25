@@ -14,6 +14,6 @@ fun main(){
     Decomposer().findCover(BooleanArray(16))
 
     val f2fGraph = F2FReader().getF2FNetwork(4)
-    val decomposition = Decomposer(state = false, deltaWindowAlgo = 0)
+    val decomposition = Decomposer(deltaWindowAlgo = 0)
     val decompositionResult = decomposition.findComposite(f2fGraph)
 }
