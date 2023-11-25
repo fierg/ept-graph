@@ -6,7 +6,6 @@ import io.github.fierg.extensions.removeIfNotIncludedIn
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.model.result.Factor.Companion.recalculateOutliers
-import java.util.Collections
 
 /**
  * The `Cover` class represents a cover with various properties, including a target state, state to replace,
@@ -132,13 +131,15 @@ data class Cover(
      * Applies a Fourier transform to the factors to clean them of multiples.
      * Clean factors of multiples, e.g. if 10 and 101110 are both factors, 10 and 000100 are considered clean factors.
      */
-    fun fourierTransform(factors: MutableList<Factor>, singleStateMode: Boolean = false): MutableList<Factor> {
+    fun fourierTransform(factors: MutableList<Factor>, singleStateMode: Boolean = true): MutableList<Factor> {
         val factorIndex = factors.mapIndexed { index, factor -> factor.array.size to index }.toMap()
-        getMultiplesOfPeriods(factors.map { it.array.size }).forEach { entry ->
+        getMultiplesOfPeriods(factors.map { it.array.size }.filter { it != 1 }).forEach { entry ->
             entry.value.forEach { multiple ->
                 factors[factorIndex[multiple]!!].array = cleanFactor(factors[factorIndex[entry.key]!!].array, factors[factorIndex[multiple]!!].array)
             }
         }
+
+        //TODO: FIXME!!!!
         if (singleStateMode) {
             val newCleanFactors = mutableListOf<Factor>()
             factors.forEach { factor ->
@@ -153,6 +154,7 @@ data class Cover(
                     newCleanFactors.add(Factor(newArray, recalculateOutliers(this.target, stateToReplace, listOf(newArray)), compositionMode))
                 }
             }
+            factors.addAll(newCleanFactors)
         }
         return factors
     }
@@ -250,6 +252,7 @@ data class Cover(
     fun getRelativeCoveredValues(outliers: MutableList<Int> = this.outliers): Double {
         if (totalValues < outliers.size) {
             totalValues
+            Logger.error("...")
             return 0.0
         } else return ((totalValues - outliers.size).toDouble() / totalValues)
     }

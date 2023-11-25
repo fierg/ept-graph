@@ -68,4 +68,33 @@ class TestFourierTransformExamples {
             assert( resultingFactors.any { it.contentEquals(target) })
         }
     }
+
+
+    //TODO!!
+    @Test
+    fun testExample1cleanQuotients1c(){
+        val array = arrayOf(false, true, false, true, false, false).toBooleanArray()
+        val options = Options.emptyOptions()
+        options.skipSelfEdges = true
+        options.decompositionMode = DecompositionMode.FOURIER_TRANSFORM
+        options.threshold = 1.0
+        options.compositionMode = CompositionMode.AND
+        val d = Decomposer(options)
+        val cover = d.findCover(array)
+        d.analyzeCover(cover)
+        val resultingFactors = cover.factors.map { it.array }
+        val expectedFactors = listOf(arrayOf(false,true).toBooleanArray(), arrayOf(false,true,false).toBooleanArray())
+
+        Logger.info("Target: ${array.getBinaryString()} Factors: ${cover.factors}")
+        cover.factors.forEach {factor ->
+            Logger.info("Factor: ${factor.array.getBinaryString()}, rel size: ${factor.getRelativeSize(cover)} outliers: ${factor.outliers}")
+            Logger.info("Combined outliers: ${factor.getOutliersOfCoverUntilThisFactor(cover)}")
+            Logger.info("Combined covered values: ${factor.getCoveredValuesUntilThisFactor(cover)}")
+            Logger.info("Combined relative covered values: ${factor.getRelativeCoveredValues(cover)}\n")
+        }
+
+        expectedFactors.forEach { target ->
+            assert( resultingFactors.any { it.contentEquals(target) })
+        }
+    }
 }
