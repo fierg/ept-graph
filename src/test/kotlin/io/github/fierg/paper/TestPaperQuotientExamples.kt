@@ -52,6 +52,14 @@ class TestPaperQuotientExamples {
     }
 
     @Test
+    fun testCleanQuotients2(){
+        val array = arrayOf(false, true, false, true, false, false, false, true, false, true, false, false).toBooleanArray()
+        val d = Decomposer(options)
+        val cover = d.findCover(array)
+        d.analyzeCover(cover)
+    }
+
+    @Test
     fun testExample1cleanQuotients2(){
         val array = arrayOf(false, true, false, true, true, true).toBooleanArray()
         val d = Decomposer(options)

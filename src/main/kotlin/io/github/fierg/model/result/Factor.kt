@@ -1,6 +1,7 @@
 package io.github.fierg.model.result
 
 import io.github.fierg.extensions.removeIfNotIncludedIn
+import io.github.fierg.model.options.CompositionMode
 
 /**
  * The `Factor` class represents a factor with a set of boolean values (cover) and a list of outliers.
@@ -9,14 +10,14 @@ import io.github.fierg.extensions.removeIfNotIncludedIn
  * @param array     The array of boolean values representing the factor.
  * @param outliers  The list of indices representing outliers in the factor.
  */
-class Factor(var array: BooleanArray, val outliers: MutableList<Int>) {
+class Factor(var array: BooleanArray, val outliers: MutableList<Int>, val compositionMode: CompositionMode) {
     /**
      * Constructs a `Factor` object using a boolean array to represent the cover and a list of outliers.
      *
      * @param cover     The array of boolean values representing the factor.
      * @param outliers  The list of indices representing outliers in the factor.
      */
-    constructor(cover: Array<Boolean>, outliers: MutableList<Int>) : this(array = cover.toBooleanArray(), outliers)
+    constructor(cover: Array<Boolean>, outliers: MutableList<Int>, compositionMode: CompositionMode) : this(array = cover.toBooleanArray(), outliers, compositionMode)
 
     companion object {
 
@@ -68,12 +69,7 @@ class Factor(var array: BooleanArray, val outliers: MutableList<Int>) {
     }
 
     fun getRelativeCoveredValues(cover: Cover): Double {
-        val outliers = cover.target.indices.filter { cover.target[it] == cover.stateToReplace }.toMutableList()
-        val outliersOfFactors = cover.factors.subList(0, cover.factors.indexOf(this) + 1).map { it.outliers }
-        outliersOfFactors.forEach { outliersList ->
-            outliers.removeIfNotIncludedIn(outliersList)
-        }
-        return cover.getRelativeCoveredValues(outliers)
+        return cover.getRelativeCoveredValues(getOutliersOfCoverUntilThisFactor(cover))
     }
 
     override fun equals(other: Any?): Boolean {
@@ -86,16 +82,27 @@ class Factor(var array: BooleanArray, val outliers: MutableList<Int>) {
         return outliers == other.outliers
     }
 
-    fun getOutliersOfCoverUntilThisFactor(cover: Cover): Int {
-        val outliers = cover.target.indices.filter { cover.target[it] == cover.stateToReplace }.toMutableList()
-        val outliersOfFactors = cover.factors.subList(0, cover.factors.indexOf(this) + 1).map { it.outliers }
-        outliersOfFactors.forEach { outliersList ->
-            outliers.removeIfNotIncludedIn(outliersList)
+    private fun getOutliersOfCoverUntilThisFactor(cover: Cover): MutableList<Int> {
+        return when (this.compositionMode) {
+            CompositionMode.OR -> {
+                val outliers = cover.target.indices.filter { cover.target[it] == cover.stateToReplace }.toMutableList()
+                val outliersOfFactors = cover.factors.subList(0, cover.factors.indexOf(this) + 1).map { it.outliers }
+                outliersOfFactors.forEach { outliersList ->
+                    outliers.removeIfNotIncludedIn(outliersList)
+                }
+                outliers
+            }
+
+            CompositionMode.AND -> {
+                val factorArrays = cover.factors.subList(0, cover.factors.indexOf(this) + 1).map { it.array }
+                recalculateOutliers(cover.target, cover.stateToReplace, factorArrays)
+            }
         }
-        return outliers.size
+
     }
 
 
-    fun getCoveredValuesUntilThisFactor(cover: Cover) = cover.totalValues - getOutliersOfCoverUntilThisFactor(cover)
+    fun getCoveredValuesUntilThisFactor(cover: Cover) =
+        cover.totalValues - getOutliersOfCoverUntilThisFactor(cover).size
 
 }

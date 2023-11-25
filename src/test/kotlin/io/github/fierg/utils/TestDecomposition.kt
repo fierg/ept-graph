@@ -3,6 +3,7 @@ package io.github.fierg.utils
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.DotEnvParser
 import io.github.fierg.data.F2FReader
+import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.model.options.DecompositionMode
 import io.github.fierg.model.options.Options
 import io.github.fierg.model.result.Cover
@@ -22,6 +23,19 @@ class TestDecomposition {
     fun testDecomposition1() {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val edge = f2fGraph.edges.elementAt(6)
+        val decomposition = Decomposer(state = false)
+        val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
+        decomposition.analyzeCover(cover)
+
+        assert(cover.outliers.size <= 3)
+    }
+
+    @Test
+    fun testDecomposition1c() {
+        val f2fGraph = F2FReader().getF2FNetwork(0)
+        val edge = f2fGraph.edges.elementAt(6)
+        options.compositionMode = CompositionMode.AND
+        options.decompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS
         val decomposition = Decomposer(state = false)
         val cover = decomposition.findCover(f2fGraph.steps[edge]!!)
         decomposition.analyzeCover(cover)
@@ -148,7 +162,7 @@ class TestDecomposition {
         val array = arrayOf(true, false, false, true, true, false).toBooleanArray()
         val state = false
         val periods = Decomposer(state = state, threshold = 0.5).findCover(array)
-        val expectedFactors = mutableListOf(Factor(arrayOf(true, false, false), mutableListOf(4)))
+        val expectedFactors = mutableListOf(Factor(arrayOf(true, false, false), mutableListOf(4), options.compositionMode))
         val expectedPeriods = Cover(array, !state, 3, 3, mutableListOf(4), expectedFactors)
         Decomposer(state = state, threshold = 0.5).analyzeCover(periods)
         assert(periods == expectedPeriods)
@@ -160,8 +174,8 @@ class TestDecomposition {
         val state = false
         val periods = Decomposer(state = state).findCover(array)
         val expectedFactors = mutableListOf(
-            Factor(arrayOf(true, false, false), mutableListOf(4)),
-            Factor(arrayOf(true, false, false, true, true, false), mutableListOf())
+            Factor(arrayOf(true, false, false), mutableListOf(4), CompositionMode.OR),
+            Factor(arrayOf(true, false, false, true, true, false), mutableListOf(), CompositionMode.OR)
         )
         val expectedPeriods = Cover(array, !state, 3, 6, mutableListOf(), expectedFactors)
         Decomposer(state = state, threshold = 0.5).analyzeCover(periods)
@@ -173,7 +187,7 @@ class TestDecomposition {
     fun testDecomposition4a() {
         val input = BooleanArray(16) { true }
         val cover = Decomposer(state = false).findCover(input)
-        val expectedFactors = mutableListOf(Factor(arrayOf(true), mutableListOf()))
+        val expectedFactors = mutableListOf(Factor(arrayOf(true), mutableListOf(), CompositionMode.OR))
         Decomposer(state = false, threshold = 0.5).analyzeCover(cover)
 
         assert(cover == Cover(input, true, 16, 1, mutableListOf(), expectedFactors))

@@ -1,7 +1,12 @@
 package io.github.fierg.chart
 
+import io.github.fierg.algo.Decomposer
+import io.github.fierg.analysis.Analyzer
 import io.github.fierg.analysis.Visualizer
+import io.github.fierg.data.DotEnvParser
 import io.github.fierg.logger.Logger
+import io.github.fierg.model.options.CompositionMode
+import io.github.fierg.model.options.DecompositionMode
 import io.github.fierg.model.style.DefaultPlotStyle.Companion.DEFAULT_HEIGHT
 import io.github.fierg.model.style.DefaultPlotStyle.Companion.DEFAULT_WIDTH
 import io.github.fierg.model.style.DefaultPlotStyle.Companion.blankTheme
@@ -118,6 +123,29 @@ class TestCharts {
         val plot1 = letsPlot(data3) + ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) + ggtitle("Test Point Chart") + geomPoint(size = 2.0) { x = "name"; y = "value" }
 
         Visualizer.savePlotToFile("test-cover-factor.png", plot1, "test-plots")
+    }
+
+    @Test
+    fun testAndPlots(){
+        Logger.setLogLevelToDebug()
+        val upTo = 61
+        val options = DotEnvParser.readDotEnv()
+
+        options.decompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS
+        options.compositionMode = CompositionMode.AND
+        options.state = true
+        val decomposer = Decomposer(options)
+        Logger.info("Analyzing all graphs, reading options from .env file, using decomposition mode ${options.decompositionMode.name} and composition mode ${options.compositionMode.name}")
+        Logger.setLogLevelToQuiet()
+        val evalResult = decomposer.analyzeAllGraphs(upTo)
+        Logger.setLogLevelToDebug()
+
+        evalResult
+
+
+        val factorPlot1 = Analyzer.createCoverByFactorPlotNormalized(evalResult.flatten())
+        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-test.png", factorPlot1, path = "test-plots")
+
     }
 
 }

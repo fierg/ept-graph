@@ -3,6 +3,7 @@ package io.github.fierg.model.result
 import io.github.fierg.extensions.applyPeriod
 import io.github.fierg.extensions.minus
 import io.github.fierg.extensions.removeIfNotIncludedIn
+import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.CompositionMode
 
 /**
@@ -65,10 +66,14 @@ data class Cover(
             }
 
             CompositionMode.AND -> {
-                if (!skipFactorIfNoChangesOccur || !outliers.any { factor.outliers.contains(it) }) {
-                    factors.add(factor)
-                    size = factor.array.size
-                    outliers = Factor.recalculateOutliers(target, stateToReplace, factors.map { it.array })
+                if (factor.array.any { value -> value != stateToReplace }) {
+                    if (!skipFactorIfNoChangesOccur || !outliers.any { factor.outliers.contains(it) }) {
+                        factors.add(factor)
+                        size = factor.array.size
+                        outliers = Factor.recalculateOutliers(target, stateToReplace, factors.map { it.array })
+                    }
+                } else {
+                    Logger.debug("Skipping empty factor of size: ${factor.array.size}")
                 }
             }
         }
@@ -143,7 +148,7 @@ data class Cover(
                     newArray[position] = stateToReplace
 
                     factor.outliers.addAll(getNewOutliers(position, factor.array.size, this.target.size))
-                    newCleanFactors.add(Factor(newArray, Factor.recalculateOutliers(this.target, stateToReplace, listOf(newArray))))
+                    newCleanFactors.add(Factor(newArray, Factor.recalculateOutliers(this.target, stateToReplace, listOf(newArray)), compositionMode))
                 }
             }
         }
@@ -196,7 +201,7 @@ data class Cover(
     }
 
     fun getAbsoluteResultMapFromCover(): Map<Double, Int> {
-        val map = mutableMapOf<Double,Int>()
+        val map = mutableMapOf<Double, Int>()
         this.factors.forEach { factor ->
             val size = factor.getRelativeSize(this)
             val coveredValues = factor.getCoveredValuesUntilThisFactor(this)

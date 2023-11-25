@@ -161,13 +161,13 @@ class Decomposer(state: Boolean = true, private val mode: DecompositionMode = De
      * @return An array of `Factor` objects representing the factors.
      */
     private fun getFactors(input: BooleanArray, factorIndex: Map<Int, Int>, periods: List<Int>): Array<Factor> {
-        val factors = Array(factorIndex.size) { Factor(BooleanArray(0), mutableListOf()) }
+        val factors = Array(factorIndex.size) { Factor(BooleanArray(0), mutableListOf(), compositionMode) }
         val jobs = mutableListOf<Deferred<Unit>>()
 
         for (factor in periods) {
             when (this.compositionMode) {
                 CompositionMode.AND -> jobs.add(computeFactorWithAndOperator(input, factor, factors, factorIndex[factor]!!))
-                else -> jobs.add(computeFactorWithOrOperator(input, factor, factors, factorIndex[factor]!!))
+                CompositionMode.OR -> jobs.add(computeFactorWithOrOperator(input, factor, factors, factorIndex[factor]!!))
             }
         }
         runBlocking { jobs.forEach { it.await() } }
@@ -189,7 +189,7 @@ class Decomposer(state: Boolean = true, private val mode: DecompositionMode = De
             val modIndex = index % factorSize
             if (input[index] == stateToReplace) coverArray[modIndex] = stateToReplace
         }
-        factors[factorIndex] = Factor(coverArray, Factor.recalculateOutliers(input, stateToReplace, listOf(coverArray)))
+        factors[factorIndex] = Factor(coverArray, Factor.recalculateOutliers(input, stateToReplace, listOf(coverArray)), compositionMode)
         return@async
     }
 
@@ -209,7 +209,7 @@ class Decomposer(state: Boolean = true, private val mode: DecompositionMode = De
                 coverArray[index % factorSize] = stateToReplace
             }
         }
-        factors[factorIndex] = Factor(coverArray, getOutliers(input, coverArray))
+        factors[factorIndex] = Factor(coverArray, getOutliers(input, coverArray), compositionMode)
         return@async
     }
 

@@ -1,6 +1,7 @@
 package io.github.fierg.paper
 
 import io.github.fierg.algo.Decomposer
+import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.model.options.DecompositionMode
 import io.github.fierg.model.options.Options
 import org.junit.Test
