@@ -257,10 +257,7 @@ data class Cover(
     }
 
     fun getRelativeCoveredValues(outliers: MutableList<Int> = this.outliers): Double {
-        if (totalValues < outliers.size) {
-            totalValues
-            Logger.error("...")
-            return 0.0
-        } else return ((totalValues - outliers.size).toDouble() / totalValues)
+        assert(totalValues >= outliers.size)
+        return ((totalValues - outliers.size).toDouble() / totalValues)
     }
 }
