@@ -26,6 +26,7 @@ import org.jetbrains.letsPlot.letsPlot
 import org.jetbrains.letsPlot.scale.scaleXContinuous
 import org.jetbrains.letsPlot.scale.scaleYContinuous
 import org.jetbrains.letsPlot.tooltips.tooltipsNone
+import java.awt.Color
 import java.awt.Desktop
 import java.io.File
 import kotlin.math.exp
@@ -56,12 +57,12 @@ class Visualizer {
         }
 
         fun savePlotToFile(filename: String, plot: Plot, path: String = "./plots") {
-            Logger.debug("Saving file $filename to $path.")
+            Logger.info("Saving file $filename to $path.")
             ggsave(plot, filename, path = path)
         }
 
         fun savePlotToFile(filename: String, plot: GGBunch, path: String = "./plots") {
-            Logger.debug("Saving file $filename to $path.")
+            Logger.info("Saving file $filename to $path.")
             ggsave(plot, filename, path = path)
         }
 
@@ -139,7 +140,7 @@ class Visualizer {
             }
 
             Logger.info("Generating plot...")
-            Logger.info("PLOT DATA: $data")
+            Logger.debug("PLOT DATA: $data")
             return letsPlot(data) +
                     ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
                     //ggtitle("% of Values covered by factor of size x") +
@@ -209,8 +210,7 @@ class Visualizer {
                     ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
                     ggtitle("Sum of Values covered by factor of size x") +
                     scaleYContinuous(limits = Pair(0, sumList.last().first)) +
-                    geomPoint(size = 2.0) { x = xS; y = yS } +
-                    geomSmooth(method = "loess")
+                    geomPoint(size = 2.0) { x = xS; y = yS }
         }
 
         private fun expandToResultList(resultMap: Map<Double, List<Double>>): List<Pair<Double, Double>> {
@@ -224,7 +224,7 @@ class Visualizer {
         }
 
 
-        fun generatePointPlot(resultMap: MutableMap<Double, Int>, totalValuesToCover: Int, xS: String, yS: String, normalized: Boolean, byFactorNr: Boolean): Plot {
+        fun generatePointPlot(resultMap: MutableMap<Double, Int>, totalValuesToCover: Int, xS: String, yS: String, normalized: Boolean, byFactorNr: Boolean, fitCurve: Boolean): Plot {
             val sortedMap = resultMap.toSortedMap()
             val data = when {
                 normalized -> mapOf(
@@ -244,12 +244,16 @@ class Visualizer {
             }
             Logger.info("Generating plot...")
             Logger.debug("PLOT DATA: $data")
-            return letsPlot(data) +
-                    ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
-                    //ggtitle("Sum of Values covered by factor of size x") +
-                    //scaleYContinuous(limits = Pair(0, totalValuesToCover)) +
-                    geomPoint(size = 2.0, showLegend = false) { x = xS; y = yS } +
-                    geomSmooth(method = "loess")
+            return if (fitCurve)
+                letsPlot(data) +
+                        ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+                        geomPoint(showLegend = false) { x = xS; y = yS } +
+                        geomSmooth(method = "loess", size = 0.5, se = false, color = Color.BLACK, linetype = 3) { x = xS; y = yS } +
+                        scaleYContinuous(limits = Pair(0,100))
+            else
+                letsPlot(data) +
+                        ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+                        geomPoint(size = 2.0, showLegend = false) { x = xS; y = yS }
         }
     }
 }

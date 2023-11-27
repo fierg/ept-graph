@@ -54,6 +54,9 @@ class ChartGenerator {
                     val factorPlot3 = Analyzer.createCoverByFactorPlotSum(evalResult.flatten(), normalized = true)
                     Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-values-by-factor-sum-normalized.png", factorPlot3, "./plots/point-plots")
 
+                    val factorPlot3b = Analyzer.createCoverByFactorPlotSum(evalResult.flatten(), normalized = true, fitCurve = true)
+                    Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-values-by-factor-sum-normalized-curve.png", factorPlot3b, "./plots/point-plots")
+
                     val factorPlot4 = Analyzer.createCoverByFactorPlotSum(evalResult.flatten(), byFactorNr = true)
                     Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-values-by-factor-sum-by-factor-nr.png", factorPlot4, "./plots/point-plots")
 
