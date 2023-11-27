@@ -4,10 +4,14 @@
 All algorithms described have been implemented using Kotlin, because it can be compiled for the Java Virtual Machine and for native execution, therefore it seemed like a good balance between a native implementation and higher language conciseness and fault tolerance. The project is realized as a maven project, to simplify dependency management.
 
 \section{Decomposition using Maximal Divisors}
+For the initial implementation, only maximal divisors were used as this is already well studied. For an input array of size $n$, all maximal divisors are lazily yielded into a sequence, via a \textit{NumbersExtensions}. Extension functions are a useful Kotlin tool if you want to extend the static functionality of base classes, e.g. Integers. Then a preliminary Factor is created for each maximal divisor, with an empty array the size of the divisor and a job is spawned for each factor as the periodicity of the factors can be tested in parallel. With the help of Kotlin Co-routines, a modest multi-threading approach is implemented where the main algorithm thread waits for all the factors to be checked. Afterwards, they are collected into a \textit{Cover} object, which handles all the quality assessment and validation. For this, a cover array is created, where all factors are consolidated and uncovered values so called outliers are visible. As not all inputs are decomposable and by default we do not allow  $|B_i| = |A|$, we may find labels for which the \DFAs are not decomposable. In this case, we consider them partially decomposable, as the found factors create a cover array which is partially identical to the original but not in all places, so a warning is issued with the amount of hard outliers.
+
 
 \section{Greedy Short Factor Decomposition}
 
 \section{Fourier Transformed Decomposition}
+
+\section{File Reader and Graph Algorithms}
 
 \section{External Libraries}
 TODO: jgraph, lets plot, argparser, 
