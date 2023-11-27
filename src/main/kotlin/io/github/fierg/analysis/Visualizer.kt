@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.PlotSvgExport
 import org.jetbrains.letsPlot.GGBunch
 import org.jetbrains.letsPlot.annotations.layerLabels
 import org.jetbrains.letsPlot.export.ggsave
+import org.jetbrains.letsPlot.geom.geomBoxplot
 import org.jetbrains.letsPlot.geom.geomPie
 import org.jetbrains.letsPlot.geom.geomPoint
 import org.jetbrains.letsPlot.geom.geomSmooth
@@ -22,10 +23,13 @@ import org.jetbrains.letsPlot.intern.Plot
 import org.jetbrains.letsPlot.intern.toSpec
 import org.jetbrains.letsPlot.label.ggtitle
 import org.jetbrains.letsPlot.letsPlot
+import org.jetbrains.letsPlot.scale.scaleXContinuous
 import org.jetbrains.letsPlot.scale.scaleYContinuous
 import org.jetbrains.letsPlot.tooltips.tooltipsNone
 import java.awt.Desktop
 import java.io.File
+import kotlin.math.exp
+import kotlin.math.floor
 
 
 class Visualizer {
@@ -98,7 +102,11 @@ class Visualizer {
             }
 
             Logger.debug("PLOT DATA: $mappedData")
-            val basePlot = letsPlot(mappedData) + defaultPieCharConfig + ggtitle("Values covered by periods (state: ${Decomposer.getStateToReplaceFromCompositionMode(options.compositionMode)})") + ggsize(width, DEFAULT_HEIGHT)
+            val basePlot =
+                letsPlot(mappedData) + defaultPieCharConfig + ggtitle("Values covered by periods (state: ${Decomposer.getStateToReplaceFromCompositionMode(options.compositionMode)})") + ggsize(
+                    width,
+                    DEFAULT_HEIGHT
+                )
 
             return when (style) {
                 PieChartStyle.PERCENT_AND_NAME -> basePlot + geomPie(
@@ -141,6 +149,50 @@ class Visualizer {
             //geomSmooth(se = FALSE, method = "gam") +
         }
 
+        fun generateBoxPlotForNormalized(resultMap: Map<Double, List<Double>>, xS: String, yS: String, minDistance: Double, showOutliers: Boolean, useFactorNrInsteadOfSize: Boolean): Plot {
+            val outliersShowVal = if (showOutliers) 1 else 0
+            val resultList = if (minDistance == 0.0) {
+                expandToResultList(resultMap)
+            } else {
+                val expandedList = expandToResultList(resultMap).sortedBy { it.first }
+                val listWithMinDistance = mutableListOf<Pair<Double, Double>>()
+                var lastSeenX = 0.0
+                expandedList.forEach { entry ->
+                    if (entry.first >= lastSeenX + minDistance) {
+                        listWithMinDistance.add(entry)
+                        lastSeenX = entry.first
+                    } else {
+                        listWithMinDistance.add(Pair(lastSeenX, entry.second))
+                    }
+                }
+                listWithMinDistance
+            }
+
+            val data = if (useFactorNrInsteadOfSize) {
+                mapOf(
+                    xS to resultList.mapIndexed { index, _ -> floor(((index.toDouble() / resultList.size) * 10)) },
+                    yS to resultList.map { it.second }
+                )
+            } else {
+                mapOf(
+                    xS to resultList.map { it.first },
+                    yS to resultList.map { it.second }
+                )
+            }
+
+            Logger.info("Generating box plot...")
+            Logger.debug("PLOT DATA: $data")
+            return if (!useFactorNrInsteadOfSize)
+                letsPlot(data) +
+                        ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+                        scaleXContinuous(limits = Pair(0, 0.5)) +
+                        geomBoxplot(outlierStroke = outliersShowVal, outlierSize = 0.5, outlierShape = 4) { x = xS; y = yS }
+            else
+                letsPlot(data) +
+                        ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
+                        geomBoxplot(outlierStroke = outliersShowVal, outlierSize = 0.5, outlierShape = 4) { x = xS; y = yS }
+        }
+
         fun generatePointPlot1(resultMap: Map<Double, Pair<Int, Int>>, xS: String, yS: String): Plot {
             val sortedMap = resultMap.toSortedMap()
             val maxValue = sortedMap.values.fold(0) { acc, pair -> acc + pair.second }
@@ -152,7 +204,7 @@ class Visualizer {
                 yS to sumList.map { it.first }
             )
             Logger.info("Generating plot...")
-            Logger.info("PLOT DATA: $data")
+            Logger.debug("PLOT DATA: $data")
             return letsPlot(data) +
                     ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
                     ggtitle("Sum of Values covered by factor of size x") +
@@ -179,17 +231,19 @@ class Visualizer {
                     xS to sortedMap.keys.toList(),
                     yS to sortedMap.values.toList().map { (it.toDouble() / sortedMap.values.last()) * 100 }
                 )
+
                 byFactorNr -> mapOf(
                     xS to sortedMap.keys.toList().indices.toList(),
                     yS to sortedMap.values.toList()
                 )
+
                 else -> mapOf(
                     xS to sortedMap.keys.toList(),
                     yS to sortedMap.values.toList()
                 )
             }
             Logger.info("Generating plot...")
-            Logger.info("PLOT DATA: $data")
+            Logger.debug("PLOT DATA: $data")
             return letsPlot(data) +
                     ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
                     //ggtitle("Sum of Values covered by factor of size x") +

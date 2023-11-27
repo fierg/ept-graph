@@ -6,7 +6,7 @@ import org.jetbrains.letsPlot.intern.Plot
 
 class Analyzer {
 
-    companion object{
+    companion object {
         fun createCoverByFactorPlotSum(covers: List<Cover>, normalized: Boolean = false, byFactorNr: Boolean = false): Plot {
             val xS = "Rel Factor Size"
             val yS = "Sum of covered values"
@@ -34,7 +34,7 @@ class Analyzer {
             return Visualizer.generatePointPlot(resultMap, totalValuesToCover, xS, yS, normalized, byFactorNr)
         }
 
-        fun createCoverByFactorPlotNormalized(covers: List<Cover>, useAverage: Boolean = false): Plot {
+        fun createCoverByFactorPlotNormalized(covers: List<Cover>, useAverage: Boolean = false, createBoxPlot: Boolean = false, showOutliers: Boolean = false, minDistance: Double = 0.0, useFactorNrInsteadOfSize: Boolean = false): Plot {
             val xS = "Rel Factor Size"
             val yS = "Rel amount of values covered"
             Logger.info("Collecting values to plot...")
@@ -50,7 +50,10 @@ class Analyzer {
                 }
             }
 
-            return Visualizer.generatePointPlotForNormalized(resultMap, xS, yS, useAverage)
+            return if (createBoxPlot)
+                Visualizer.generateBoxPlotForNormalized(resultMap, xS, yS, minDistance, showOutliers, useFactorNrInsteadOfSize)
+            else
+                Visualizer.generatePointPlotForNormalized(resultMap, xS, yS, useAverage)
         }
 
         fun createCoverByFactorPlot(covers: List<Cover>): Plot {
@@ -72,7 +75,5 @@ class Analyzer {
 
             return Visualizer.generatePointPlot1(resultMap, xS, yS)
         }
-
-
     }
 }

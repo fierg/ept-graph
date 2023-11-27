@@ -276,7 +276,6 @@ class Decomposer(
     fun analyzeAllGraphs(upTo: Int): List<List<Cover>> {
         val result = mutableListOf<List<Cover>>()
         for (i in 0..upTo) {
-            println("Reading next graph ($i) ...")
             val f2fGraph = F2FReader().getF2FNetwork(i)
             result.add(findComposite(f2fGraph))
         }
