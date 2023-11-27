@@ -103,4 +103,11 @@ class Factor(var array: BooleanArray, val outliers: MutableList<Int>, val compos
 
     fun getCoveredValuesUntilThisFactor(cover: Cover) = cover.totalValues - getOutliersOfCoverUntilThisFactor(cover).size
 
+    override fun hashCode(): Int {
+        var result = array.contentHashCode()
+        result = 31 * result + outliers.hashCode()
+        result = 31 * result + compositionMode.hashCode()
+        return result
+    }
+
 }

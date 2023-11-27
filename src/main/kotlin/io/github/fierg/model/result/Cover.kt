@@ -110,24 +110,18 @@ data class Cover(
      *
      * @return A boolean array representing the cover.
      */
-    fun getCoverArray(flipState: Boolean): BooleanArray {
-        val cover = if (flipState) BooleanArray(target.size) { !stateToReplace } else BooleanArray(target.size) { stateToReplace }
+    fun getCoverArray(): BooleanArray {
+        val cover = if (compositionMode == CompositionMode.OR) BooleanArray(target.size) { stateToReplace } else BooleanArray(target.size) { !stateToReplace }
         when (compositionMode) {
             CompositionMode.OR -> {
                 cover.indices.forEach { index ->
-                    if (flipState)
-                        cover[index] = factors.all { it.get(index) != stateToReplace }
-                    else
-                        cover[index] = factors.any { it.get(index) == stateToReplace }
+                    cover[index] = factors.any { it.get(index) != stateToReplace }
                 }
             }
 
             CompositionMode.AND -> {
                 cover.indices.forEach { index ->
-                    if (flipState)
-                        cover[index] = factors.any { it.get(index) != stateToReplace }
-                    else
-                        cover[index] = factors.all { it.get(index) == stateToReplace }
+                    cover[index] = factors.all { it.get(index) != stateToReplace }
                 }
             }
         }
@@ -139,31 +133,39 @@ data class Cover(
      * Clean factors of multiples, e.g. if 10 and 101110 are both factors, 10 and 000100 are considered clean factors.
      */
     fun fourierTransform(factors: MutableList<Factor>, singleStateMode: Boolean = true): MutableList<Factor> {
+        fourierTransformMultiples(factors)
+
+        if (singleStateMode) {
+            fullFourierTransform(factors)
+        }
+        return factors
+    }
+
+    private fun fullFourierTransform(factors: MutableList<Factor>) {
+        val newCleanFactors = mutableListOf<Factor>()
+        factors.forEach { factor ->
+            val setValues = factor.array.indices.filter { index -> factor.array[index] == stateToReplace }.toMutableList()
+            while (setValues.size > 1) {
+                val position = setValues.removeLast()
+                val newArray = BooleanArray(factor.array.size) { !stateToReplace }
+                factor.array[position] = !stateToReplace
+                newArray[position] = stateToReplace
+
+                factor.outliers.addAll(getNewOutliers(position, factor.array.size, this.target.size))
+                newCleanFactors.add(Factor(newArray, recalculateOutliers(this.target, stateToReplace, listOf(newArray)), compositionMode))
+            }
+        }
+        factors.addAll(newCleanFactors)
+        factors.sortBy { it.array.size }
+    }
+
+    private fun fourierTransformMultiples(factors: MutableList<Factor>) {
         val factorIndex = factors.mapIndexed { index, factor -> factor.array.size to index }.toMap()
         getMultiplesOfPeriods(factors.map { it.array.size }.filter { it != 1 }).forEach { entry ->
             entry.value.forEach { multiple ->
                 factors[factorIndex[multiple]!!].array = cleanFactor(factors[factorIndex[entry.key]!!].array, factors[factorIndex[multiple]!!].array)
             }
         }
-
-        if (singleStateMode) {
-            val newCleanFactors = mutableListOf<Factor>()
-            factors.forEach { factor ->
-                val setValues = factor.array.indices.filter { index -> factor.array[index] == stateToReplace }.toMutableList()
-                while (setValues.size > 1) {
-                    val position = setValues.removeLast()
-                    val newArray = BooleanArray(factor.array.size) { !stateToReplace }
-                    factor.array[position] = !stateToReplace
-                    newArray[position] = stateToReplace
-
-                    factor.outliers.addAll(getNewOutliers(position, factor.array.size, this.target.size))
-                    newCleanFactors.add(Factor(newArray, recalculateOutliers(this.target, stateToReplace, listOf(newArray)), compositionMode))
-                }
-            }
-            factors.addAll(newCleanFactors)
-        }
-        factors.sortBy { it.array.size }
-        return factors
     }
 
     private fun getNewOutliers(position: Int, factorSize: Int, coverSize: Int): Collection<Int> {

@@ -44,4 +44,6 @@ object Logger {
     fun resetLogLevel() {
         LOGGER!!.level = Level.INFO
     }
+
+    fun getLevel() = LOGGER!!.level
 }

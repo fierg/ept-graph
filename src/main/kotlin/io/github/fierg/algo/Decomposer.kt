@@ -11,6 +11,7 @@ import io.github.fierg.model.options.Options
 import io.github.fierg.model.result.Factor
 import io.github.fierg.model.result.Cover
 import kotlinx.coroutines.*
+import java.util.logging.Level
 
 /**
  * The `Decomposer` class represents a decomposer that processes boolean arrays to find covers based on various composition modes and settings.
@@ -22,7 +23,7 @@ import kotlinx.coroutines.*
  */
 class Decomposer(
     private val mode: DecompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS, private val deltaWindowAlgo: Int = 0, private val threshold: Double = 1.0,
-    private val compositionMode: CompositionMode = CompositionMode.OR, private val allowFullSizeDecomposition: Boolean = true, private val flipState: Boolean = false
+    private val compositionMode: CompositionMode = CompositionMode.OR, private val allowFullSizeDecomposition: Boolean = true
 ) {
 
     /**
@@ -30,10 +31,10 @@ class Decomposer(
      *
      * @param options The `Options` object containing decomposition parameters.
      */
-    constructor(options: Options) : this(options.decompositionMode, options.deltaWindowAlgo, options.threshold, options.compositionMode, options.allowFullLengthDecomposition, options.flipDefaultState)
+    constructor(options: Options) : this(options.decompositionMode, options.deltaWindowAlgo, options.threshold, options.compositionMode, options.allowFullLengthDecomposition)
 
     private val applyDeltaWindow = deltaWindowAlgo > 0
-    private val stateToReplace = if (flipState) !getStateToReplaceFromCompositionMode(this.compositionMode) else getStateToReplaceFromCompositionMode(this.compositionMode)
+    private val stateToReplace = getStateToReplaceFromCompositionMode(this.compositionMode)
     private var singleDebugLog = true
     private var nrDigits = 3
 
@@ -100,21 +101,24 @@ class Decomposer(
      * @param result The `Cover` object to analyze.
      */
     fun analyzeCover(result: Cover) {
-        Logger.info(
-            "Found decomposition with largest factor ${String.format("%${nrDigits}d", (result.size.toDouble() / result.target.size * 100).toInt())}% original size (${String.format("%${nrDigits}d", result.size)}), " +
-                    "covered ${String.format("%${nrDigits}d", (result.totalValues - result.outliers.size))}/${String.format("%${nrDigits}d", result.totalValues)} values, " +
-                    "resulting in ${String.format("%${nrDigits}d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)." +
-                    "Metrics: w=${result.getWidth()}, p=${result.getPeriodicity()}, ds=${result.getDecompositionStructure()}"
-        )
-        Logger.debug("Target:\t ${result.target.getBinaryString()}")
-        Logger.debug("Cover:\t ${result.getCoverArray(flipState).getBinaryString()}")
-        result.factors.forEach { factor ->
-            Logger.debug("Factor: ${factor.array.getBinaryString()}, rel size: ${factor.getRelativeSize(result)} outliers: ${factor.outliers}")
-            Logger.debug("Combined outliers: ${factor.getOutliersOfCoverUntilThisFactor(result)}")
-            Logger.debug("Combined covered values: ${factor.getCoveredValuesUntilThisFactor(result)}/${result.totalValues}")
-            Logger.debug("Combined relative covered values: ${factor.getRelativeCoveredValues(result)}\n")
+        if (Logger.getLevel() != Level.OFF && Logger.getLevel() != Level.INFO) {
+            Logger.info(
+                "Found decomposition with largest factor ${String.format("%${nrDigits}d", (result.size.toDouble() / result.target.size * 100).toInt())}% original size (${String.format("%${nrDigits}d", result.size)}), " +
+                        "covered ${String.format("%${nrDigits}d", (result.totalValues - result.outliers.size))}/${String.format("%${nrDigits}d", result.totalValues)} values, " +
+                        "resulting in ${String.format("%${nrDigits}d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)." +
+                        "Metrics: w=${result.getWidth()}, p=${result.getPeriodicity()}, ds=${result.getDecompositionStructure()}"
+            )
+
+            Logger.debug("Target:\t ${result.target.getBinaryString()}")
+            Logger.debug("Cover:\t ${result.getCoverArray().getBinaryString()}")
+            result.factors.forEach { factor ->
+                Logger.debug("Factor(${factor.array.size}): ${factor.array.getBinaryString()}, rel size: ${factor.getRelativeSize(result)} outliers: ${factor.outliers}")
+                Logger.debug("Combined outliers: ${factor.getOutliersOfCoverUntilThisFactor(result)}")
+                Logger.debug("Combined covered values: ${factor.getCoveredValuesUntilThisFactor(result)}/${result.totalValues}")
+                Logger.debug("Combined relative covered values: ${factor.getRelativeCoveredValues(result)}\n")
+            }
+            Logger.debug("\n\n")
         }
-        Logger.debug("\n\n")
     }
 
     /**
@@ -272,6 +276,7 @@ class Decomposer(
     fun analyzeAllGraphs(upTo: Int): List<List<Cover>> {
         val result = mutableListOf<List<Cover>>()
         for (i in 0..upTo) {
+            println("Reading next graph ($i) ...")
             val f2fGraph = F2FReader().getF2FNetwork(i)
             result.add(findComposite(f2fGraph))
         }

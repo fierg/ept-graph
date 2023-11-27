@@ -12,27 +12,6 @@ class OnesVSZerosTest {
         Logger.setLogLevelToDebug()
     }
 
-
-    @Test
-    fun testOrExample1() {
-        val array = arrayOf(false, true, false, true, false, false).toBooleanArray()
-        val options = Options.emptyOptions()
-        options.skipSelfEdges = true
-        options.decompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS
-        options.threshold = 1.0
-        options.compositionMode = CompositionMode.OR
-        options.flipDefaultState = true
-        val d = Decomposer(options)
-        val cover = d.findCover(array)
-        d.analyzeCover(cover)
-        val resultingFactors = cover.factors.map { it.array }
-        val expectedFactors = listOf(arrayOf(false, true).toBooleanArray(), arrayOf(true, true, false).toBooleanArray())
-
-        expectedFactors.forEach { target ->
-            assert(resultingFactors.any { it.contentEquals(target) })
-        }
-    }
-
     @Test
     fun testOrExample0() {
         val array = arrayOf(false, true, false, true, false, false).toBooleanArray()

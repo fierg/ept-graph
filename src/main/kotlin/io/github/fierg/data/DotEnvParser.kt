@@ -25,7 +25,6 @@ class DotEnvParser {
             options.debug = env[ENV.DEBUG.name] == "true"
             options.quiet = env[ENV.QUIET.name] == "true"
             options.threshold = env[ENV.THRESHOLD.name].toDouble()
-            options.flipDefaultState = env[ENV.FLIP_DEFAULT_STATE.name] == "true"
             options.allowFullLengthDecomposition = env[ENV.FULL_LENGTH_DECOMPOSITION.name] == "true"
 
             options.decompositionMode = when (env[ENV.DECOMPOSITION_MODE.name]) {
