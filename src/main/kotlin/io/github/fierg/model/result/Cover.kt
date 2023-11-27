@@ -26,7 +26,8 @@ data class Cover(
     var size: Int,
     var outliers: MutableList<Int>,
     val factors: MutableList<Factor>,
-    val compositionMode: CompositionMode = CompositionMode.OR
+    val compositionMode: CompositionMode = CompositionMode.OR,
+    val flippedState: Boolean = false
 ) {
 
     private var lastOutlierSize = outliers.size
@@ -69,7 +70,7 @@ data class Cover(
             }
 
             CompositionMode.AND -> {
-                if (!skipFactorIfNoChangesOccur || factor.array.any { value -> value != stateToReplace }) {
+                if (!skipFactorIfNoChangesOccur || factor.array.any { value -> value == stateToReplace }) {
                     factors.add(factor)
                     size = factor.array.size
                     outliers = recalculateOutliers(target, stateToReplace, factors.map { it.array })
@@ -109,18 +110,24 @@ data class Cover(
      *
      * @return A boolean array representing the cover.
      */
-    fun getCoverArray(): BooleanArray {
-        val cover = BooleanArray(target.size) { !stateToReplace }
+    fun getCoverArray(flipState: Boolean): BooleanArray {
+        val cover = if (flipState) BooleanArray(target.size) { !stateToReplace } else BooleanArray(target.size) { stateToReplace }
         when (compositionMode) {
             CompositionMode.OR -> {
-                factors.forEach { factor ->
-                    cover.applyPeriod(factor.array, stateToReplace)
+                cover.indices.forEach { index ->
+                    if (flipState)
+                        cover[index] = factors.all { it.get(index) != stateToReplace }
+                    else
+                        cover[index] = factors.any { it.get(index) == stateToReplace }
                 }
             }
 
             CompositionMode.AND -> {
                 cover.indices.forEach { index ->
-                    cover[index] = factors.all { it.get(index) }
+                    if (flipState)
+                        cover[index] = factors.any { it.get(index) != stateToReplace }
+                    else
+                        cover[index] = factors.all { it.get(index) == stateToReplace }
                 }
             }
         }
@@ -139,7 +146,6 @@ data class Cover(
             }
         }
 
-        //TODO: FIXME!!!!
         if (singleStateMode) {
             val newCleanFactors = mutableListOf<Factor>()
             factors.forEach { factor ->
@@ -156,6 +162,7 @@ data class Cover(
             }
             factors.addAll(newCleanFactors)
         }
+        factors.sortBy { it.array.size }
         return factors
     }
 

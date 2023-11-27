@@ -9,8 +9,8 @@ Finds all factors of a given number lazily and yields them into a sequence.
 fun Int.factors(includeSelf: Boolean = true): Sequence<Int> {
     val n = this
     return sequence {
-        (1..n / 2).forEach {
-            if (n % it == 0) yield(it)
+        for(i in 1..n / 2) {
+            if (n % i == 0) yield(i)
         }
         if (includeSelf) yield(n)
     }

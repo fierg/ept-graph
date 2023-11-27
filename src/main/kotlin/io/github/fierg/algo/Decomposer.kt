@@ -22,7 +22,7 @@ import kotlinx.coroutines.*
  */
 class Decomposer(
     private val mode: DecompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS, private val deltaWindowAlgo: Int = 0, private val threshold: Double = 1.0,
-    private val compositionMode: CompositionMode = CompositionMode.OR
+    private val compositionMode: CompositionMode = CompositionMode.OR, private val allowFullSizeDecomposition: Boolean = true, private val flipState: Boolean = false
 ) {
 
     /**
@@ -30,10 +30,10 @@ class Decomposer(
      *
      * @param options The `Options` object containing decomposition parameters.
      */
-    constructor(options: Options) : this(options.decompositionMode, options.deltaWindowAlgo, options.threshold, options.compositionMode)
+    constructor(options: Options) : this(options.decompositionMode, options.deltaWindowAlgo, options.threshold, options.compositionMode, options.allowFullLengthDecomposition, options.flipDefaultState)
 
     private val applyDeltaWindow = deltaWindowAlgo > 0
-    private val stateToReplace = getStateToReplaceFromCompositionMode(this.compositionMode)
+    private val stateToReplace = if (flipState) !getStateToReplaceFromCompositionMode(this.compositionMode) else getStateToReplaceFromCompositionMode(this.compositionMode)
     private var singleDebugLog = true
     private var nrDigits = 3
 
@@ -66,7 +66,7 @@ class Decomposer(
      */
     fun findCover(input: BooleanArray): Cover {
         nrDigits = input.size.digits()
-        val periods = getFactorSequence(input.size).toList()
+        val periods = getFactorSequence(input.size, allowFullSizeDecomposition).toList()
         val factorIndex = periods.mapIndexed { index, factor -> factor to index }.toMap()
         val factors = getFactors(input, factorIndex, periods)
 
@@ -101,21 +101,20 @@ class Decomposer(
      */
     fun analyzeCover(result: Cover) {
         Logger.info(
-            "Found decomposition with largest factor ${String.format("%${nrDigits}d", (result.size.toDouble() / result.target.size * 100).toInt())}% original size (${
-                String.format(
-                    "%${nrDigits}d",
-                    result.size
-                )
-            }), " +
+            "Found decomposition with largest factor ${String.format("%${nrDigits}d", (result.size.toDouble() / result.target.size * 100).toInt())}% original size (${String.format("%${nrDigits}d", result.size)}), " +
                     "covered ${String.format("%${nrDigits}d", (result.totalValues - result.outliers.size))}/${String.format("%${nrDigits}d", result.totalValues)} values, " +
                     "resulting in ${String.format("%${nrDigits}d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)." +
-                    " Metrics: w=${result.getWidth()}, p=${result.getPeriodicity()}, ds=${result.getDecompositionStructure()}"
+                    "Metrics: w=${result.getWidth()}, p=${result.getPeriodicity()}, ds=${result.getDecompositionStructure()}"
         )
         Logger.debug("Target:\t ${result.target.getBinaryString()}")
-        Logger.debug("Cover:\t ${result.getCoverArray().getBinaryString()}")
+        Logger.debug("Cover:\t ${result.getCoverArray(flipState).getBinaryString()}")
         result.factors.forEach { factor ->
-            Logger.debug("Factor:\t $factor -> Outliers: ${factor.outliers}")
+            Logger.debug("Factor: ${factor.array.getBinaryString()}, rel size: ${factor.getRelativeSize(result)} outliers: ${factor.outliers}")
+            Logger.debug("Combined outliers: ${factor.getOutliersOfCoverUntilThisFactor(result)}")
+            Logger.debug("Combined covered values: ${factor.getCoveredValuesUntilThisFactor(result)}/${result.totalValues}")
+            Logger.debug("Combined relative covered values: ${factor.getRelativeCoveredValues(result)}\n")
         }
+        Logger.debug("\n\n")
     }
 
     /**
@@ -133,8 +132,8 @@ class Decomposer(
             DecompositionMode.MAX_DIVISORS -> {
                 periods.forEach { size ->
                     cover.addFactor(factors[factorIndex[size]!!])
-                    if (cover.outliers.size == 0) return cover
                 }
+                if (cover.outliers.size == 0) return cover
                 Logger.warn("No Exact Cover with max divisors only possible! Hard outliers (${cover.outliers.size})")
             }
 
@@ -245,9 +244,9 @@ class Decomposer(
      * @param input The size of the input array.
      * @return A sequence of factor sizes.
      */
-    private fun getFactorSequence(input: Int): Sequence<Int> {
+    private fun getFactorSequence(input: Int, allowFullSizeDecomposition: Boolean): Sequence<Int> {
         return when (mode) {
-            DecompositionMode.GREEDY_SHORT_FACTORS, DecompositionMode.FOURIER_TRANSFORM -> input.factors()
+            DecompositionMode.GREEDY_SHORT_FACTORS, DecompositionMode.FOURIER_TRANSFORM -> input.factors(allowFullSizeDecomposition)
             DecompositionMode.MAX_DIVISORS -> input.maximalDivisors()
         }
     }

@@ -5,7 +5,7 @@ import io.github.fierg.model.options.DecompositionMode
 import io.github.fierg.model.options.Options
 import org.junit.Test
 
-class TestPaperShortestPeriods {
+class TestPaperGreedyShortFactorsExample {
 
     private val options = Options.emptyOptions()
 

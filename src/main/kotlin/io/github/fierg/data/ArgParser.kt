@@ -19,6 +19,8 @@ class ArgParser {
             val decompositionMode by parser.option(ArgType.Choice<DecompositionMode>(), description = "Choose how a decomposition is found, using only maximal divisors, using all factors and greedily collect up to the threshold or perform a fourier transform for increased understandability.", fullName = "Mode of decomposing DFAs").default(DecompositionMode.GREEDY_SHORT_FACTORS)
             val compositionMode by parser.option(ArgType.Choice<CompositionMode>(), description = "Choose how a composition is formed, using AND or OR operator for adding factors together to a decomposition.", fullName = "Mode of composing factors").default(CompositionMode.OR)
             val skipSelfEdges by parser.option(ArgType.Boolean, shortName = "skipSelfEdges", description = "Skip loop back edges with same source and target, these are often useless.").default(false)
+            val flipDefaultState by parser.option(ArgType.Boolean, shortName = "s", description = "Flip default state used with and/or decomposition").default(false)
+            val allowFullSizeDecomposition by parser.option(ArgType.Boolean, shortName = "f", description = "Allow full size decomposition").default(true)
             val debug by parser.option(ArgType.Boolean, shortName = "d", description = "Turn on debug mode").default(false)
             val quiet by parser.option(ArgType.Boolean, shortName = "q", description = "Turn on quiet mode").default(false)
             val deltaWindowPreprocessing by parser.option(ArgType.Int, description = "Delta window in preprocessing of the label").default(0)
@@ -26,7 +28,7 @@ class ArgParser {
 
             parser.parse(args = args)
 
-            return Options(dotenv, input, decompositionMode, compositionMode, skipSelfEdges, debug, quiet, deltaWindowPreprocessing, deltaWindowAlgo, threshold)
+            return Options(dotenv, input, decompositionMode, compositionMode, skipSelfEdges, flipDefaultState, debug, quiet, deltaWindowPreprocessing, deltaWindowAlgo, threshold, allowFullSizeDecomposition)
         }
     }
 }
