@@ -83,8 +83,26 @@ Looking at the novel greedy approach for finding short factors, a similar pictur
 	\label{fig:fourier-all-factors-box-plot}
 \end{figure}
 
+\newpage
 \section{Explainability Evaluation}
 
+\begin{table}[h]
+	\begin{tabular}{ll||rrrrrr|rrr|rrr}
+		& & valid & good & ok &  \multicolumn{3}{c}{ds} & \multicolumn{3}{c}{precision} & \multicolumn{3}{c}{size}  \\
+		& & & & & $\Sigma$ & a & m & $\Sigma$ & a & m & $\Sigma$ & a & m\\
+		\hline
+		\hline
+		\multirow{2}{*}{MaxDivisors} & $\cap$ & 182 & 1908 & 2670 & & & & & & & & &  \\
+		 & $\cup$ & 3 & 3 & 3 & & & & & & & & & \\
+		 \hline
+		\multirow{2}{*}{GreedyShortFactors} & $\cap$ & 182 & 1908 & 2670 & & & & & & & & & \\
+		& $\cup$ & 3 & 3 & 3 & & & & & & & & & \\
+		\hline
+		FourierTransform & $\cup$ & 3 & 3 & 3 & & & & & & & & & \\
+	\end{tabular}
+	\caption{Explainability metrics for different methods}
+	\label{tab:eval-metric}
+\end{table}
 
 %%% Local Variables: 
 %%% mode: latex
