@@ -19,8 +19,8 @@ class TestMetrics {
         val f2fGraph = F2FReader().getF2FNetwork(0)
         val decomposer = Decomposer(options)
         val decomposition = decomposer.findComposite(f2fGraph)
-        Logger.info("Cover has width ${decomposition.first().getWidth()}")
-        Logger.info("Cover has periodicity ${decomposition.first().getPeriodicity()}")
+        Logger.info("Cover has width ${decomposition.first().size}")
+        Logger.info("Cover has periodicity ${decomposition.first().getPrecision()}")
         Logger.info("Cover has decomposition structure ${decomposition.first().getDecompositionStructure()}")
 
     }

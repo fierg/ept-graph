@@ -2,6 +2,7 @@ package io.github.fierg.analysis
 
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.DotEnvParser
+import io.github.fierg.extensions.median
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.CompositionMode
 import io.github.fierg.model.options.DecompositionMode
@@ -29,7 +30,7 @@ class ChartGenerator {
                     val upTo = 61
                     options.decompositionMode = decompositionMode
                     options.compositionMode = compositionMode
-
+                    options.allowFullLengthDecomposition = false
                     val decomposer = Decomposer(options)
 
                     Logger.setLogLevelToQuiet()
@@ -39,11 +40,47 @@ class ChartGenerator {
                     Logger.resetLogLevel()
                     Logger.info("This took $elapsed.")
 
-                    generatePlots(evalResult, options)
+                    //generatePlots(evalResult, options)
+                    generateMetricTables(evalResult,options)
                 }
             }
         }
         Logger.info("Done.")
+    }
+
+    private fun generateMetricTables(evalResult: List<List<Cover>>, options: Options) {
+        var foundValidDecomposition = 0
+        var hardOutliers = 0
+        var veryGoodDecomposition = 0
+        var okDecomposition = 0
+        val mDecompositionStructures = mutableListOf<Double>()
+        var mPrecision = mutableListOf<Double>()
+        val mSize = mutableListOf<Int>()
+        evalResult.flatten().forEach { cover ->
+            val coverArray = cover.getCoverArray()
+            if (cover.target.contentEquals(coverArray)) {
+                foundValidDecomposition++
+            }
+            cover.target.forEachIndexed { index, b ->
+                  if (coverArray[index] != b) hardOutliers ++
+            }
+            val precision = cover.getPrecision()
+            if (precision > 0.9) {
+                veryGoodDecomposition++
+                okDecomposition++
+            }else if (precision > 0.75){
+                okDecomposition++
+            }
+            mDecompositionStructures.add(cover.getDecompositionStructure())
+            mPrecision.add(precision)
+            mSize.add(cover.factors.size)
+        }
+        mPrecision = mPrecision.filter { !it.isNaN() }.toMutableList()
+        Logger.info("Analyzing ${options.decompositionMode.name} mode ${options.compositionMode.name}")
+        println("valid decompositions: $foundValidDecomposition, good decompositions: $veryGoodDecomposition, ok decompositions:$okDecomposition total hard outliers $hardOutliers")
+        println("& ${mDecompositionStructures.sum()} & ${mDecompositionStructures.average()} & ${mDecompositionStructures.median()}")
+        println("& ${mPrecision.sum()} & ${mPrecision.average()} & ${mPrecision.median()}")
+        println("& ${mSize.sum()} & ${mSize.average()} & ${mSize.median()}")
     }
 
     private fun generatePlots(evalResult: List<List<Cover>>, options: Options) {

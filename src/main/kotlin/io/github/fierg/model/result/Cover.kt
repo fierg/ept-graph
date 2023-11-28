@@ -82,24 +82,17 @@ data class Cover(
     }
 
     /**
-     * Calculates the periodicity of the cover based on the total values to cover and outliers.
+     * Calculates the precision of the cover based on the total values to cover and outliers.
      *
      * @return The precision of the cover as a double value.
      */
-    fun getPeriodicity() = (totalValues - outliers.size).toDouble() / totalValues
-
-    /**
-     * Calculates the width of the cover based on the total number of factors.
-     *
-     * @return The precision of the cover as a double value.
-     */
-    fun getWidth() = factors.size
+    fun getPrecision() = (totalValues - outliers.size).toDouble() / totalValues
 
     /**
      * Calculates the decomposition structure of the cover based on the total values to cover,
      * each factors size and outliers, according to the described metric.
      *
-     * @return The precision of the cover as a double value.
+     * @return The decomposition structure of the cover as a double value.
      */
     fun getDecompositionStructure() = factors.fold(0.0) { acc, factor ->
         acc + (factor.array.size.toDouble() / target.size) * (factor.outliers.size.toDouble() / totalValues)

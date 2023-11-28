@@ -22,3 +22,17 @@ fun MutableList<Int>.removeIfNotIncludedIn(other: List<Int>){
     }
     this.removeAll(this.subList(indexA, this.size))
 }
+
+fun List<Double>.median() = this.sorted().let {
+    if (it.size % 2 == 0)
+        (it[it.size / 2] + it[(it.size - 1) / 2]) / 2
+    else
+        it[it.size / 2]
+}
+
+fun List<Int>.median() = this.sorted().let {
+    if (it.size % 2 == 0)
+        (it[it.size / 2] + it[(it.size - 1) / 2]) / 2
+    else
+        it[it.size / 2]
+}
