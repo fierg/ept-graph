@@ -3,19 +3,18 @@
 \bibitem{erlebach2020game}
 Erlebach, T. and Spooner, J.~T.,
 \newblock A game of cops and robbers on graphs with periodic edge-connectivity,
-\newblock in {\em SOFSEM 2020: Theory and Practice of Computer Science: 46th
-  International Conference on Current Trends in Theory and Practice of
-  Informatics, SOFSEM 2020, Limassol, Cyprus, January 20--24, 2020,
-  Proceedings}, pages 64--75, Springer, 2020.
+\newblock volume abs/1908.06828, 2019.
 
 \bibitem{prime-languages}
 Kupferman, O. and Mosheiff, J.,
 \newblock Prime languages,
-\newblock volume 240, 2014.
+\newblock volume 240, pages 90--107, 2015,
+\newblock MFCS 2013.
 
 \bibitem{DBLP:journals/corr/abs-2107-04683}
 Jecker, I., Mazzocchi, N., and Wolf, P.,
-\newblock CoRR {\bf abs/2107.04683} (2021).
+\newblock Decomposing permutation automata,
+\newblock volume abs/2107.04683, 2021.
 
 \bibitem{unara-prime-languages}
 Jecker, I., Kupferman, O., and Mazzocchi, N.,
@@ -28,15 +27,18 @@ Jecker, I., Kupferman, O., and Mazzocchi, N.,
 
 \bibitem{Holme_2012}
 Holme, P. and Saramäki, J.,
-\newblock Physics Reports {\bf 519} (2012) 97.
+\newblock Temporal networks,
+\newblock volume 519, pages 97--125, Elsevier {BV}, 2012.
 
 \bibitem{DBLP:journals/corr/Erlebach0K15}
 Erlebach, T., Hoffmann, M., and Kammer, F.,
-\newblock CoRR {\bf abs/1504.07976} (2015).
+\newblock On temporal graph exploration,
+\newblock volume abs/1504.07976, 2015.
 
 \bibitem{DBLP:journals/corr/Michail15}
 Michail, O.,
-\newblock CoRR {\bf abs/1503.00278} (2015).
+\newblock An introduction to temporal graphs: An algorithmic perspective,
+\newblock volume abs/1503.00278, 2015.
 
 \bibitem{arrighi2022multiparameter}
 Arrighi, E., Grüttemeier, N., Morawietz, N., Sommer, F., and Wolf, P.,
@@ -45,7 +47,9 @@ Arrighi, E., Grüttemeier, N., Morawietz, N., Sommer, F., and Wolf, P.,
 
 \bibitem{temporalLinkPrediction}
 Dunlavy, D.~M., Kolda, T.~G., and Acar, E.,
-\newblock ACM Trans. Knowl. Discov. Data {\bf 5} (2011).
+\newblock Temporal link prediction using matrix and tensor factorizations,
+\newblock volume~5, New York, NY, USA, 2011, Association for Computing
+  Machinery.
 
 \bibitem{temporalClusterCoefficient}
 Cui, J., Zhang, Y.-Q., and Li, X.,
@@ -62,7 +66,8 @@ Fu, D., Fang, L., Maciejewski, R., Torvik, V.~I., and He, J.,
 
 \bibitem{kerracher2014design}
 Kerracher, N., Kennedy, J., and Chalmers, K.,
-\newblock (2014).
+\newblock The design space of temporal graph visualisation.,
+\newblock 2014.
 
 \bibitem{tang2009temporal}
 Tang, J., Musolesi, M., Mascolo, C., and Latora, V.,
@@ -79,7 +84,9 @@ Fu, D. and He, J.,
 
 \bibitem{dibrita2022temporal}
 DiBrita, N.~S., Eledlebi, K., Hildmann, H., Culley, L., and Isakovic, A.~F.,
-\newblock Applied Sciences {\bf 12} (2022) 1315.
+\newblock Temporal graphs and temporal network characteristics for bio-inspired
+  networks during optimization,
+\newblock volume~12, page 1315, MDPI, 2022.
 
 \bibitem{f2f-bai2019predicting}
 Bai, C. et~al.,
