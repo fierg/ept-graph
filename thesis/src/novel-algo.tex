@@ -102,7 +102,7 @@ This algorithm finds more factors than actually required, since it also finds th
 The original problem was solvable in \LogSpace, but extending the problem to finding the shortest possible factors, we face a different challenge. Finding a valid decomposition is in \LogSpace but selecting a minimal amount of given factors needed to be a valid decomposition is not. This problem can be formalized as follows:
 
 \begin{defn}[\sc{Min Factors Decomposition}]{\ \\}
-	Input: A binary string $u$ with $\ell(u)= l$ and a set of binary strings $\mathcal{W}=\{w_1, w_2, \dots, w_n\}$ with $\ell(w_i) < l$ and $\ell(w_i)$ divides $l$ for $1 \leq i \leq n$\\
+	Input: A binary string $u$ with $\ell(u)= l$ and a set of binary strings $\mathcal{W} = \{w_1, w_2, \dots, w_n\}$ with $\ell(w_i) < l$ and $\ell(w_i)$ divides $l$ for $1 \leq i \leq n$\\
 	Question: Exists indices $i_1, i_2, \dots i_k$ such that
 	$$w_{i_1}^{l / \ell(w_{i_1})} \lor w_{i_2}^{l / \ell(w_{i_2})} ~\dots~ \lor w_{i_k}^{l / \ell(w_{i_k})} = u $$
 \end{defn}
