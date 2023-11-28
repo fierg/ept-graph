@@ -4,25 +4,31 @@
 All algorithms described have been implemented using Kotlin, because it can be compiled for the Java Virtual Machine and for native execution, therefore it seemed like a good balance between a native implementation and higher language conciseness and fault tolerance. The project is realized as a maven project, to simplify dependency management.
 
 \section{File Reader}
+\label{ch:Implementation:file-reader}
 TODO: f2f file reader
 
 \section{Decomposition using Maximal Divisors}
+\label{ch:Implementation:max-divisor}
 For the initial implementation, only maximal divisors were used as this is already well studied. For an input array of size $n$, all maximal divisors are lazily yielded into a sequence, via a \textit{NumbersExtensions}. Extension functions are a useful Kotlin tool if you want to extend the static functionality of base classes, e.g. Integers. Then a preliminary Factor is created for each maximal divisor, with an empty array the size of the divisor and a job is spawned for each factor as the periodicity of the factors can be tested in parallel. With the help of Kotlin Co-routines, a modest multi-threading approach is implemented where the main algorithm thread waits for all the factors to be checked. Afterwards, they are collected into a \textit{Cover} object, which handles all the validation and quality assessment. For this, a cover array is created, where all factors are consolidated and uncovered values so called outliers are visible. As not all inputs are decomposable and by default we do not allow  $|B_i| = |A|$, we may find labels for which the \DFAs are not decomposable. In this case, we consider them partially decomposable, as the found factors create a cover array which is partially identical to the original but not in all places, so a warning is issued with the amount of hard outliers.
 
 \section{Greedy Short Factor Decomposition}
+\label{ch:Implementation:greedy-short-factor}
 The implementation of the greedy approach to find shorter factors, is very similar to the previous method. As described in Section \ref{ch:novel-algos:greedy-short-factors}, all divisors of the length or the original \DFA are considered instead of just the maximal divisors. Multi-threading in the job implementation is even more useful as we consider a greater amount of possible factor sizes. All found factors are again collected into a Cover object, this time we are only adding factors to the cover object if their addition changes the resulting cover array. In the example from the Figure \ref{fig:short-factors} we would only add $A_2$ and skip over $A_4$ since the further addition of factors does not change the resulting decomposition. If after an addition of a factor a complete decomposition is formed with $L(A) = \cup_{B_i \in \text{Cover}} L(B_i)$ which is validated by counting the outliers and checking for $out(\{B_i \in~\text{Cover}\}) = 0$. Since is to be expected that a considerable amount of \DFAs generated from labels from real world data, a decomposition with a given $precision(\{B_i \in~\text{Cover}\})$ is also implemented.
 
 \section{Fourier Transformed Decomposition}
+\label{ch:Implementation:fourier-transform}
 With the goal of increased explainability, the Fourier-transformed decomposition is implemented according to Section \ref{ch:novel-algos:fourier}. Similar to the greedy approach, all divisors of the length or the original \DFA are considered. With the Fourier-transformation of the possible factors, we first remove all multiples of periods as described. Afterwards, the single set value requirement $|F_{B_i}| = 1$ is enforced, by replacing all factors not meeting the requirement, by multiple factors which do hold. The collecting into a cover is performed greedily again, to reduce the number of factors in the cover to improve explainability.
 
 Independent from the decomposition method used, a \textit{Cover} object can be turned into an EPT multi-graph with the same nodes as the original f2f graph but for each cover there is now a multi-edge, one for each decomposition with the cover array as label.
 
 \section{External Libraries}
+\label{ch:Implementation:external-libs}
 Some external libraries are used throughout this project which was quite simple through the use of maven. \emph{org.junit.jupiter} provided the packages \emph{junit}, \emph{engine} and \emph{api} in version 4.13.2, which allows a simple test unit creation and execution. Multi-threading was enabled by use of Kotlin \emph{coroutines} in version 1.7.1, provided by Jetbrains.
 
 TODO: jgraph, lets plot, argparser, 
 
 \section{Usage}
+\label{ch:Implementation:usage}
 To enable a convenient usage, the algorithm is obtainable as jar file but it can also be built from sources. It provides a simple command line interface
 
 \verb|Usage: EPT Graph Reader options_list|\\
