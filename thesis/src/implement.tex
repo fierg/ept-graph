@@ -18,29 +18,40 @@ With the goal of increased explainability, the Fourier-transformed decomposition
 Independent from the decomposition method used, a \textit{Cover} object can be turned into an EPT multi-graph with the same nodes as the original f2f graph but for each cover there is now a multi-edge, one for each decomposition with the cover array as label.
 
 \section{External Libraries}
-TODO: jgraph, lets plot, argparser, 
-
 Some external libraries are used throughout this project which was quite simple through the use of maven. \emph{org.junit.jupiter} provided the packages \emph{junit}, \emph{engine} and \emph{api} in version 4.13.2, which allows a simple test unit creation and execution. Multi-threading was enabled by use of Kotlin \emph{coroutines} in version 1.7.1, provided by Jetbrains.
+
+TODO: jgraph, lets plot, argparser, 
 
 \section{Usage}
 To enable a convenient usage, the algorithm is obtainable as jar file but it can also be built from sources. It provides a simple command line interface
-
-TODO: fix CLI
 
 \verb|Usage: EPT Graph Reader options_list|\\
 \verb|Arguments: |\\
 \verb|input -> input (Network id in range (0..61) { Int }|\\
 \verb|threshold [1.0] -> Min threshold of cover to be valid (optional) { Double }|\\
 \verb|Options: |\\
-\verb|--dotenv, -env [false] -> Use config from .env file (Recommended usage due to amount of args) |\\
-\verb|--state, -s [false] -> Invert state to substitute in decomposition (if set, decomposition will replace 0s instead of 1s) |\\
-\verb|--Mode of decomposing DFAs [GREEDY_SHORT_FACTORS] -> Choose how a decomposition is found, using only maximal divisors, using all factors and greedily collect up to the threshold or perform a fourier transform for increased understandability. { Value should be one of [max_divisors, greedy_short_factors, fourier_transform] }|\\
-\verb|--Mode of composing factors [OR] -> Choose how a composition is formed, using AND or OR operator for adding factors together to a decomposition. { Value should be one of [and, or] }|\\
-\verb|--skipSelfEdges, -skipSelfEdges [false] -> Skip loop back edges with same source and target, these are often useless. |\\
+\verb|--dotenv, -env [false] -> Use config from .env file|\\
+\verb|		(Recommended usage due to amount of args) |\\
+\verb|--state, -s [false] -> Invert state to substitute in decomposition|\\
+\verb|		(if set, decomposition will replace 0s instead of 1s) |\\
+\verb|--Mode of decomposing DFAs [GREEDY_SHORT_FACTORS] -> Choose how|\\
+\verb|		a decomposition is found, using only maximal divisors,|\\
+\verb|		using all factors and greedily collect up to the threshold|\\
+\verb|		or perform a fourier transform for increased understandability.|\\
+\verb|		{ Value should be one of [max_divisors, greedy_short_factors,|\\
+\verb| 		fourier_transform] }|\\
+\verb|--Mode of composing factors [OR] -> Choose how a composition is formed,|\\
+\verb|		using AND or OR operator for adding factors together to|\\
+\verb|		a decomposition. { Value should be one of [and, or] }|\\
+\verb|--skipSelfEdges, -skipSelfEdges [false] -> Skip loop back edges|\\
+\verb|		with same source and target, these are often useless. |\\
 \verb|--debug, -d [false] -> Turn on debug mode |\\
 \verb|--quiet, -q [false] -> Turn on quiet mode |\\
-\verb|--deltaWindowPreprocessing [0] -> Delta window in preprocessing of the label { Int }|\\
+\verb|--deltaWindowPreprocessing [0] -> Delta window|\\
+\verb|		 in preprocessing of the label { Int }|\\
 \verb|--deltaWindowAlgo [0] -> Delta window during decomposing { Int }|\\
 \verb|--help, -h -> Usage info |\\
 
 TODO: describe, .env file
+
+TODO: github link

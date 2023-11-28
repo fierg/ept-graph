@@ -25,15 +25,68 @@ Although performance was not the main focus of the implementation and evaluation
 It is to not that the \andDecomp is expected to be slower because of considerably greater amount of zeros in the data set as well as the modification to the cover finding algorithm. While with an \orDecomp, each additional factor can only remove outliers, in an \andDecomp an additional factor can also add new outliers. Because of that, the current outliers of a decomposition must be recalculated considering all factors. The Fourier-transform method again increases the amount of factors per cover, which hurts performance. Also it is not implemented for \andDecomp as it is not considered reasonable, since a human would still need to look at all factors since it is an \andDecomp.
 
 \section{Decomposition Evaluation}
-Moving on to the decomposition evaluation.
+Moving on to the decomposition evaluation, we validate each method separately and then compare them against each other. We also benchmark \andDecomp and \orDecomp.
+
+\subsection{Maximal Divisor Decomposition Evaluation}
+To get an insight on how well a particular decomposition method is performing, decompose the whole data-set and then plot each factor of each decomposition by its relative size compared to the original \DFA size and the relative amount of covered values of the \DFA by this factor.
 
 \begin{figure}[h]
-	\includegraphics[width=\linewidth]{../old_plots/backup/SHORTEST_PERIODS-all-relative-values-by-factor-size.png}
-\end{figure}
-\begin{figure}
-	%\includegraphics[width=\linewidth]{../plots/GREEDY_SHORT_FACTORS-OR-all-values-by-factor-sum.png}
+	\begin{minipage}[h]{0.49\linewidth}
+		\centering
+		OR-decomposition
+	\includegraphics[width=\linewidth]{../plots/point-plots/MAX_DIVISORS-OR-all-relative-values-by-factor-size.png}
+	\end{minipage}
+	\begin{minipage}[h]{0.49\linewidth}
+		\centering
+		AND-decomposition
+	\includegraphics[width=\linewidth]{../plots/point-plots/MAX_DIVISORS-AND-all-relative-values-by-factor-size.png}
+\end{minipage}
+\label{fig:max-divisor-all-factors}
+\caption{Relative amount of covered values by relative factor size}
 \end{figure}
 
+
+
+
+\begin{figure}[h]
+	\begin{minipage}[h]{0.49\linewidth}
+		\centering
+		OR-decomposition
+		\includegraphics[width=\linewidth]{../plots/box-plots/MAX_DIVISORS-OR-all-relative-values-by-factor-boxplot-dist.png}
+	\end{minipage}
+	\begin{minipage}[h]{0.49\linewidth}
+		\centering
+		AND-decomposition
+		\includegraphics[width=\linewidth]{../plots/box-plots/MAX_DIVISORS-AND-all-relative-values-by-factor-boxplot-dist.png}
+	\end{minipage}
+	\label{fig:max-divisor-all-factors-box-plot}
+	\caption{Relative amount of covered values by relative factor size}
+\end{figure}
+
+\subsection{Greedy Short Factor Decomposition Evaluation}
+
+\begin{figure}[h]
+	\begin{minipage}[h]{0.49\linewidth}
+		\centering
+		OR-decomposition
+		\includegraphics[width=\linewidth]{../plots/box-plots/GREEDY_SHORT_FACTORS-OR-all-relative-values-by-factor-boxplot-dist.png}
+	\end{minipage}
+	\begin{minipage}[h]{0.49\linewidth}
+		\centering
+		AND-decomposition
+		\includegraphics[width=\linewidth]{../plots/box-plots/GREEDY_SHORT_FACTORS-AND-all-relative-values-by-factor-boxplot-dist.png}
+	\end{minipage}
+	\label{fig:greedy-short-factors-all-factors-box-plot}
+	\caption{Relative amount of covered values by relative factor size}
+\end{figure}
+
+\subsection{Fourier-Transform Decomposition Evaluation}
+
+\begin{figure}[h]
+	\includegraphics[width=\linewidth]{../plots/box-plots/FOURIER_TRANSFORM-OR-all-relative-values-by-factor-boxplot-outliers.png}
+	\label{fig:fourier-all-factors-box-plot}
+	\caption{Relative amount of covered values by relative factor size}
+\end{figure}
 
 \section{Explainability Evaluation}
 
