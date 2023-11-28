@@ -142,7 +142,7 @@ class TestCharts {
         evalResult
 
 
-        val factorPlot1 = Analyzer.createCoverByFactorPlotNormalized(evalResult.flatten())
+        val factorPlot1 = Analyzer.createCoverByFactorPlotNormalized(evalResult.flatten(), xS = "xs", yS = "xy")
         Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-test.png", factorPlot1, path = "test-plots")
 
     }

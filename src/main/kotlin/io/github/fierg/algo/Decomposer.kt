@@ -275,11 +275,19 @@ class Decomposer(
      */
     fun analyzeAllGraphs(upTo: Int): List<List<Cover>> {
         val result = mutableListOf<List<Cover>>()
+        val dataAnalysis = mutableMapOf("TotalEdges" to 0, "TotalLabelLength" to 0, "TotalValuesToCover" to 0)
         for (i in 0..upTo) {
             val f2fGraph = F2FReader().getF2FNetwork(i)
+            dataAnalysis["TotalEdges"] = dataAnalysis["TotalEdges"]!! + f2fGraph.edges.size
+            f2fGraph.steps.forEach { (_, label) ->
+                dataAnalysis["TotalLabelLength"] = dataAnalysis["TotalLabelLength"]!! + label.size
+                dataAnalysis["TotalValuesToCover"] = dataAnalysis["TotalValuesToCover"]!! + label.count { it == stateToReplace }
+            }
             result.add(findComposite(f2fGraph))
         }
-
+        Logger.resetLogLevel()
+        Logger.info("$dataAnalysis")
+        Logger.setLogLevelToQuiet()
         return result
     }
 
