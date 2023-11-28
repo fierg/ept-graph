@@ -39,7 +39,7 @@ class ChartGenerator {
                     Logger.resetLogLevel()
                     Logger.info("This took $elapsed.")
 
-                    //generatePlots(evalResult, options)
+                    generatePlots(evalResult, options)
                 }
             }
         }
@@ -55,7 +55,7 @@ class ChartGenerator {
             Analyzer.createCoverByFactorPlotNormalized(evalResult.flatten(), createBoxPlot = true, showOutliers = true, xS = "Relative Factor Size", yS = "Relative covered values in cover")
         Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-relative-values-by-factor-boxplot-outliers.png", boxPlot2, "./plots/box-plots")
 
-        val minDistance = 0.1
+        val minDistance = 0.05
         val boxPlot3 =
             Analyzer.createCoverByFactorPlotNormalized(evalResult.flatten(), createBoxPlot = true, minDistance = minDistance, showOutliers = true, xS = "Relative Factor Size (min distance $minDistance)", yS = "Relative covered values in cover")
         Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-relative-values-by-factor-boxplot-dist.png", boxPlot3, "./plots/box-plots")

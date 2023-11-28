@@ -52,24 +52,5 @@ class Analyzer {
                 Visualizer.generatePointPlotForNormalized(resultMap, xS, yS, useAverage)
         }
 
-        fun createCoverByFactorPlot(covers: List<Cover>): Plot {
-            val xS = "Rel Factor Size"
-            val yS = "Sum of covered values"
-            Logger.info("Collecting values to plot...")
-            val resultMap = mutableMapOf<Double, Pair<Int, Int>>()
-            covers.forEach { cover ->
-                cover.factors.forEach { factor ->
-                    val size = factor.getRelativeSize(cover)
-                    if (resultMap[size] == null) {
-                        resultMap[size] = Pair(cover.totalValues - factor.outliers.size, cover.totalValues)
-                    } else {
-                        resultMap[size] = Pair(resultMap[size]!!.first + cover.totalValues - factor.outliers.size, resultMap[size]!!.second + cover.totalValues)
-
-                    }
-                }
-            }
-
-            return Visualizer.generatePointPlot1(resultMap, xS, yS)
-        }
     }
 }

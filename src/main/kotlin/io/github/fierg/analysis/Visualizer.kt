@@ -144,10 +144,8 @@ class Visualizer {
             return letsPlot(data) +
                     ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
                     //ggtitle("% of Values covered by factor of size x") +
-                    //scaleYContinuous(limits = Pair(0,1)) +
+                    scaleXContinuous(limits = Pair(0.0,0.5)) +
                     geomPoint(size = 2.0) { x = xS; y = yS }
-            //geomBoxplot { x = xS; y = yS }  +
-            //geomSmooth(se = FALSE, method = "gam") +
         }
 
         fun generateBoxPlotForNormalized(resultMap: Map<Double, List<Double>>, xS: String, yS: String, minDistance: Double, showOutliers: Boolean, useFactorNrInsteadOfSize: Boolean): Plot {
@@ -155,6 +153,7 @@ class Visualizer {
             val resultList = if (minDistance == 0.0) {
                 expandToResultList(resultMap)
             } else {
+                Logger.info("Using min distance: $minDistance")
                 val expandedList = expandToResultList(resultMap).sortedBy { it.first }
                 val listWithMinDistance = mutableListOf<Pair<Double, Double>>()
                 var lastSeenX = 0.0
@@ -186,31 +185,12 @@ class Visualizer {
             return if (!useFactorNrInsteadOfSize)
                 letsPlot(data) +
                         ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
-                        scaleXContinuous(limits = Pair(0, 0.5)) +
+                        scaleXContinuous(limits = Pair(0.0, 0.5)) +
                         geomBoxplot(outlierStroke = outliersShowVal, outlierSize = 0.5, outlierShape = 4) { x = xS; y = yS }
             else
                 letsPlot(data) +
                         ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
                         geomBoxplot(outlierStroke = outliersShowVal, outlierSize = 0.5, outlierShape = 4) { x = xS; y = yS }
-        }
-
-        fun generatePointPlot1(resultMap: Map<Double, Pair<Int, Int>>, xS: String, yS: String): Plot {
-            val sortedMap = resultMap.toSortedMap()
-            val maxValue = sortedMap.values.fold(0) { acc, pair -> acc + pair.second }
-            val sumList = sortedMap.values.runningReduce { acc, pair -> Pair(pair.first + acc.first, maxValue) }.toMutableList()
-            sumList[0] = Pair(sumList[0].first, maxValue)
-
-            val data = mapOf(
-                xS to sortedMap.keys.toList(),
-                yS to sumList.map { it.first }
-            )
-            Logger.info("Generating plot...")
-            Logger.debug("PLOT DATA: $data")
-            return letsPlot(data) +
-                    ggsize(DEFAULT_WIDTH, DEFAULT_HEIGHT) +
-                    ggtitle("Sum of Values covered by factor of size x") +
-                    scaleYContinuous(limits = Pair(0, sumList.last().first)) +
-                    geomPoint(size = 2.0) { x = xS; y = yS }
         }
 
         private fun expandToResultList(resultMap: Map<Double, List<Double>>): List<Pair<Double, Double>> {
