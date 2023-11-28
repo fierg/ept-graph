@@ -14,15 +14,16 @@ Arguments:
     threshold [1.0] -> Min threshold of cover to be valid (optional) { Double }
 Options: 
     --dotenv, -env [false] -> Use config from .env file (Recommended usage due to amount of args) 
-    --state, -s [false] -> Invert state to substitute in decomposition (if set, decomposition will replace 0s instead of 1s) 
     --Mode of decomposing DFAs [GREEDY_SHORT_FACTORS] -> Choose how a decomposition is found, using only maximal divisors, using all factors and greedily collect up to the threshold or perform a fourier transform for increased understandability. { Value should be one of [max_divisors, greedy_short_factors, fourier_transform] }
-    --Mode of composing factors [OR] -> Choose how a composition is formed, using AND or OR operator for adding factors together to a decomposition. { Value should be one of [and, or] }
+    --Mode of composing factors [OR] -> Choose how a composition is formed, using AND or OR operator for adding factors together to a decomposition. { Value should be one of [or, and] }
     --skipSelfEdges, -skipSelfEdges [false] -> Skip loop back edges with same source and target, these are often useless. 
+    --allowFullSizeDecomposition, -f [true] -> Allow full size decomposition 
     --debug, -d [false] -> Turn on debug mode 
     --quiet, -q [false] -> Turn on quiet mode 
     --deltaWindowPreprocessing [0] -> Delta window in preprocessing of the label { Int }
     --deltaWindowAlgo [0] -> Delta window during decomposing { Int }
     --help, -h -> Usage info 
+
 ```
 
 ### .env config file
