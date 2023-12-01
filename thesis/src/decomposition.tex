@@ -152,40 +152,9 @@ In the example in Figure \ref{fig:clean-quotients-example}, the \DFA $A$ with fi
 \label{ch:analysis:max-divisors}
 The idea of folding \DFAs from \cite{prime-languages} was greatly improved by Jecker, Mazzocchi and Wolf in \cite{DBLP:journals/corr/abs-2107-04683} by limiting the potential factors to maximal divisors instead of strict divisors of $d$. This can be done because every factor with length $i_1$ non maximal divisor of $|Q|$, there is a factor with length $i_2$ and an integer $n \in \mathbb{N}$ such that $n \cdot i_1 = i_2$ and the factor with $i_2$ will also cover all the values of the $i_1$ factor. This property will be useful in another way later in Chapter \ref{chap:novel-algos}, when searching for shorter factors instead of fewer factors.
 
-TODO: explain algorithm? or remove and reference?
-
-\begin{algorithm}[h]
-	\label{algo:original-composite}
-	\DontPrintSemicolon
-	\SetKwProg{Fn}{Function}{:}{}
-	\Fn{isBoundedComposite($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, integer k)}{
-		\ForEach{binaryString $\in \{0,1\}^{log|Q|}$ with $\leq k$ ones}{
-			\If{testCombination($A$,binaryString)}{\KwRet true}
-			}
-			\KwRet false
-		}
-		
-		\Fn{testCombination($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, binaryString)}{
-			\ForEach{$q \in Q \setminus F$}{
-				\If{not cover(A,q,binaryString)}{\KwRet false}
-				\KwRet true
-			}
-		}
-		
-		\Fn{cover($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, binaryString, $q \in Q \setminus F$)}{
-			\ForEach{$i$ with wordCombination[i]=1}{
-				$p_i \gets i$'th prime divisor of $|Q|$\;
-				\If{cover($A,q,\sigma(q,a^{|Q|/p_i})$)}{\KwRet true}
-			}
-			\KwRet false
-		}
-		
-		\caption{\LogSpace Algorithm solving the Decomp problem for unary DFAs}
-\end{algorithm}
+TODO: explain algorithm
 
 TODO: rework complexity completely 
-
-This also implies the complexity since given 2 divisors $i^1$ and $i^2$ of $|Q|$, with $i^1 < i^2 <|Q|$ and $i^1$ divides $i^2$, then all states covered by $a^{i1}$ are also covered by $a^{i2}$. Therefore the algorithm from \cite{DBLP:journals/corr/abs-2107-04683} only considers words of the form $a^i$ where $i$ is a maximal divisor of $|Q|$ as potential candidates for the decomposition. Now, let $p_1^{j1} \cdot p_2^{j2} \cdot ~ \dots ~\cdot p_m^{jm} = |Q|$ be the prime factor decomposition of $|Q|$. Since $|Q|$ is given in unary we can compute the prime factor decomposition of $|Q|$ in space logarithmic in $|Q|$. $A$ is $k$-factor composite if and only if a selection of $k$ words from the set $W = \{a^{|Q|/p_i} | 1 \leq i \leq m\}$ cover all the rejecting states of $A$.  As $|W| = m$ is logarithmic in $|Q|$, we can iterate over all sets in $2^W$ of size at most $k$ in \LogSpace. By Lemma 6 from \cite{DBLP:journals/corr/abs-2107-04683}, checking whether a state $q \in Q$ is covered by the current collection of $k$ words can also be done in \LogSpace.
 
 
 
