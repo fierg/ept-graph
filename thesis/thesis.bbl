@@ -1,15 +1,15 @@
 \begin{thebibliography}{10}
 
-\bibitem{erlebach2020game}
-Erlebach, T. and Spooner, J.~T.,
-\newblock A game of cops and robbers on graphs with periodic edge-connectivity,
-\newblock volume abs/1908.06828, 2019.
-
 \bibitem{prime-languages}
 Kupferman, O. and Mosheiff, J.,
 \newblock Prime languages,
 \newblock volume 240, pages 90--107, 2015,
 \newblock MFCS 2013.
+
+\bibitem{erlebach2020game}
+Erlebach, T. and Spooner, J.~T.,
+\newblock A game of cops and robbers on graphs with periodic edge-connectivity,
+\newblock volume abs/1908.06828, 2019.
 
 \bibitem{DBLP:journals/corr/abs-2107-04683}
 Jecker, I., Mazzocchi, N., and Wolf, P.,
@@ -40,6 +40,15 @@ Michail, O.,
 \newblock An introduction to temporal graphs: An algorithmic perspective,
 \newblock volume abs/1503.00278, 2015.
 
+\bibitem{temporal-mining-oettershagen2022tglib}
+Oettershagen, L. and Mutzel, P.,
+\newblock Tglib: An open-source library for temporal graph analysis, 2022.
+
+\bibitem{temporal-comunity-detection-8861143}
+Al-sharoa, E., Al-khassaweneh, M.~A., and Aviyente, S.,
+\newblock IEEE Transactions on Signal and Information Processing over Networks
+  {\bf 5} (2019) 723.
+
 \bibitem{arrighi2022multiparameter}
 Arrighi, E., Grüttemeier, N., Morawietz, N., Sommer, F., and Wolf, P.,
 \newblock Multi-parameter analysis of finding minors and subgraphs in edge
@@ -68,6 +77,17 @@ Fu, D., Fang, L., Maciejewski, R., Torvik, V.~I., and He, J.,
 Kerracher, N., Kennedy, J., and Chalmers, K.,
 \newblock The design space of temporal graph visualisation.,
 \newblock 2014.
+
+\bibitem{temporal-friends}
+Orlando, D., Ormachea, J., Soliani, V., and Vaisman, A.,
+\newblock Tgv: A visualization tool for temporal property graph databases,
+\newblock 2023.
+
+\bibitem{temporal-information-diffusion}
+Dorner, M., Smite, D., Méndez~Fernández, D., Wnuk, K., and Czerwonka, J.,
+\newblock Only time will tell: Modelling information diffusion in code review
+  with time-varying hypergraphs,
+\newblock pages 195--204, 2022.
 
 \bibitem{tang2009temporal}
 Tang, J., Musolesi, M., Mascolo, C., and Latora, V.,
