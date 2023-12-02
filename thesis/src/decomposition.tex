@@ -150,7 +150,7 @@ In the example in Figure \ref{fig:clean-quotients-example}, the \DFA $A$ with fi
 
 \section{Decomposition of \DFAs Using Maximal Divisors}
 \label{ch:analysis:max-divisors}
-The idea of folding \DFAs from \cite{prime-languages} was greatly improved by Jecker, Mazzocchi and Wolf in \cite{DBLP:journals/corr/abs-2107-04683} by limiting the potential factors to maximal divisors instead of strict divisors of $d$. This can be done because every factor with length $i_1$ non maximal divisor of $|Q|$, there is a factor with length $i_2$ and an integer $n \in \mathbb{N}$ such that $n \cdot i_1 = i_2$ and the factor with $i_2$ will also cover all the values of the $i_1$ factor. This property will be useful in another way later in Chapter \ref{chap:novel-algos}, when searching for shorter factors instead of fewer factors.
+The idea of folding \DFAs was greatly improved by Jecker, Mazzocchi and Wolf in \cite{DBLP:journals/corr/abs-2107-04683} by limiting the potential factors to maximal divisors instead of strict divisors of $d$. This can be done because every factor with length $i_1$ non maximal divisor of $|Q|$, there is a factor with length $i_2$ and an integer $n \in \mathbb{N}$ such that $n \cdot i_1 = i_2$ and the factor with $i_2$ will also cover all the values of the $i_1$ factor. This property will be useful in another way later in Chapter \ref{chap:novel-algos}, when searching for shorter factors instead of fewer factors.
 
 TODO: explain algorithm
 
