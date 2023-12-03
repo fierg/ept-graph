@@ -29,15 +29,19 @@ class Factor(var array: BooleanArray, val outliers: MutableList<Int>, val compos
          * @param factors         A collection of boolean arrays representing factors.
          * @return A mutable list of integer indices representing outliers.
          */
-        fun recalculateOutliers(target: BooleanArray, stateToReplace: Boolean, factors: Collection<BooleanArray>): MutableList<Int> {
+        fun recalculateOutliers(target: BooleanArray, stateToReplace: Boolean, factors: Collection<BooleanArray>, deltaWindow: Int): MutableList<Int> {
             val outliers = mutableListOf<Int>()
             target.forEachIndexed { index, state ->
-                if (state == stateToReplace) {
-                    if (factors.all { factor -> factor[index % factor.size] != stateToReplace })
-                        outliers.add(index)
+                if (deltaWindow > 0) {
+
                 } else {
-                    if (factors.all { factor -> factor[index % factor.size] == stateToReplace })
-                        outliers.add(index)
+                    if (state == stateToReplace) {
+                        if (factors.all { factor -> factor[index % factor.size] != stateToReplace })
+                            outliers.add(index)
+                    } else {
+                        if (factors.all { factor -> factor[index % factor.size] == stateToReplace })
+                            outliers.add(index)
+                    }
                 }
             }
             return outliers
@@ -95,7 +99,7 @@ class Factor(var array: BooleanArray, val outliers: MutableList<Int>, val compos
 
             CompositionMode.AND -> {
                 val factorArrays = cover.factors.subList(0, cover.factors.indexOf(this) + 1).map { it.array }
-                recalculateOutliers(cover.target, cover.stateToReplace, factorArrays)
+                recalculateOutliers(cover.target, cover.stateToReplace, factorArrays, cover.deltaWindow)
             }
         }
 

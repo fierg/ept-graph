@@ -17,12 +17,12 @@ import java.util.logging.Level
  * The `Decomposer` class represents a decomposer that processes boolean arrays to find covers based on various composition modes and settings.
  *
  * @param state             The default state value (default is `true`).
- * @param mode              The composition mode used for decomposition (default is `CompositionMode.SHORTEST_PERIODS`).
+ * @param decompositionMode              The composition mode used for decomposition (default is `CompositionMode.SHORTEST_PERIODS`).
  * @param deltaWindowAlgo   The delta window algorithm used (default is `0`).
  * @param threshold         The coverage threshold for finding covers (default is `1.0`).
  */
 class Decomposer(
-    private val mode: DecompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS, private val deltaWindowAlgo: Int = 0, private val threshold: Double = 1.0,
+    private val decompositionMode: DecompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS, private val deltaWindowAlgo: Int = 0, private val threshold: Double = 1.0,
     private val compositionMode: CompositionMode = CompositionMode.OR, private val allowFullSizeDecomposition: Boolean = true
 ) {
 
@@ -37,6 +37,10 @@ class Decomposer(
     private val stateToReplace = getStateToReplaceFromCompositionMode(this.compositionMode)
     private var singleDebugLog = true
     private var nrDigits = 3
+
+    init {
+        Logger.info("Using ${this.decompositionMode.name} decomposition in ${compositionMode.name} mode, with delta window $deltaWindowAlgo, min precision $threshold, and allowFullSizeDecom=$allowFullSizeDecomposition.")
+    }
 
     /**
      * Finds composite covers for a given graph and returns a list of `Cover` objects.
@@ -91,8 +95,10 @@ class Decomposer(
     fun getOutliers(input: BooleanArray, cover: BooleanArray): MutableList<Int> {
         val expandedCover = BooleanArray(input.size) { !stateToReplace }
         expandedCover.applyPeriod(cover, stateToReplace)
-
-        return expandedCover.indices.filter { input[it] == stateToReplace && expandedCover[it] != stateToReplace }.toMutableList()
+        return if (applyDeltaWindow)
+            expandedCover.indices.filter { index -> input[index] == stateToReplace && expandedCover.valueOfDeltaWindow(deltaWindowAlgo,index, stateToReplace) != stateToReplace }.toMutableList()
+        else
+            expandedCover.indices.filter { index -> input[index] == stateToReplace && expandedCover[index] != stateToReplace }.toMutableList()
     }
 
     /**
@@ -103,9 +109,19 @@ class Decomposer(
     fun analyzeCover(result: Cover) {
         if (Logger.getLevel() != Level.OFF && Logger.getLevel() != Level.INFO) {
             Logger.info(
-                "Found decomposition with largest factor ${String.format("%${nrDigits}d", (result.size.toDouble() / result.target.size * 100).toInt())}% original size (${String.format("%${nrDigits}d", result.size)}), " +
+                "Found decomposition with largest factor ${String.format("%${nrDigits}d", (result.size.toDouble() / result.target.size * 100).toInt())}% original size (${
+                    String.format(
+                        "%${nrDigits}d",
+                        result.size
+                    )
+                }), " +
                         "covered ${String.format("%${nrDigits}d", (result.totalValues - result.outliers.size))}/${String.format("%${nrDigits}d", result.totalValues)} values, " +
-                        "resulting in ${String.format("%${nrDigits}d", result.outliers.size)} outliers (${String.format("%3d", (result.outliers.size.toFloat() / result.totalValues * 100).toInt())}%)." +
+                        "resulting in ${String.format("%${nrDigits}d", result.outliers.size)} outliers (${
+                            String.format(
+                                "%3d",
+                                (result.outliers.size.toFloat() / result.totalValues * 100).toInt()
+                            )
+                        }%)." +
                         "Metrics: w=${result.size}, p=${result.getPrecision()}, ds=${result.getDecompositionStructure()}"
             )
 
@@ -131,8 +147,8 @@ class Decomposer(
      * @return A `Cover` object representing the composite cover.
      */
     private fun getCover(input: BooleanArray, factorIndex: Map<Int, Int>, factors: Array<Factor>, periods: List<Int>): Cover {
-        val cover = Cover(input, stateToReplace, compositionMode)
-        when (mode) {
+        val cover = Cover(input, stateToReplace, compositionMode, deltaWindow = deltaWindowAlgo)
+        when (decompositionMode) {
             DecompositionMode.MAX_DIVISORS -> {
                 periods.forEach { size ->
                     cover.addFactor(factors[factorIndex[size]!!])
@@ -198,7 +214,7 @@ class Decomposer(
             val modIndex = index % factorSize
             if (input[index] != stateToReplace) coverArray[modIndex] = !stateToReplace
         }
-        factors[factorIndex] = Factor(coverArray, Factor.recalculateOutliers(input, stateToReplace, listOf(coverArray)), compositionMode)
+        factors[factorIndex] = Factor(coverArray, Factor.recalculateOutliers(input, stateToReplace, listOf(coverArray), deltaWindowAlgo), compositionMode)
         return@async
     }
 
@@ -212,13 +228,13 @@ class Decomposer(
      */
     @OptIn(DelicateCoroutinesApi::class)
     private fun computeFactorWithOrOperator(input: BooleanArray, factorSize: Int, factors: Array<Factor>, factorIndex: Int) = GlobalScope.async {
-        val coverArray = BooleanArray(factorSize) { !stateToReplace }
+        val factorArray = BooleanArray(factorSize) { !stateToReplace }
         for (index in 0 until factorSize) {
             if (input[index] == stateToReplace && isPeriodic(input, index, factorSize)) {
-                coverArray[index % factorSize] = stateToReplace
+                factorArray[index % factorSize] = stateToReplace
             }
         }
-        factors[factorIndex] = Factor(coverArray, getOutliers(input, coverArray), compositionMode)
+        factors[factorIndex] = Factor(factorArray, getOutliers(input, factorArray), compositionMode)
         return@async
     }
 
@@ -227,17 +243,17 @@ class Decomposer(
      *
      * @param array     The input boolean array.
      * @param index     The starting index of the subsequence to check.
-     * @param factor    The factor size for the periodicity check.
+     * @param factorSize    The factor size for the periodicity check.
      * @return `true` if the subsequence is periodic; otherwise, `false`.
      */
-    private fun isPeriodic(array: BooleanArray, index: Int, factor: Int): Boolean {
-        var position = (index + factor) % array.size
+    fun isPeriodic(array: BooleanArray, index: Int, factorSize: Int): Boolean {
+        var position = (index + factorSize) % array.size
         while (position != index) {
             if (applyDeltaWindow) {
-                if (array.valueOfDeltaWindow(deltaWindowAlgo, index, stateToReplace)) return false
+                if (array.valueOfDeltaWindow(deltaWindowAlgo, index, stateToReplace) != stateToReplace) return false
             } else
                 if (array[position] != stateToReplace) return false
-            position = (position + factor) % array.size
+            position = (position + factorSize) % array.size
         }
         return true
     }
@@ -249,7 +265,7 @@ class Decomposer(
      * @return A sequence of factor sizes.
      */
     private fun getFactorSequence(input: Int, allowFullSizeDecomposition: Boolean): Sequence<Int> {
-        return when (mode) {
+        return when (decompositionMode) {
             DecompositionMode.GREEDY_SHORT_FACTORS, DecompositionMode.FOURIER_TRANSFORM -> input.factors(allowFullSizeDecomposition)
             DecompositionMode.MAX_DIVISORS -> input.maximalDivisors()
         }
@@ -260,7 +276,7 @@ class Decomposer(
      */
     private fun logInfo() {
         Logger.info("Searching for composite... (Looking for $stateToReplace values while decomposing)")
-        when (mode) {
+        when (decompositionMode) {
             DecompositionMode.GREEDY_SHORT_FACTORS -> Logger.info("Trying to find cover with shortest possible factors with at least ${threshold * 100}% coverage.")
             DecompositionMode.MAX_DIVISORS -> Logger.info("Trying to find cover with only the max divisors.")
             DecompositionMode.FOURIER_TRANSFORM -> Logger.info("Trying to find most explainable factors using fourier transform.")
@@ -273,7 +289,7 @@ class Decomposer(
      * @param upTo The index of the graph to analyze.
      * @return A list of lists of `Cover` objects representing composite covers for multiple graphs.
      */
-    fun analyzeAllGraphs(upTo: Int): List<List<Cover>> {
+    fun analyzeAllGraphs(upTo: Int = 61): List<List<Cover>> {
         val result = mutableListOf<List<Cover>>()
         val dataAnalysis = mutableMapOf("TotalEdges" to 0, "TotalLabelLength" to 0, "TotalValuesToCover" to 0)
         for (i in 0..upTo) {
@@ -291,7 +307,7 @@ class Decomposer(
         return result
     }
 
-    companion object{
+    companion object {
         fun getStateToReplaceFromCompositionMode(compositionMode: CompositionMode) =
             when (compositionMode) {
                 CompositionMode.OR -> true

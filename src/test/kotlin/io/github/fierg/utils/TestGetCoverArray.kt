@@ -38,7 +38,7 @@ class TestGetCoverArray {
         val factor = Factor(arrayOf(false,true).toBooleanArray(), mutableListOf(),compositionMode)
         val cover = Cover(
             target = arrayOf(false, true, false, true, false, true, false, true).toBooleanArray(),
-            stateToReplace = false,
+            stateToReplace = true,
             totalValues = 4,
             size = 2,
             outliers = mutableListOf(),
@@ -84,7 +84,7 @@ class TestGetCoverArray {
         val factor = Factor(arrayOf(false,true).toBooleanArray(), mutableListOf(),compositionMode)
         val cover = Cover(
             target = arrayOf(false, true, false, true, false, true, false, true).toBooleanArray(),
-            stateToReplace = false,
+            stateToReplace = true,
             totalValues = 4,
             size = 2,
             outliers = mutableListOf(),
@@ -110,7 +110,7 @@ class TestGetCoverArray {
         val factor2 = Factor(arrayOf(false,true,false).toBooleanArray(), mutableListOf(),compositionMode)
         val cover = Cover(
             target = arrayOf(false, true, false, true, true, true).toBooleanArray(),
-            stateToReplace = false,
+            stateToReplace = true,
             totalValues = 4,
             size = 2,
             outliers = mutableListOf(),

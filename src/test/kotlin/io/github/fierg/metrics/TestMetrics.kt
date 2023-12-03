@@ -1,4 +1,4 @@
-package io.github.fierg.utils
+package io.github.fierg.metrics
 
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.data.F2FReader

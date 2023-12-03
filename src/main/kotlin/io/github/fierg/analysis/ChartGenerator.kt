@@ -1,11 +1,8 @@
 package io.github.fierg.analysis
 
 import io.github.fierg.algo.Decomposer
-import io.github.fierg.data.DotEnvParser
 import io.github.fierg.extensions.median
 import io.github.fierg.logger.Logger
-import io.github.fierg.model.options.CompositionMode
-import io.github.fierg.model.options.DecompositionMode
 import io.github.fierg.model.options.Options
 import io.github.fierg.model.result.Cover
 import kotlin.time.ExperimentalTime
@@ -14,36 +11,24 @@ import kotlin.time.measureTimedValue
 class ChartGenerator {
 
     @ExperimentalTime
-    fun decomposeAllAndGeneratePlots() {
+    fun decomposeAllAndGeneratePlotsAndTables() {
         Logger.info("Analyzing all graphs in all modes")
         Logger.info("This might take a while...")
         Logger.setLogLevelToDebug()
-        val options = DotEnvParser.readDotEnv()
 
-        CompositionMode.values().forEach { compositionMode ->
-            DecompositionMode.values().forEach { decompositionMode ->
-                if (compositionMode == CompositionMode.AND && decompositionMode == DecompositionMode.FOURIER_TRANSFORM) {
-                    Logger.info("Skipping unsupported mode")
-                } else {
-                    Logger.info("Analyzing all graphs, reading options from .env file, using decomposition mode ${decompositionMode.name} and composition mode ${compositionMode.name}")
+        val suit = Options.getBenchmarkSuit()
+        suit.third.forEach { options ->
+            val decomposer = Decomposer(options)
 
-                    val upTo = 61
-                    options.decompositionMode = decompositionMode
-                    options.compositionMode = compositionMode
-                    options.allowFullLengthDecomposition = false
-                    val decomposer = Decomposer(options)
-
-                    Logger.setLogLevelToQuiet()
-                    val (evalResult, elapsed) = measureTimedValue {
-                         decomposer.analyzeAllGraphs(upTo)
-                    }
-                    Logger.resetLogLevel()
-                    Logger.info("This took $elapsed.")
-
-                    //generatePlots(evalResult, options)
-                    generateMetricTables(evalResult,options)
-                }
+            Logger.setLogLevelToQuiet()
+            val (evalResult, elapsed) = measureTimedValue {
+                decomposer.analyzeAllGraphs()
             }
+            Logger.resetLogLevel()
+            Logger.info("This took $elapsed.")
+
+            //generatePlots(evalResult, options)
+            generateMetricTables(evalResult, options)
         }
         Logger.info("Done.")
     }
@@ -62,13 +47,13 @@ class ChartGenerator {
                 foundValidDecomposition++
             }
             cover.target.forEachIndexed { index, b ->
-                  if (coverArray[index] != b) hardOutliers ++
+                if (coverArray[index] != b) hardOutliers++
             }
             val precision = cover.getPrecision()
             if (precision > 0.9) {
                 veryGoodDecomposition++
                 okDecomposition++
-            }else if (precision > 0.75){
+            } else if (precision > 0.75) {
                 okDecomposition++
             }
             mDecompositionStructures.add(cover.getDecompositionStructure())
@@ -76,11 +61,8 @@ class ChartGenerator {
             mSize.add(cover.factors.size)
         }
         mPrecision = mPrecision.filter { !it.isNaN() }.toMutableList()
-        Logger.info("Analyzing ${options.decompositionMode.name} mode ${options.compositionMode.name}")
         println("valid decompositions: $foundValidDecomposition, good decompositions: $veryGoodDecomposition, ok decompositions:$okDecomposition total hard outliers $hardOutliers")
-        println("& ${mDecompositionStructures.sum()} & ${mDecompositionStructures.average()} & ${mDecompositionStructures.median()}")
-        println("& ${mPrecision.sum()} & ${mPrecision.average()} & ${mPrecision.median()}")
-        println("& ${mSize.sum()} & ${mSize.average()} & ${mSize.median()}")
+        println("& ${mDecompositionStructures.sum()} & ${mDecompositionStructures.average()} & ${mDecompositionStructures.median()} & ${mPrecision.sum()} & ${mPrecision.average()} & ${mPrecision.median()} & ${mSize.sum()} & ${mSize.average()} & ${mSize.median()}")
     }
 
     private fun generatePlots(evalResult: List<List<Cover>>, options: Options) {
@@ -94,7 +76,14 @@ class ChartGenerator {
 
         val minDistance = 0.05
         val boxPlot3 =
-            Analyzer.createCoverByFactorPlotNormalized(evalResult.flatten(), createBoxPlot = true, minDistance = minDistance, showOutliers = true, xS = "Relative Factor Size (min distance $minDistance)", yS = "Relative covered values in cover")
+            Analyzer.createCoverByFactorPlotNormalized(
+                evalResult.flatten(),
+                createBoxPlot = true,
+                minDistance = minDistance,
+                showOutliers = true,
+                xS = "Relative Factor Size (min distance $minDistance)",
+                yS = "Relative covered values in cover"
+            )
         Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-relative-values-by-factor-boxplot-dist.png", boxPlot3, "./plots/box-plots")
 
         val boxPlot4 =
@@ -120,5 +109,5 @@ class ChartGenerator {
 
 @OptIn(ExperimentalTime::class)
 fun main() {
-    ChartGenerator().decomposeAllAndGeneratePlots()
+    ChartGenerator().decomposeAllAndGeneratePlotsAndTables()
 }

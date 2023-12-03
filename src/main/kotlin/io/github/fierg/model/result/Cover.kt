@@ -27,7 +27,8 @@ data class Cover(
     var outliers: MutableList<Int>,
     val factors: MutableList<Factor>,
     val compositionMode: CompositionMode = CompositionMode.OR,
-    val flippedState: Boolean = false
+    val flippedState: Boolean = false,
+    val deltaWindow: Int = 0
 ) {
 
     private var lastOutlierSize = outliers.size
@@ -39,14 +40,16 @@ data class Cover(
      * @param stateToReplace    The boolean value to replace in the cover.
      * @param compositionMode          The logical operator used for combining factors (default is Operator.OR).
      */
-    constructor(input: BooleanArray, stateToReplace: Boolean, compositionMode: CompositionMode = CompositionMode.OR) : this(
+    constructor(input: BooleanArray, stateToReplace: Boolean, compositionMode: CompositionMode = CompositionMode.OR, deltaWindow: Int = 0) : this(
         input,
         stateToReplace,
         input.count { it == stateToReplace },
         0,
         input.mapIndexed { index, b -> if (b == stateToReplace) index else -1 }.filter { it != -1 }.toMutableList(),
         mutableListOf(),
-        compositionMode
+        compositionMode,
+        false,
+        deltaWindow
     )
 
     /**
@@ -73,7 +76,7 @@ data class Cover(
                 if (!skipFactorIfNoChangesOccur || factor.array.any { value -> value == stateToReplace }) {
                     factors.add(factor)
                     size = factor.array.size
-                    outliers = recalculateOutliers(target, stateToReplace, factors.map { it.array })
+                    outliers = recalculateOutliers(target, stateToReplace, factors.map { it.array }, deltaWindow)
                 } else {
                     Logger.debug("Skipping empty factor of size: ${factor.array.size}")
                 }
@@ -104,11 +107,11 @@ data class Cover(
      * @return A boolean array representing the cover.
      */
     fun getCoverArray(): BooleanArray {
-        val cover = if (compositionMode == CompositionMode.OR) BooleanArray(target.size) { stateToReplace } else BooleanArray(target.size) { !stateToReplace }
+        val cover = BooleanArray(target.size) { !stateToReplace }
         when (compositionMode) {
             CompositionMode.OR -> {
                 cover.indices.forEach { index ->
-                    cover[index] = factors.any { it.get(index) != stateToReplace }
+                    cover[index] = factors.any { it.get(index) == stateToReplace }
                 }
             }
 
@@ -145,7 +148,7 @@ data class Cover(
                 newArray[position] = stateToReplace
 
                 factor.outliers.addAll(getNewOutliers(position, factor.array.size, this.target.size))
-                newCleanFactors.add(Factor(newArray, recalculateOutliers(this.target, stateToReplace, listOf(newArray)), compositionMode))
+                newCleanFactors.add(Factor(newArray, recalculateOutliers(this.target, stateToReplace, listOf(newArray), deltaWindow), compositionMode))
             }
         }
         factors.addAll(newCleanFactors)

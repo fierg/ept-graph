@@ -1,4 +1,4 @@
-package io.github.fierg.ONESvsZEROS
+package io.github.fierg.andVsOr
 
 import io.github.fierg.algo.Decomposer
 import io.github.fierg.logger.Logger
@@ -7,13 +7,13 @@ import io.github.fierg.model.options.DecompositionMode
 import io.github.fierg.model.options.Options
 import org.junit.Test
 
-class OnesVSZerosTest {
+class TestAndVsOr {
     init {
         Logger.setLogLevelToDebug()
     }
 
     @Test
-    fun testOrExample0() {
+    fun testOrExample() {
         val array = arrayOf(false, true, false, true, false, false).toBooleanArray()
         val options = Options.emptyOptions()
         options.skipSelfEdges = true
@@ -32,7 +32,7 @@ class OnesVSZerosTest {
     }
 
     @Test
-    fun testAndExample0() {
+    fun testAndExample() {
         val array = arrayOf(false, true, false, true, false, false).toBooleanArray()
         val options = Options.emptyOptions()
         options.skipSelfEdges = true

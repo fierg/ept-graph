@@ -1,4 +1,4 @@
-package io.github.fierg.utils
+package io.github.fierg.deltaWindow
 
 import io.github.fierg.algo.Preprocessor
 import io.github.fierg.data.F2FReader
@@ -8,7 +8,7 @@ import io.github.fierg.logger.Logger
 import org.junit.Test
 
 
-class TestDeltaWindow {
+class TestDeltaWindowUtils {
 
     @Test
     fun testPreprocessingWidth1() {
