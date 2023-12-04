@@ -29,7 +29,7 @@ All benchmarks were performed on an AMD Ryzen 5 2600X six core processor (12 thr
 	\caption{Decomposition time in seconds [s] for complete dataset}
 	\label{tab:eval-performance}
 \end{table}
-It is to not that the \andDecomp is expected to be slower because of considerably greater amount of zeros in the data set as well as the modification to the cover finding algorithm.
+It is to note that the \andDecomp is expected to be slower because of considerably greater amount of zeros in the data set as well as the modification to the cover finding algorithm.
 While with an \orDecomp, each additional factor can only remove outliers, in an \andDecomp an additional factor can also add new outliers.
 Because of that, the current outliers of a decomposition must be recalculated considering all factors.
 The Fourier-transform method again increases the amount of factors per cover, which hurts performance.
