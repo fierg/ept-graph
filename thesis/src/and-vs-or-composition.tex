@@ -1,6 +1,8 @@
 \chapter{AND vs OR Decomposition}
 \label{chap:and-vs-or}
-As we defined the \orDecomp with $L(A) = \cup_{1\leq i \leq k} L(B_i)$ as a conceptual counterpart to the \andDecomp, we considered different \DFAs with either a \andDecomp or an \orDecomp. Of course there exist \DFAs with both and- and \orDecomp but we try to prove that this is not the case for every \DFA. For an example see Figures \ref{fig:factors-and-example} and \ref{fig:factors-or-example}, where $A$ has a \andDecomp and $B$ has a \orDecomp but not vice versa.
+As we defined the \orDecomp with $L(A) = \cup_{1\leq i \leq k} L(B_i)$ as a conceptual counterpart to the \andDecomp, we considered different \DFAs with either a \andDecomp or an \orDecomp.
+Of course there exist \DFAs with both and- and \orDecomp but we try to prove that this is not the case for every \DFA.
+For an example see Figures \ref{fig:factors-and-example} and \ref{fig:factors-or-example}, where $A$ has a \andDecomp and $B$ has a \orDecomp but not vice versa.
 
 \begin{figure}[h]
 	\begin{minipage}[t]{\textwidth}
@@ -95,7 +97,8 @@ As we defined the \orDecomp with $L(A) = \cup_{1\leq i \leq k} L(B_i)$ as a conc
 	\label{fig:factors-or-example}
 \end{figure}
 
-To prove that there exists words which are and-decomposable but not or-decomposable and vice versa, we need a bit of background. For this purpose we have extended the logic operators $\lor$ and $\land$ to binary words.
+To prove that there exists words which are and-decomposable but not or-decomposable and vice versa, we need a bit of background.
+For this purpose we have extended the logic operators $\lor$ and $\land$ to binary words.
 
 \begin{fact}
 	$$A \land B = \overbar{\overbar{A} \lor \overbar{B}}$$
@@ -106,7 +109,9 @@ To prove that there exists words which are and-decomposable but not or-decomposa
 \end{theorem}
 
 \begin{proof}
-	Assume $\overbar{w}$ is not and-decomposable and $w = v_1 \lor v_2 \lor \dots \lor v_k$. Using the Fact 1, we obtain $w = \overbar{\overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}}$ which is equal to $\overbar{w} = \overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}$. This implies $w$ is not or-decomposable via contradiction.
+	Assume $\overbar{w}$ is not and-decomposable and $w = v_1 \lor v_2 \lor \dots \lor v_k$.
+	Using the Fact 1, we obtain $w = \overbar{\overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}}$ which is equal to $\overbar{w} = \overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}$.
+	This implies $w$ is not or-decomposable via contradiction.
 \end{proof}
 
 
@@ -115,7 +120,9 @@ To prove that there exists words which are and-decomposable but not or-decomposa
 \end{theorem}
 
 \begin{proof}
-	Assume $\overbar{w}$ is not or-decomposable and $w = v_1 \land v_2 \land \dots \land v_k$.Using the Fact 1, we obtain $w = \overbar{\overbar{v_1} \lor \overbar{v_2} \lor \dots \lor \overbar{v_k}}$ which is equal to $\overbar{w} = \overbar{v_1} \lor \overbar{v_2} \lor \dots \lor \overbar{v_k}$. This implies $w$ is not and-decomposable via contradiction.
+	Assume $\overbar{w}$ is not or-decomposable and $w = v_1 \land v_2 \land \dots \land v_k$.
+	Using the Fact 1, we obtain $w = \overbar{\overbar{v_1} \lor \overbar{v_2} \lor \dots \lor \overbar{v_k}}$ which is equal to $\overbar{w} = \overbar{v_1} \lor \overbar{v_2} \lor \dots \lor \overbar{v_k}$.
+	This implies $w$ is not and-decomposable via contradiction.
 \end{proof}
 
 \begin{corollary}

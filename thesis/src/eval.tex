@@ -5,10 +5,19 @@
 \label{ch:Evaluation}
 %% ==============================
 
-In this evaluation section, we explore how well the algorithm performs by looking at the performance and examining the decompositions. Our primary interest lies in two aspects, the size of the factors contributing to the decomposition and the coverage of final states by each factor. Through this analysis, we aim to gauge the algorithm's effectiveness in generating meaningful decompositions. This evaluation is pivotal for understanding the algorithm's capability to produce concise and relevant factors, providing insights into the temporal structure of the give labels. For this purpose, the complete f2f dataset was evaluated, described in Section \ref{ch:prelimiaries:real-world-data} consisting of 62 Temporal graphs with 20 to 56 edges each, ignoring loop edges. In total there are 3321 edges with a combined label length of around 2.3 million giving an average label length of 6993. Please not that the data sets represent people looking at each other, a directed edge from node $u$ to $v$ indicates participant $u$ looks at participant $v$ therefore only one edge label at a given time step $t$ has its value set, $\tau(e)[t] = 1$ for exactly one outgoing edged of $u$. This is also visible in the data as only 13.4\% of values in the labels is set to 1 over all the labels.
+In this evaluation section, we explore how well the algorithm performs by looking at the performance and examining the decompositions.
+Our primary interest lies in two aspects, the size of the factors contributing to the decomposition and the coverage of final states by each factor.
+Through this analysis, we aim to gauge the algorithm's effectiveness in generating meaningful decompositions.
+This evaluation is pivotal for understanding the algorithm's capability to produce concise and relevant factors, providing insights into the temporal structure of the give labels.
+For this purpose, the complete f2f dataset was evaluated, described in Section \ref{ch:prelimiaries:real-world-data} consisting of 62 Temporal graphs with 20 to 56 edges each, ignoring loop edges.
+In total there are 3321 edges with a combined label length of around 2.3 million giving an average label length of 6993.
+Please not that the data sets represent people looking at each other, a directed edge from node $u$ to $v$ indicates participant $u$ looks at participant $v$ therefore only one edge label at a given time step $t$ has its value set, $\tau(e)[t] = 1$ for exactly one outgoing edged of $u$.
+This is also visible in the data as only 13.4\% of values in the labels is set to 1 over all the labels.
 
 \section{Performance Evaluation}
-Although performance was not the main focus of the implementation and evaluation, generating \orDecomp for the complete dataset is reasonable fast with around 3 seconds if using the maximal divisors or the greedy approach. The Fourier-transformation takes a lot of additional time for cleaning multiples of a factor as well as replacing factors with multiple set values with a set of factors with only one set value, causing it to run for 1 minute and 45 seconds. All benchmarks were performed on an AMD Ryzen 5 2600X six core processor (12 threads) with a 3.6 GHz base clock and a 4.2 GHz boost clock speed. For memory, 16GB 3200MHz ram and a Samsung evo ssd was used for persistent storage.
+Although performance was not the main focus of the implementation and evaluation, generating \orDecomp for the complete dataset is reasonable fast with around 3 seconds if using the maximal divisors or the greedy approach.
+The Fourier-transformation takes a lot of additional time for cleaning multiples of a factor as well as replacing factors with multiple set values with a set of factors with only one set value, causing it to run for 1 minute and 45 seconds.
+All benchmarks were performed on an AMD Ryzen 5 2600X six core processor (12 threads) with a 3.6 GHz base clock and a 4.2 GHz boost clock speed. For memory, 16GB 3200MHz ram and a Samsung evo ssd was used for persistent storage.
 \begin{table}[h]
 	\begin{tabular}{l|rrr}
 		 & MaxDivisors & GreedyShortFactors & FourierTransform  \\
@@ -20,10 +29,16 @@ Although performance was not the main focus of the implementation and evaluation
 	\caption{Decomposition time in seconds [s] for complete dataset}
 	\label{tab:eval-performance}
 \end{table}
-It is to not that the \andDecomp is expected to be slower because of considerably greater amount of zeros in the data set as well as the modification to the cover finding algorithm. While with an \orDecomp, each additional factor can only remove outliers, in an \andDecomp an additional factor can also add new outliers. Because of that, the current outliers of a decomposition must be recalculated considering all factors. The Fourier-transform method again increases the amount of factors per cover, which hurts performance. Also it is not implemented for \andDecomp as it is not considered reasonable, since a human would still need to look at all factors since it is an \andDecomp.
+It is to not that the \andDecomp is expected to be slower because of considerably greater amount of zeros in the data set as well as the modification to the cover finding algorithm.
+While with an \orDecomp, each additional factor can only remove outliers, in an \andDecomp an additional factor can also add new outliers.
+Because of that, the current outliers of a decomposition must be recalculated considering all factors.
+The Fourier-transform method again increases the amount of factors per cover, which hurts performance.
+Also it is not implemented for \andDecomp as it is not considered reasonable, since a human would still need to look at all factors since it is an \andDecomp.
 
 \section{Decomposition Evaluation}
-Moving on to the decomposition evaluation, we validate each method separately and then compare them against each other. We also benchmark \andDecomp and \orDecomp. To get an insight on how well a particular decomposition method is performing, decompose the whole data-set and then plot each factor of each decomposition by its relative size compared to the original \DFA size and the relative amount of covered values of the \DFA by this factor.
+Moving on to the decomposition evaluation, we validate each method separately and then compare them against each other.
+We also benchmark \andDecomp and \orDecomp.
+To get an insight on how well a particular decomposition method is performing, decompose the whole data-set and then plot each factor of each decomposition by its relative size compared to the original \DFA size and the relative amount of covered values of the \DFA by this factor.
 \begin{figure}[t]
 	\begin{minipage}[h]{0.49\linewidth}
 		\centering
@@ -40,7 +55,9 @@ Moving on to the decomposition evaluation, we validate each method separately an
 \end{figure}
 
 \subsection{Maximal Divisor Decomposition Evaluation}
-Decomposing with the Maximal Divisor method implemented as described in Section \ref{ch:Implementation:max-divisor} was used first for decomposing the complete dataset. Analyzing the resulting decompositions and plotting each factor $B_i$ of each decomposition of a \DFA $A$ by its size relative to the original $\frac{|B_i|}{|A|}$ with its relative amount of covered final states from $A$, the precision up to that factor. The results are shown in Figure \ref{fig:eval:max-divisor-all-factors} and it clearly shows that the \orDecomp finds factors, but there are less factors in the decompositions and they cover fewer values than the comparable \andDecomp.
+Decomposing with the Maximal Divisor method implemented as described in Section \ref{ch:Implementation:max-divisor} was used first for decomposing the complete dataset.
+Analyzing the resulting decompositions and plotting each factor $B_i$ of each decomposition of a \DFA $A$ by its size relative to the original $\frac{|B_i|}{|A|}$ with its relative amount of covered final states from $A$, the precision up to that factor.
+The results are shown in Figure \ref{fig:eval:max-divisor-all-factors} and it clearly shows that the \orDecomp finds factors, but there are less factors in the decompositions and they cover fewer values than the comparable \andDecomp.
 \begin{figure}[h]
 	\begin{minipage}[h]{0.49\linewidth}
 		\centering
@@ -55,10 +72,19 @@ Decomposing with the Maximal Divisor method implemented as described in Section 
 	\caption{Relative amount of covered values by relative factor size (MaxDivisors)}
 	\label{fig:eval:max-divisor-all-factors-box-plot}
 \end{figure}
-A lot of data-points collapse onto a single x value since they are grouped by their relative size, not their absolute. For the \andDecomp there are many values scattered around a small relative factor size. To get some more insight into the distribution, a box plot is also provided in Figure \ref{fig:eval:max-divisor-all-factors-box-plot}. Here, the same x and y values are chosen but the values are aggregated such that if a x value is to close to another, their data points gets merged. The \orDecomp shows that even with a relative factor size of $\frac{1}{2}$ which is the largest possible factor, the median over all these factors only cover 10\% of the target \DFA. There are some outliers with $\frac{1}{3}$ or $\frac{1}{2}$ the original size which cover already up to 60-80\% of the original \DFA but they are outliers and most of the \orDecomp found by using the maximal divisors cover almost nothing of the original, especially the short factors. For the \andDecomp a lot of the small relative factor sizes have to be aggregated in order to visualize them as box-plots, so if a relative factor size value is less than $\frac{1}{20}$ away from a previous data-point, they become one distribution. Notably, factors of size between $\frac{1}{12}$ and $\frac{1}{5}$ stretch over the entire range of relative covered values in the decomposition. With $\frac{1}{6}$ relative factor size, the \andDecomp already covered more than 50\% of a given \DFAs final states.
+A lot of data-points collapse onto a single x value since they are grouped by their relative size, not their absolute.
+For the \andDecomp there are many values scattered around a small relative factor size.
+To get some more insight into the distribution, a box plot is also provided in Figure \ref{fig:eval:max-divisor-all-factors-box-plot}.
+Here, the same x and y values are chosen but the values are aggregated such that if a x value is to close to another, their data points gets merged.
+The \orDecomp shows that even with a relative factor size of $\frac{1}{2}$ which is the largest possible factor, the median over all these factors only cover 10\% of the target \DFA.
+There are some outliers with $\frac{1}{3}$ or $\frac{1}{2}$ the original size which cover already up to 60-80\% of the original \DFA but they are outliers and most of the \orDecomp found by using the maximal divisors cover almost nothing of the original, especially the short factors.
+For the \andDecomp a lot of the small relative factor sizes have to be aggregated in order to visualize them as box-plots, so if a relative factor size value is less than $\frac{1}{20}$ away from a previous data-point, they become one distribution.
+Notably, factors of size between $\frac{1}{12}$ and $\frac{1}{5}$ stretch over the entire range of relative covered values in the decomposition. With $\frac{1}{6}$ relative factor size, the \andDecomp already covered more than 50\% of a given \DFAs final states.
 
 \subsection{Greedy Short Factor Decomposition Evaluation}
-Looking at the novel greedy approach for finding short factors, a similar picture becomes evident. We find more factors and some better ones as before when using just the maximal divisors as potential factor sizes, but some factor size data points from Figure \ref{fig:eval:greedy-short-factors-all-factors} only have a single factor with that relative size. Although there are now more factors present overall, the short factors found, only cover at most 20\% of the final states of the \DFA they compose.
+Looking at the novel greedy approach for finding short factors, a similar picture becomes evident.
+We find more factors and some better ones as before when using just the maximal divisors as potential factor sizes, but some factor size data points from Figure \ref{fig:eval:greedy-short-factors-all-factors} only have a single factor with that relative size.
+Although there are now more factors present overall, the short factors found, only cover at most 20\% of the final states of the \DFA they compose.
 \begin{figure}[h]
 	\begin{minipage}[h]{0.49\linewidth}
 		\centering
