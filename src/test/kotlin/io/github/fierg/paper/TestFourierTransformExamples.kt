@@ -90,6 +90,7 @@ class TestFourierTransformExamples {
         options.decompositionMode = DecompositionMode.FOURIER_TRANSFORM
         options.threshold = 1.0
         options.compositionMode = CompositionMode.OR
+        options.allowFullLengthDecomposition = true
         val d = Decomposer(options)
         val cover = d.findCover(array)
         d.analyzeCover(cover)
