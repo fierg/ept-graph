@@ -172,10 +172,13 @@ By only considering maximal divisors the complexity can be further improved, whi
 \section{Decomposition of \DFAs Using Maximal Divisors}
 \label{ch:analysis:max-divisors}
 The idea of folding \DFAs was greatly improved by Jecker, Mazzocchi and Wolf in \cite{DBLP:journals/corr/abs-2107-04683} by limiting the potential factors to maximal divisors instead of strict divisors of $d$.
-This can be done because every factor with length $i_1$ non maximal divisor of $|Q|$, there is a factor with length $i_2$ and an integer $n \in \mathbb{N}$ such that $n \cdot i_1 = i_2$ and the factor with $i_2$ will also cover all the values of the $i_1$ factor.
-This property will be useful in another way later in Chapter \ref{chap:novel-algos}, when searching for shorter factors instead of fewer factors.
+This can be done because every factor with length $i_1$ where $i_1$ is not a maximal divisor of $|Q|$, there is a factor with length $i_2$ and an integer $n \in \mathbb{N}$ such that $n \cdot i_1 = i_2$ and the factor with $i_2$ will also cover all the values of the $i_1$ factor.
+This property will be useful in another way later in Chapter \ref{chap:novel-algos}, when searching for shorter factors instead of as few factors as possible.
 
-TODO: explain algorithm
+The algorithm 3 from \cite{DBLP:journals/corr/abs-2107-04683}, solving the bounded decomposition problem for unary \DFA by iterating over all possible word combinations $2^\mathcal{W}$ from  $\mathcal{W} = \{a^{|Q|/p_i} | 1 \geq i \geq m\}$ and finding a selection of $k$ words from the set, that cover all the rejecting states of $A$.
+For each set of binary strings with length of a maximal divisor of $|Q|$ and $\leq k$ ones, the word combination is tested by checking if there are any non final states, not covered by the current set.
+Iterating over all states $q \in Q \backslash F$, the set $Q_{q,w_i} = \{\sigma(q,w^\lambda_i)|\lambda \geq |Q|\}$ is computing for each word $w_i \in \mathcal{W}$, which contains all the states reachable from $q$ when reading a word from $\mathcal{W}$.
+If the intersection of $Q_{q,w_i}$ and the final states of $A$ is empty, $w_i$ covers all rejecting states, and if this is true for all words from the current word combination set, a valid decomposition is found.
 
 TODO: rework complexity completely 
 
