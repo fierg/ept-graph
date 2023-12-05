@@ -100,17 +100,13 @@ For an example see Figures \ref{fig:factors-and-example} and \ref{fig:factors-or
 To prove that there exists words which are and-decomposable but not or-decomposable and vice versa, we need a bit of background.
 For this purpose we have extended the logic operators $\lor$ and $\land$ to binary words.
 
-\begin{fact}
-	$$A \land B = \overbar{\overbar{A} \lor \overbar{B}}$$
-\end{fact}
-
 \begin{theorem}
 	There exists a word $w \in \{0,1\}^*$ such that $w$ is and-decomposable but not or-decomposable
 \end{theorem}
 
 \begin{proof}
 	Assume $\overbar{w}$ is not and-decomposable and $w = v_1 \lor v_2 \lor \dots \lor v_k$.
-	Using the Fact 1, we obtain $w = \overbar{\overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}}$ which is equal to $\overbar{w} = \overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}$.
+	Using the fact that $A \lor B = \overbar{\overbar{A} \land \overbar{B}}$, we obtain $w = \overbar{\overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}}$ which is equal to $\overbar{w} = \overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}$.
 	This implies $w$ is not or-decomposable via contradiction.
 \end{proof}
 
@@ -121,7 +117,7 @@ For this purpose we have extended the logic operators $\lor$ and $\land$ to bina
 
 \begin{proof}
 	Assume $\overbar{w}$ is not or-decomposable and $w = v_1 \land v_2 \land \dots \land v_k$.
-	Using the Fact 1, we obtain $w = \overbar{\overbar{v_1} \lor \overbar{v_2} \lor \dots \lor \overbar{v_k}}$ which is equal to $\overbar{w} = \overbar{v_1} \lor \overbar{v_2} \lor \dots \lor \overbar{v_k}$.
+	Using the fact  that $A \land B = \overbar{\overbar{A} \lor \overbar{B}}$, we obtain $w = \overbar{\overbar{v_1} \lor \overbar{v_2} \lor \dots \lor \overbar{v_k}}$ which is equal to $\overbar{w} = \overbar{v_1} \lor \overbar{v_2} \lor \dots \lor \overbar{v_k}$.
 	This implies $w$ is not and-decomposable via contradiction.
 \end{proof}
 
