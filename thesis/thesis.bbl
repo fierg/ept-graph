@@ -1,30 +1,5 @@
 \begin{thebibliography}{10}
 
-\bibitem{prime-languages}
-Kupferman, O. and Mosheiff, J.,
-\newblock Prime languages,
-\newblock volume 240, pages 90--107, 2015,
-\newblock MFCS 2013.
-
-\bibitem{erlebach2020game}
-Erlebach, T. and Spooner, J.~T.,
-\newblock A game of cops and robbers on graphs with periodic edge-connectivity,
-\newblock volume abs/1908.06828, 2019.
-
-\bibitem{DBLP:journals/corr/abs-2107-04683}
-Jecker, I., Mazzocchi, N., and Wolf, P.,
-\newblock Decomposing permutation automata,
-\newblock volume abs/2107.04683, 2021.
-
-\bibitem{unara-prime-languages}
-Jecker, I., Kupferman, O., and Mazzocchi, N.,
-\newblock {Unary Prime Languages},
-\newblock in {\em 45th International Symposium on Mathematical Foundations of
-  Computer Science (MFCS 2020)}, edited by Esparza, J. and Kr{\'a}ľ, D.,
-  volume 170 of {\em Leibniz International Proceedings in Informatics
-  (LIPIcs)}, pages 51:1--51:12, Dagstuhl, Germany, 2020, Schloss
-  Dagstuhl--Leibniz-Zentrum f{\"u}r Informatik.
-
 \bibitem{Holme_2012}
 Holme, P. and Saramäki, J.,
 \newblock Temporal networks,
@@ -107,6 +82,47 @@ DiBrita, N.~S., Eledlebi, K., Hildmann, H., Culley, L., and Isakovic, A.~F.,
 \newblock Temporal graphs and temporal network characteristics for bio-inspired
   networks during optimization,
 \newblock volume~12, page 1315, MDPI, 2022.
+
+\bibitem{clique-mining-epg}
+Qin, H. et~al.,
+\newblock Mining periodic cliques in temporal networks,
+\newblock in {\em 2019 IEEE 35th International Conference on Data Engineering
+  (ICDE)}, pages 1130--1141, 2019.
+
+\bibitem{minor-subgraph-epg}
+Arrighi, E., Gr{\"u}ttemeier, N., Morawietz, N., Sommer, F., and Wolf, P.,
+\newblock Multi-parameter analysis of finding minors and subgraphs
+  in edge-periodic temporal graphs,
+\newblock in {\em SOFSEM 2023: Theory and Practice of Computer Science}, edited
+  by G{\k{a}}sieniec, L., pages 283--297, Springer, 2023.
+
+\bibitem{erlebach2020game}
+Erlebach, T. and Spooner, J.~T.,
+\newblock A game of cops and robbers on graphs with periodic edge-connectivity,
+\newblock in {\em SOFSEM 2020: Theory and Practice of Computer Science: 46th
+  International Conference on Current Trends in Theory and Practice of
+  Informatics, SOFSEM 2020, Limassol, Cyprus, January 20–24, 2020,
+  Proceedings}, page 64–75, Berlin, Heidelberg, 2020, Springer.
+
+\bibitem{prime-languages}
+Kupferman, O. and Mosheiff, J.,
+\newblock Prime languages,
+\newblock volume 240, pages 90--107, 2015,
+\newblock MFCS 2013.
+
+\bibitem{unara-prime-languages}
+Jecker, I., Kupferman, O., and Mazzocchi, N.,
+\newblock {Unary Prime Languages},
+\newblock in {\em 45th International Symposium on Mathematical Foundations of
+  Computer Science (MFCS 2020)}, edited by Esparza, J. and Kr{\'a}ľ, D.,
+  volume 170 of {\em Leibniz International Proceedings in Informatics
+  (LIPIcs)}, pages 51:1--51:12, Dagstuhl, Germany, 2020, Schloss
+  Dagstuhl--Leibniz-Zentrum f{\"u}r Informatik.
+
+\bibitem{DBLP:journals/corr/abs-2107-04683}
+Jecker, I., Mazzocchi, N., and Wolf, P.,
+\newblock Decomposing permutation automata,
+\newblock volume abs/2107.04683, 2021.
 
 \bibitem{f2f-bai2019predicting}
 Bai, C. et~al.,

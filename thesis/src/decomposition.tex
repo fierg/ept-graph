@@ -160,6 +160,7 @@ We obtain a \DFA $A_d = \{\Sigma, Q' , [q_I ], \sigma' , F'\}$, where $Q'$ is th
 	\label{fig:clean-quotients-example}
 \end{figure}
 
+
 In the example in Figure \ref{fig:clean-quotients-example}, the \DFA $A$ with final states $q_1$ and $q_3$ can be replaced by the clean quotients $A_2$ and $A_3$ as there is no $q_i \in Q \backslash F$ in $A$ where both clean quotients $A_d$ are in a final state $q_{i ~mod~ d}$.
 We can observe the over-approximation effect in the example depicted in Figure~\ref{fig:clean-quotients-example} as there is a state $q_0$ in $A$ where the clean quotient $A_2$ is in a final state but $A_3$ is not and only the combination of both quotients is a valid decomposition of the original \DFA.
 Finding quotients is trivial but the number of potential quotients rises sublinear with the number of states or the length of the edge label.
@@ -183,7 +184,7 @@ The complexity of the given decomposition algorithm is \LogSpace since the prime
 The prime factor decomposition of $|Q|$ is in space logarithmic in $|Q|$ since $|Q|$ is given in unary.
 As the set of word combinations $\mathcal{W}$ only contains words of length of a maximal divisor of $|Q|$, $|\mathcal{W}|$ is also logarithmic in $|Q|$ and iteration over all sets of $2^\mathcal{W}$ is also possible in \LogSpace, by using a binary string which is indicating the characteristic function.
 
-For the decomposition problem for \DFAs this is as good as it gets, but since we actually want to decompose labels, we will focus on the or-decomposition and finding decompositions with different properties than minimal width.
+For the decomposition problem for \DFAs this is as good as it gets, but since we actually want to decompose labels, we will focus on the or-decomposition and finding decompositions with different properties than minimal width. We can still evaluate the approach using maximal divisors only as potential factor size while searching for a decomposition of binary labels.
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: "thesis"

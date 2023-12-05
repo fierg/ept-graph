@@ -1,16 +1,44 @@
 @inproceedings{erlebach2020game,
-  author       = {Thomas Erlebach and Jakob T. Spooner},
-title        = {A Game of Cops and Robbers on Graphs with Periodic Edge-Connectivity},
-journal      = {CoRR},
-volume       = {abs/1908.06828},
-year         = {2019},
-url          = {http://arxiv.org/abs/1908.06828},
-eprinttype    = {arXiv},
-eprint       = {1908.06828},
-timestamp    = {Mon, 26 Aug 2019 13:20:40 +0200},
-biburl       = {https://dblp.org/rec/journals/corr/abs-1908-06828.bib},
-bibsource    = {dblp computer science bibliography, https://dblp.org}
+author = {Erlebach, Thomas and Spooner, Jakob T.},
+title = {A Game of Cops and Robbers on Graphs with Periodic Edge-Connectivity},
+year = {2020},
+isbn = {978-3-030-38918-5},
+publisher = {Springer},
+address = {Berlin, Heidelberg},
+url = {https://doi.org/10.1007/978-3-030-38919-2_6},
+doi = {10.1007/978-3-030-38919-2_6},
+abstract = {This paper considers a game in which a single cop and a single robber take turns moving along the edges of a given graph G. If there exists a strategy for the cop which enables it to be positioned at the same vertex as the robber eventually, then G is called cop-win, and robber-win otherwise. In contrast to previous work, we study this classical combinatorial game on edge-periodic graphs. These are graphs with an infinite lifetime comprised of discrete time steps such that each edge e is assigned a bit pattern of length , with a 1 in the i-th position of the pattern indicating the presence of edge e in the i-th step of each consecutive block of steps. Utilising the known framework of reachability games, we obtain an time algorithm to decide if a given n-vertex edge-periodic graph is cop-win or robber-win as well as compute a strategy for the winning player (here, L is the set of all edge pattern lengths , and denotes the least common multiple of the set L). For the special case of edge-periodic cycles, we prove an upper bound of on the minimum length required of any edge-periodic cycle to ensure that it is robber-win, where if , and otherwise. Furthermore, we provide constructions of edge-periodic cycles that are cop-win and have length in the case and length in the case.},
+booktitle = {SOFSEM 2020: Theory and Practice of Computer Science: 46th International Conference on Current Trends in Theory and Practice of Informatics, SOFSEM 2020, Limassol, Cyprus, January 20–24, 2020, Proceedings},
+pages = {64–75},
+numpages = {12},
+location = {Limassol, Cyprus}
 }
+
+@InProceedings{minor-subgraph-epg,
+	author="Arrighi, Emmanuel
+	and Gr{\"u}ttemeier, Niels
+	and Morawietz, Nils
+	and Sommer, Frank
+	and Wolf, Petra",
+	editor="G{\k{a}}sieniec, Leszek",
+	title="Multi-Parameter Analysis of Finding Minors and Subgraphs in Edge-Periodic Temporal Graphs",
+	booktitle="SOFSEM 2023: Theory and Practice of Computer Science",
+	year="2023",
+	publisher="Springer",
+	pages="283--297",
+	abstract="We study the computational complexity of determining structural properties of edge-periodic temporal graphs (EPGs).  EPGs are time-varying graphs that compactly represent periodic behavior of components of a dynamic network, for example, train schedules on a rail network. In EPGs, for each edge e of the graph, a binary string {\$}{\$}s{\_}e{\$}{\$}sedetermines in which time steps the edge is present, namely e is present in time step t if and only if {\$}{\$}s{\_}e{\$}{\$}secontains a 1 at position {\$}{\$}t {\backslash}mod |s{\_}e|{\$}{\$}tmod|se|. Due to this periodicity, EPGs serve as very compact representations of complex periodic systems and can even be exponentially smaller than classic temporal graphs representing one period of the same system, as the latter contain the whole sequence of graphs explicitly. In this paper, we study the computational complexity of fundamental questions of the new concept of EPGs such as is there a time step or a sliding window of size {\$}{\$}{\backslash}Delta {\$}{\$}$\Delta$in which the graph (1) is minor-free; (2) contains a minor; (3) is subgraph-free; (4) contains a subgraph; with respect to a given minor or subgraph.  We give a detailed parameterized analysis for multiple combinations of parameters for the problems stated above including several algorithms.",
+	isbn="978-3-031-23101-8"
+}
+
+@inproceedings{clique-mining-epg,
+	author={Qin, Hongchao and Li, Rong-Hua and Wang, Guoren and Qin, Lu and Cheng, Yurong and Yuan, Ye},
+	booktitle={2019 IEEE 35th International Conference on Data Engineering (ICDE)}, 
+	title={Mining Periodic Cliques in Temporal Networks}, 
+	year={2019},
+	volume={},
+	number={},
+	pages={1130-1141},
+	doi={10.1109/ICDE.2019.00104}}
 
 @inproceedings{prime-languages,
 	title = {Prime languages},
@@ -68,7 +96,6 @@ bibsource    = {dblp computer science bibliography, https://dblp.org}
 	month = {oct},	
 	publisher = {Elsevier {BV}},
 	volume = {519},
-	number = {3},
 	pages = {97--125},
 	author = {Petter Holme and Jari Saramäki},
 	journal = {Physics Reports}
@@ -189,7 +216,6 @@ keywords = {CANDECOMP, PARAFAC, Link mining, evolution, link prediction, tensor 
 	author={DiBrita, Nicholas S and Eledlebi, Khouloud and Hildmann, Hanno and Culley, Lucas and Isakovic, Abdel F},
 	journal={Applied Sciences},
 	volume={12},
-	number={3},
 	pages={1315},
 	year={2022},
 	publisher={MDPI}

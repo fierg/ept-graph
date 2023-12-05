@@ -53,7 +53,9 @@ In the realm of biology, temporal graphs have been used to study protein-protein
 Overall, the study of temporal graphs is a multidisciplinary field, with researchers from computer science, network science, physics, and other domains contributing to its advancements.
 Ongoing research continues to explore new techniques and methodologies for analyzing, modeling, and understanding the complex dynamics of temporal graphs.
 
-In contrary, edge periodic graph is not a widely known term and is not as well established as temporal graphs, especially the transformation of temporal graphs into edge periodic graphs is not explored.
+Contrary to the well-established and studied field of temporal graphs, edge periodic graphs have received less attention.
+Research has delved into areas such as mining periodic cliques \cite{clique-mining-epg}, identifying minors and subgraphs in EPGs \cite{minor-subgraph-epg}, and analyzing EPGs within the context of the Game of Cops and Robbers \cite{erlebach2020game}.
+However, the transformation of temporal graphs into EPGs remains an underexplored area.
 On the other hand, there are various resources regarding the study of the decomposition of different types of deterministic finite automatons, especially the problem:
 \begin{defn}[\sc{\DFA Decomposition}]{\ \\}
 	Input: A \DFA $\mathcal{A}$\\
@@ -79,14 +81,12 @@ The proofs are formalized for unary \DFAs but they can also be applied to binary
 
 \section{Real World Data (F2F Graphs)}
 \label{ch:prelimiaries:real-world-data}
-
 Real world data is helpful in evaluating the effectiveness of the decomposition, therefore a collection of temporal graphs has been gathered from the Stanford Large Network Dataset Collection\footnote{\url{https://snap.stanford.edu/data/}}.
 All the temporal graph datasets except one, contain interaction networks of forums such as Stackoverflow or Reddit and are in a format, where the edges have timestamps, at which point in time they are active.
 The Reddit network includes timestamps in Unix epoch seconds over a period of 3 years, consequently, the edges are only very rarely present in the graph.
 However, it would be possible to reinterpret these, for example, by increasing the time span between discrete time points.
 Instead of a time span of 1 second between events, it would also be possible to set the time span to one day, and a label at time point $t$ would contain a 1 if on that day, person $A$ commented on person $B$'s post.
-We opted to used the \href{https://snap.stanford.edu/data/comm-f2f-Resistance.html}{Dynamic Face-to-Face Interaction Networks} dataset, where the data format is very close to the formal definition, containing binary labels with discrete steps and a one at step $t$ indicating the existence of any given edge. 
-\begin{figure}[h]
+\begin{figure}[b]
 	\centering
 	\begin{tikzpicture}[every edge quotes/.style = {auto, font=\footnotesize, sloped}]
 		\begin{scope}[every node/.style={circle,fill}]
@@ -113,6 +113,7 @@ We opted to used the \href{https://snap.stanford.edu/data/comm-f2f-Resistance.ht
 	\caption{Example of the real word input data (F2F Files)}
 	\label{tikz:realWorldDataFiles}
 \end{figure}
+We opted to used the \href{https://snap.stanford.edu/data/comm-f2f-Resistance.html}{Dynamic Face-to-Face Interaction Networks} dataset, where the data format is very close to the formal definition, containing binary labels with discrete steps and a one at step $t$ indicating the existence of any given edge. 6
 These networks represent the interactions that happen during discussions between a group of participants playing the Resistance game.
 This dataset contains networks extracted from 62 games.
 Each game is played by 5-8 participants and lasts between 45-60 minutes.
