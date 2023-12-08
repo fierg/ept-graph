@@ -1,48 +1,63 @@
 \chapter{Explainability}
-%%% Local Variables: 
+%%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "thesis"
-%%% End: 
+%%% End:
 Understanding and interpreting labels in edge periodic temporal graphs is essential for various applications, such as network analysis, system monitoring, and predictive modeling.
 However, assessing the ease with which humans can comprehend these labels presents a unique challenge.
 In our earlier exploration of a simplified train schedule in Section \ref{ch:Introduction:sec:Motivation}, which is applicable to small scenarios with short factors that are easy to comprehend.
 Handling real world data with thousands of edges with labels with thousand time-steps, this simplicity of looking at a factor and guessing its semantic meaning gets lost.
-In this context, we propose a comprehensive metric to measure the \enquote{explainability} of such labels, taking into account multiple factors that influence their possibility to interpret.
+In this context, we propose a comprehensive metric to measure the \enquote{explainability} of decompositions of such labels, taking into account multiple effects that influence their possibility to interpret.
 This metric aims to enhance our ability to analyze a decomposition and comprehend the underlying factors, contributing to a more robust and insightful analysis.
 
 \section{Explainability Metric}
 The comprehensive nature of the proposed metric is crucial.
 By considering factors like decomposition structure, precision, and size, it offers a holistic evaluation of label explainability.
-A standardized metric facilitates comparative analysis across different graphs and so this comparison allows for the selection of methods and different parameters in the algorithm to make it more understandable by humans. For a \DFA $A$, and its decomposition $(B_i)_{1 \leq i \leq k}$, we consider:
+A standardized metric facilitates comparative analysis across different graphs and so this comparison allows for the selection of methods and different parameters in the algorithm to make it more understandable by humans.
+For a \DFA $A$, and its decomposition $(B_i)_{1 \leq i \leq k}$, we evaluate the following metrics:
 
 \textbf{Decomposition Structure} ($\operatorname{DS} = \sum\limits_{factor~ B_i}\frac{|B_i|}{\text{|A|}} \cdot \frac{out_{\{B_1,\dots,B_i\}}}{|F_A|}$)
 
-The decomposition structure takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels.
-Labels with multiple shorter segments may facilitate explanation, as they enable a more granular understanding of connectivity changes at different time steps.
-For example, dividing the label into daily or weekly segments could aid in interpreting temporal patterns.
-
+The decomposition structure is the sum over all relative factor sizes, weighted by their relative amount of outliers.
+It takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels.
+Labels with multiple shorter segments may facilitate explanation, as they enable a more granular understanding of connectivity changes at different time steps, if they cover a relatively high amount of values.
+For example, dividing the label into daily or weekly segments that represent more or less the long temporal label could aid in interpreting temporal patterns.
+A few small factors with few outliers imply a small decomposition structure value as visible in Figure \ref{tab:metric-example-decompositions} for decomposition $D$, a large factor, covering not many values implies a high decomposition structure value.
 
 \textbf{Precision} ($\operatorname{precision} = \frac{|F_A| - out_{\{B_1,\dots,B_k\}}}{|F_A|}$)
 
 Precision refers to the regularity of patterns in the label across different time steps.
-A label that exhibits a clear and consistent periodicity allows human observers to anticipate when changes in connectivity occur.
-This precision aids in comprehending the temporal dynamics of the graph.
-Few outliers which cannot be covered by any factor imply a high precision.
+A decomposition that has a high precision value, implies that there are few outliers and many of the actual values can be read from the smaller factors.
+Low precision implies that the decomposition covers only few values as for example in Figure \ref{tab:metric-example-decompositions} in decomposition $D''$, requiring either a list of all outliers to fully understand the full picture.
 
 \textbf{Size} ($k$)
 
-The decomposition size is a fundamental factor in assessing explainability.
-A highly decomposed label, often implies a more concise representation.
+The decomposition size is fundamental in assessing explainability.
 A collection of labels with distinct information is generally easier for humans to understand, as it conveys information succinctly.
-Very long labels may overwhelm human observers with excessive detail.
+Therefore, generally a decomposition with many factors is preferred over a decomposition with few factors.
+
+To get some insight, consider the following imaginary example decompositions of a \DFA with $|Q| = 100$ and $|F| = 50$.
+A zero in Figure \ref{tab:metric-example-decompositions} implies that the decomposition covers the complete input \DFA with a factor of this size, a dash implies that a factor in the decomposition of this size covers no states at all.
+\begin{table}[h]
+	\centering
+	\begin{tabular}{l|ccccc|ccc}
+		& \multicolumn{5}{c}{$|D_i|$} & DS & precision & size \\
+		& 4 & 5 & 10 & 20 & 50 & & & \\
+		\hline
+		$D$ & 25 & 0 & &  & & 0.02 & 1 & 2\\		
+		$D'$ & - & 30 & 20 & 0 & & 0.07 & 1 & 3\\
+		$D''$ & - & - & - & - & 40 & 0.4 & 0.2 & 1\\
+	\end{tabular}
+	\caption{Example decompositions and their outliers of combined factors}
+	\label{tab:metric-example-decompositions}
+\end{table}
 
 
 \section{Explainability Measurement}
 
-To measure the proposed explainability metric for edge periodic temporal graphs, a systematic approach is employed, utilizing real-world data from face-to-face (f2f) graphs.
+To measure the proposed explainability metric for edge periodic temporal graphs, a systematic approach is employed, utilizing real-world data from face-to-face (F2F) graphs.
 Existing algorithms as well as novel approaches designed for edge periodic temporal graph construction are used and the resulting decompositions are evaluated using the described metrics.
 For a more complete analysis of the quality of the measured explainability, a study with a human computer interaction focus would be required but is out of scope for this project.
 
 TODO: How could those experiments look like?
 
-TODO: give some examples and estimates for the given metrics

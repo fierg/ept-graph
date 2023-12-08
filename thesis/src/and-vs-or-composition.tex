@@ -1,11 +1,11 @@
 \chapter{AND vs OR Decomposition}
 \label{chap:and-vs-or}
 All theoretical studies so far used the \andDecomp with the complement over all factors.
-This idea is easy expandable to the \orDecomp, where the union over all factors $B_i$ results in the original language, $L(A) = \cup_{1\leq i \leq k} L(B_i)$.
+This idea is easily expandable to the \orDecomp, where the union over all factors $B_i$ results in the original language, $L(A) = \cup_{1\leq i \leq k} L(B_i)$.
 Note that, all $B_i$ in the decomposition satisfy $|B_i| < |A|$ and $L(A) \supseteq L(B_i)$.
-With this change, a single factor implies certain final states, whereas with the \andDecomp, all factors have to be considered in order to know whether a given state $s$ is final in $A$.
-As we defined the \orDecomp with as a conceptual counterpart to the \andDecomp, we considered different \DFAs with either a \andDecomp or an \orDecomp.
-Of course there exist \DFAs with both and- and \orDecomp but we try to prove that this is not the case for every \DFA.
+With this change, a single factor implies certain final states, whereas, with the \andDecomp, all factors have to be considered to know whether a given state $s$ is final in $A$.
+As we defined the \orDecomp as a conceptual counterpart to the \andDecomp, we considered different \DFAs with either a \andDecomp or an \orDecomp.
+Of course, there exist \DFAs with both and- and \orDecomp but we try to prove that this is not the case for every \DFA.
 For an example see Figures \ref{fig:factors-and-example} and \ref{fig:factors-or-example}, where $A$ has a \andDecomp and $B$ has a \orDecomp but not vice versa.
 
 \begin{figure}[h]
@@ -101,7 +101,7 @@ For an example see Figures \ref{fig:factors-and-example} and \ref{fig:factors-or
 	\label{fig:factors-or-example}
 \end{figure}
 
-To prove that there exists words which are and-decomposable but not or-decomposable and vice versa, we need a bit of background.
+To prove that there exist words that are and-decomposable but not or-decomposable and vice versa, we need a bit of background.
 For this purpose we have extended the logic operators $\lor$ and $\land$ to binary words.
 
 \begin{theorem}
@@ -129,7 +129,7 @@ For this purpose we have extended the logic operators $\lor$ and $\land$ to bina
 	The set of or-decomposable strings and the set of and-decomposable string is not comparable.
 \end{corollary}
 
-
+As we have now proven that the results of \andDecomp and \orDecomp are not comparable, we will will focus on \orDecomp for explainability purposes, but still evaluate the effectiveness of both methods.
 
 
 %%% Local Variables: 
