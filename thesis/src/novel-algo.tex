@@ -64,7 +64,8 @@ In this particular example, there exists a smaller factor with size 2, $A_2$ whi
 
 Usually the algorithms and proofs are considering unary \DFAs consisting of a chain leading into a cycle of states.
 Since we obtain our \DFAs by transforming from a periodic label, we only have \DFAs with empty chains, therefore only considering unary permutation \DFA.
-This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683} as seen in Algorithm \ref{algo:composite} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$.
+This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683} as seen in Algorithm \ref{algo:composite} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$, and we want to compute an \orDecomp.
+Instead of iterating over all potential sets of words $2^\mathcal{W}$, we iterate over the input states and generate possible factors.
 Additional we are not only interested in answering the yes/no question of the composite problem but we actually want to collect the factors and continue our computation.
 After all possible factors are computed, they are added greedily to the composite, in the order of their length, until no further changes occur.
 
@@ -74,7 +75,7 @@ TODO: rework
 	\label{algo:composite}
 	\DontPrintSemicolon
 	\SetKwProg{Fn}{Function}{:}{}
-	\Fn{findGreedyComposite($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA)}{
+	\Fn{findGreedyComposite($A = \{{a}, Q, q_I , \sigma, F \}$: unary DFA)}{
 		Decomposition $\gets \emptyset$\; 
 		\ForEach{factor $\in$ getAllFactors($A$)}{
 			\If{factorChangesComposite($A$,binaryString)}{CompositeList.add(binaryString)}
@@ -82,7 +83,7 @@ TODO: rework
 		\KwRet Decomposition\;
 	}
 	
-	\Fn{getAllFactors($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA)}{
+	\Fn{getAllFactors($A = \{{a}, Q, q_I , \sigma, F \}$: unary DFA)}{
 		FactorList $\gets \emptyset$\; 
 		\ForEach{divisor $d$ of $|Q|$}{
 			FactorList.add(getFactor($A$,$d$))
@@ -90,10 +91,19 @@ TODO: rework
 		\KwRet FactorList\;
 	}
 	
-	\Fn{getFactor($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, integer $d$)}{
-		TODO
+	\Fn{getFactor($A = \{{a}, Q, q_I , \sigma, F \}$: unary DFA, integer $d$)}{
+		$F_d \gets \emptyset$
+		$A_d \gets \{{a}, Q, q_I , \sigma, F_d \}$
+		\ForEach{$i \in [1,d]$}{
+			\If{isPeriodic($A$,$i$)}{
+				$F_d \gets F_d \cup q_i$ 
+			}
+		}
 	}
-	
+	\Fn{isPeriodic($A = \{{a}, Q, q_I , \sigma, F \}$: unary DFA, integer $i$)}{
+		\While{}{while-block}
+		
+	}
 	\caption{Algorithm for greedily computing an \orDecomp for unary DFAs and ¸returning the factors.}
 \end{algorithm}
 This algorithm finds more factors than actually required, since it also finds the multiples of the maximal divisors.

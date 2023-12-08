@@ -176,7 +176,7 @@ The idea of folding \DFAs was greatly improved by Jecker, Mazzocchi and Wolf in 
 This can be done because every factor with length $i_1$ where $i_1$ is not a maximal divisor of $|Q|$, there is a factor with length $i_2$ and an integer $n \in \mathbb{N}$ such that $n \cdot i_1 = i_2$ and the factor with $i_2$ will also cover all the values of the $i_1$ factor.
 This property will be useful in another way later in Chapter \ref{chap:novel-algos}, when searching for shorter factors instead of as few factors as possible.
 
-Algorithm 3 from \cite{DBLP:journals/corr/abs-2107-04683}, solves the bounded decomposition problem for an unary \DFA $A$, by iterating over all possible word combinations $2^\mathcal{W}$ from  $\mathcal{W} = \{a^{|Q|/p_i} | 1 \geq i \geq m\}$ and finding a selection of $k$ words from the set, that cover all the rejecting states of $A$.
+Algorithm 3 from \cite{DBLP:journals/corr/abs-2107-04683}, solves the bounded decomposition problem for an unary \DFA $A$, by iterating over all $2^\mathcal{W}$ possible word combinations  from  $\mathcal{W} = \{a^{|Q|/p_i} | 1 \geq i \geq m\}$ and finding a selection of $k$ words from the set, that cover all the rejecting states of $A$.
 For each set of binary strings with length of a maximal divisor of $|Q|$ and $\leq k$ ones, the word combination is tested by checking if there are any non final states, not covered by the current set.
 Iterating over all states $q \in Q \backslash F$, the function \textit{coverBySet} is called, to find states which are not covered by current set.
 In the function, we go through all $k$ words in the set and check if $q$ is covered by the word $a^{|Q|/p_i}$ by calling the \textit{cover} function from Algorithm 2. Here $Q_{q,w_i} = \{\sigma(q,w^\lambda_i)|\lambda \geq |Q|\}$ is generated for the word $a^{|Q|/p_i}$.
@@ -185,7 +185,7 @@ The complexity of the given decomposition algorithm is \LogSpace since the prime
 The prime factor decomposition of $|Q|$ is in space logarithmic in $|Q|$ since $A$ is given in unary.
 As the set of word combinations $\mathcal{W}$ only contains words of length of a maximal divisor of $|Q|$, $|\mathcal{W}|$ is also logarithmic in $|Q|$ and iteration over all sets of $2^\mathcal{W}$ is also possible in \LogSpace, by using a binary string which indicates the characteristic function.
 
-For the decomposition problem for \DFAs this is as good as it gets, but since we actually want to decompose labels, we will focus on the or-decomposition and finding decompositions with different properties than minimal width. We can still evaluate the approach using maximal divisors only as potential factor size while searching for a decomposition of binary labels.
+For the \andDecomp problem for \DFAs this is as good as it gets, but since we actually want to decompose labels to increase understandability, we will focus on the \orDecomp and finding decompositions with different properties than minimal width. We can still evaluate the approach using maximal divisors only as potential factor size while searching for a \orDecomp of binary labels.
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: "thesis"
