@@ -77,40 +77,28 @@ TODO: rework
 	\label{algo:composite}
 	\DontPrintSemicolon
 	\SetKwProg{Fn}{Function}{:}{}
-	\Fn{getGreedyComposite($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA)}{
-		CompositeList $\gets \emptyset$\; 
+	\Fn{findGreedyComposite($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA)}{
+		Decomposition $\gets \emptyset$\; 
 		\ForEach{factor $\in$ getAllFactors($A$)}{
 			\If{factorChangesComposite($A$,binaryString)}{CompositeList.add(binaryString)}
 		}
-		\KwRet CompositeList\;
+		\KwRet Decomposition\;
 	}
 	
 	\Fn{getAllFactors($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA)}{
 		FactorList $\gets \emptyset$\; 
-		\ForEach{divisor $d$ of $A$ with $d \leq k$ ones}{
-			\If{isFactor($A$,binaryString)}{FactorList.add(binaryString)}
+		\ForEach{divisor $d$ of $|Q|$}{
+			FactorList.add(getFactor($A$,$d$))
 		}
 		\KwRet FactorList\;
 	}
 	
-	\Fn{isFactor($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, binaryString)}{
-		\ForEach{$q \in Q \setminus F$}{
-			\If{not cover(A,q,binaryString)}{\KwRet false}
-			\KwRet true
-		}
+	\Fn{getFactor($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, integer $d$)}{
+		TODO
 	}
 	
-	\Fn{cover($A = ⟨{a}, Q, qI , \sigma, F ⟩ $: unary DFA, binaryString, $q \in Q \setminus F$)}{
-		\ForEach{$i$ with wordCombination[i]=1}{
-			$p_1 \gets i$'th prime divisor of $|Q|$\;
-			\If{cover($A,q,\sigma(q,a^{|Q|/p_i})$)}{\KwRet true}
-		}
-		\KwRet false
-	}
-	
-	\caption{Algorithm solving the Decomp problem for unary DFAs and returning a greedy composite from all factors.}
+	\caption{Algorithm for greedily computing an \orDecomp for unary DFAs and ¸returning the factors.}
 \end{algorithm}
-
 This algorithm finds more factors than actually required, since it also finds the multiples of the maximal divisors.
 In contrast, not all found factors are required to form the decomposition and we only want to add factors, which change the decomposition.
 In our example in Figure \ref{fig:short-factors} we find $A_2$ and $A_4$, but $A_2$ is fully sufficient for decomposing the \DFA $A$.
@@ -120,10 +108,11 @@ For this, we want to keep track of the outliers of each factor and the decomposi
 Regarding the explainability, it should be of preference, to have a small factor but a couple of outliers, in comparison to a long factor and even have a decomposition with hard outliers, e.g. values that cannot be covered by a decomposition.
 In this case, a decomposition including outliers is also preferred.
 
+\section{Problem Generalization}
+
 The original problem was solvable in \LogSpace, but extending the problem to finding the shortest possible factors, we face a different challenge.
 Finding a valid decomposition is possible in \LogSpace but selecting a minimal amount of given factors needed to be a valid decomposition is not.
 This problem can be generalized for a given set of factors as follows:
-
 \begin{defn}[\sc{Min Factors Decomposition}]{\ \\}
 	Input: A binary string $u$ with $\ell(u)= l$ and a set of binary strings $\mathcal{W} = \{w_1, w_2, \dots, w_n\}$ with $\ell(w_i) < l$ and $\ell(w_i)$ divides $l$ for $1 \leq i \leq n$ and an integer $k$.\\
 	Question: Exists indices $i_1, i_2, \dots i_k$ such that
