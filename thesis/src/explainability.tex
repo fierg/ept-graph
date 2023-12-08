@@ -16,7 +16,7 @@ By considering factors like decomposition structure, precision, and size, it off
 A standardized metric facilitates comparative analysis across different graphs and so this comparison allows for the selection of methods and different parameters in the algorithm to make it more understandable by humans.
 For a \DFA $A$, and its decomposition $(B_i)_{1 \leq i \leq k}$, we evaluate the following metrics:
 
-\textbf{Decomposition Structure} ($\operatorname{DS} = \sum\limits_{factor~ B_i}\frac{|B_i|}{\text{|A|}} \cdot (1 + \frac{out_{\{B_1,\dots,B_i\}}}{|F_A|})$)
+\textbf{Decomposition Structure} ($\operatorname{DS} =  \underset{factor~ B_i}{\Pi}\frac{|B_i|}{\text{|A|}} \cdot (1 + \frac{out_{\{B_1,\dots,B_i\}}}{|F_A|})$)
 
 The decomposition structure is the sum of all relative factor sizes, weighted by their relative amount of outliers.
 It takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels.
@@ -59,12 +59,16 @@ $\mathcal{D}'$ is similarly well decomposed, with a small decomposition structur
 Although it has slightly larger factors, there might be a benefit in having more factors with different sizes when extracting semantic meaning.
 $\mathcal{D}''$ only consists of only two larger factors, but only has a few hard outliers, compared to $\mathcal{D}'''$ with a precision of 26\%.
 The last decomposition $\mathcal{D}''''$ has only a large factor with many hard outliers, which implies that it is hard to explain in a periodic way.
+In general, a low decomposition structure as well as high precision and size, allow for greater \enquote{explainability}.
 
 \section{Explainability Measurement}
 
 To measure the proposed explainability metric for edge periodic temporal graphs, a systematic approach is employed, utilizing real-world data from face-to-face (F2F) graphs.
-Existing algorithms as well as novel approaches designed for edge periodic temporal graph construction are used and the resulting decompositions are evaluated using the described metrics.
+Existing algorithms for \DFA decomposition as well as novel approaches designed for explainable decomposition construction are used and the resulting decompositions are evaluated using the described metrics.
 For a more complete analysis of the quality of the measured explainability, a study with a human-computer interaction focus would be required but is out of scope for this project.
-
-TODO: How could those experiments look like?
+Motivating the example from the introduction, an experiment quantifying the possibility with which humans can comprehend the structure of temporal or edge periodic graphs could include a train network. 
+If two groups of people are given the same network, one group becomes a description in the form of a temporal graph and the other an edge periodic multi-graph.
+Participants can then be asked questions regarding the traversal of the train network, or connectivity at certain times or intervals.
+By measuring correctness and required time of the given answers, it should be possible to evaluate, which representation is easier to understand.  
+Alternatively, a qualitative analysis would be possible by performing one-on-one interviews, where similar tasks are given but the explainability could be measured by letting participants describe, how complex understanding one or the other data structure feels.
 
