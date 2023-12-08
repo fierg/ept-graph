@@ -5,11 +5,11 @@
 \section{Motivation}
 %% ==============================
 \label{ch:Introduction:sec:Motivation}
-Edge periodic temporal graphs are graph where each edge is associated with a binary string that indicates in which time-step the edge is present.
+Edge periodic temporal graphs are graphs where each edge is associated with a binary string that indicates in which time-step the edge is present.
 They allow us to identify and capture recurring patterns in temporal data.
 By detecting periodicity, we can gain insights into regular behaviors or events that occur at fixed intervals.
 This can be valuable in fields such as finance, transportation, and social networks, where understanding periodic trends can aid in decision-making and prediction.
-Temporal graphs can become quite complex as they evolve over time and labels for each edge can have different lengths, potentially resulting in the entire sequence repeating only after an exponential time span.
+Temporal graphs can become quite complex as they evolve over time and labels for each edge can have different lengths, potentially resulting in the entire sequence repeating only after an exponential period.
 By transforming them into edge periodic temporal graphs, we can simplify the analysis of e.g. finding regularities by focusing on the repeating patterns instead of dealing with the entire temporal range.
 This reduction in complexity can lead to more efficient algorithms and computational benefits.
 In scenarios where resources need to be allocated or scheduled based on temporal patterns, edge periodic temporal graphs enable more efficient usage.
@@ -20,16 +20,16 @@ In conclusion, the transformation of temporal graphs into edge periodic temporal
 
 Imagine standing at a train station connecting place $A$ to place $B$, departing every half and full hour.
 The schedule gives information about a leaving train for any time-step $t$ for intervals of 5 minutes.
-To cover all possible time-steps at a day, a long board with all steps is listed, where you have to search for your exact arrival time, to see when the next one is leaving as this is not apparent in the large table with many additional time points.
+To cover all possible time-steps in a day, a long index with all steps is listed, where you have to search for your exact arrival time, to see when the next one is leaving as this is not apparent in the large table with many additional time points.
 Now imagine a different schedule, showing and periodically repeating after one hour.
 To find the next train, one just has to check at which time of an hour a train departs, which is not only more concise but also easier to understand for human interpreters.
 %% ==============================
 \section{Problem Statement}
 %% ==============================
 \label{ch:Introduction:sec:Problem statement}
-To use the benefits of the periodic representation as edge periodic graph, a transformation from temporal to edge periodic has to be performed.
-This transformation can be done in different ways, but we focus on a method based on the decomposition of deterministic finite automaton.
-Reading the labels of a temporal graph and interpreting it as \DFA enables the application of know methods for \DFA decomposition.
+To use the benefits of the periodic representation as an edge periodic graph, a transformation from temporal to edge periodic has to be performed.
+This transformation can be done in different ways, but we focus on a method based on the decomposition of a deterministic finite automaton.
+Reading the labels of a temporal graph and interpreting it as \DFA enables the application of known methods for \DFA decomposition.
 Labels from a temporal graph, consisting of binary strings, can be interpreted as unary \DFAs by representing the 1 values as final states of a \DFA. 
 \begin{figure}[h]
 	\begin{minipage}[t]{0.49\textwidth}
@@ -77,8 +77,8 @@ Labels from a temporal graph, consisting of binary strings, can be interpreted a
 \end{figure}
 
 Then the \DFA decomposition algorithms can be applied, to get a family of smaller \DFAs, which combined resembles the language of the original \DFA.
-These so called factors each represent a periodic part of the input and can be used to get a shorter and periodic label.
-Since we obtain a decomposition family, we might need to replace the original temporal graph with a edge periodic graph with multi-edges. 
+These so-called factors each represent a periodic part of the input and can be used to get a shorter and periodic label.
+Since we obtain a decomposition family, we might need to replace the original temporal graph with an edge periodic graph with multi-edges. 
 
 %% ==============================
 \section{Structure of this Work}
