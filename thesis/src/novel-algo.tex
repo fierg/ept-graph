@@ -1,11 +1,8 @@
 \chapter{Novel Approaches}
 \label{chap:novel-algos}
-We now have a concept of what an \enquote{explainable} edge label looks like, so we propose new ideas for decomposing \DFAs such that the resulting decomposition has a good structure, precision and size, resulting in good labels, understandable for humans.
-Additionally, we want the algorithm able to be able to handle outliers of a given decomposition, which might result in even shorter labels.
-If we have a decomposition where a small factor covers most of the original \DFA, but not all of it, we need either a larger factor or remember the uncovered values, which could increase explainability.
-Furthermore, all theoretical results so far used the \andDecomp with the complement over all factors.
-This idea is easy expandable to the \orDecomp, where the union over all factors $B_i$ results in the original language, $L(A) = \cup_{1\leq i \leq k} L(B_i)$. Note that, all $B_i$ in the decomposition satisfy $|B_i| < |A|$ and $L(A) \supseteq L(B_i)$. With this change, a single factor implies certain final states, whereas with the \andDecomp, all factors have to be considered in order to know whether a given state $s$ is final in $A$.
-The implications of this change are considered in Chapter \ref{chap:and-vs-or}.
+We now have a concept of what an \enquote{explainable} edge label looks like, so we propose new ideas for decomposing \DFAs such that the resulting \orDecomp has a good structure, precision and size, resulting in good labels, understandable for humans.
+Additionally, we want the algorithm able to be able to handle outliers of a given \orDecomp, which might result in even shorter labels.
+If we have a \orDecomp where a small factor covers most of the original \DFA, but not all of it, we need either a larger factor or remember the uncovered values, which could increase explainability.
 
 \section{Greedy Short Factors}
 \label{ch:novel-algos:greedy-short-factors}
@@ -248,6 +245,7 @@ The longer a label and therefore the corresponding automata gets, it becomes les
 To mitigate this problem, we implemented a delta window as a preprocessing as well as during the folding step of the algorithm.
 The preprocessing actually changes the input data in a way that for each set value in the label, it gets extended to the desired delta window size.
 This increases the likelihood of e.g. a valid folding, but in turn increases the amount of values to cover overall. On the contrary, the delta window during folding does not change the input, but instead a folding is considered valid, if a set value folds onto another by some delta window.
+The effectiveness of the delta window approach will be evaluated in Section \ref{ch:Evaluation:explainability}.
 
 \section{EPG Graph Creation}
 \label{ch:novel-algos:ept-graph}

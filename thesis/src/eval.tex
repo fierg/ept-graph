@@ -15,6 +15,7 @@ Please not that the data sets represent people looking at each other, a directed
 This is also visible in the data as only 13.4\% of values in the labels is set to 1 over all the labels.
 
 \section{Performance Evaluation}
+\label{ch:Evaluation:performance}
 Although performance was not the main focus of the implementation and evaluation, generating \orDecomp for the complete dataset is reasonable fast with around 3 seconds if using the maximal divisors or the greedy approach.
 The Fourier-transformation takes a lot of additional time for cleaning multiples of a factor as well as replacing factors with multiple set values with a set of factors with only one set value, causing it to run for 1 minute and 45 seconds.
 All benchmarks were performed on an AMD Ryzen 5 2600X six core processor (12 threads) with a 3.6 GHz base clock and a 4.2 GHz boost clock speed. For memory, 16GB 3200MHz ram and a Samsung evo ssd was used for persistent storage.
@@ -36,6 +37,7 @@ The Fourier-transform method again increases the amount of factors per cover, wh
 Also it is not implemented for \andDecomp as it is not considered reasonable, since a human would still need to look at all factors since it is an \andDecomp.
 
 \section{Decomposition Evaluation}
+\label{ch:Evaluation:decomposition-quality}
 Moving on to the decomposition evaluation, we validate each method separately and then compare them against each other.
 We also benchmark \andDecomp and \orDecomp.
 To get an insight on how well a particular decomposition method is performing, decompose the whole data-set and then plot each factor of each decomposition by its relative size compared to the original \DFA size and the relative amount of covered values of the \DFA by this factor.
@@ -55,6 +57,7 @@ To get an insight on how well a particular decomposition method is performing, d
 \end{figure}
 
 \subsection{Maximal Divisor Decomposition Evaluation}
+\label{ch:Evaluation:decomposition-quality:max-divisor}
 Decomposing with the Maximal Divisor method implemented as described in Section \ref{ch:Implementation:max-divisor} was used first for decomposing the complete dataset.
 Analyzing the resulting decompositions and plotting each factor $B_i$ of each decomposition of a \DFA $A$ by its size relative to the original $\frac{|B_i|}{|A|}$ with its relative amount of covered final states from $A$, the precision up to that factor.
 The results are shown in Figure \ref{fig:eval:max-divisor-all-factors} and it clearly shows that the \orDecomp finds factors, but there are less factors in the decompositions and they cover fewer values than the comparable \andDecomp.
@@ -82,6 +85,7 @@ For the \andDecomp a lot of the small relative factor sizes have to be aggregate
 Notably, factors of size between $\frac{1}{12}$ and $\frac{1}{5}$ stretch over the entire range of relative covered values in the decomposition. With $\frac{1}{6}$ relative factor size, the \andDecomp already covered more than 50\% of a given \DFAs final states.
 
 \subsection{Greedy Short Factor Decomposition Evaluation}
+\label{ch:Evaluation:decomposition-quality:greedy-short-factors}
 Looking at the novel greedy approach for finding short factors, a similar picture becomes evident.
 We find more factors and some better ones as before when using just the maximal divisors as potential factor sizes, but some factor size data points from Figure \ref{fig:eval:greedy-short-factors-all-factors} only have a single factor with that relative size.
 Although there are now more factors present overall, the short factors found, only cover at most 20\% of the final states of the \DFA they compose.
@@ -119,6 +123,7 @@ TODO:elaborate
 
 \newpage
 \subsection{Fourier-Transform Decomposition Evaluation}
+\label{ch:Evaluation:decomposition-quality:fourier}
 TODO: explain
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{../plots/box-plots/FOURIER_TRANSFORM-OR-all-relative-values-by-factor-boxplot-outliers.png}
@@ -126,9 +131,10 @@ TODO: explain
 	\label{fig:eval:fourier-all-factors-box-plot}
 \end{figure}
 
-\newpage
+
 \newpage
 \section{Explainability Evaluation}
+\label{ch:Evaluation:explainability}
 \begin{table}[h]
 	\centering
 	\begin{tabular}{ll|rrr|rrr}

@@ -112,7 +112,7 @@ A clean quotient $A_d$ of $A$ is a \DFA obtained by folding its cycle of length 
 
 \[ q_i \sim_d q_j ~\text{if and only if}~i \equiv j ~mod~ d \]
 
-We obtain a \DFA $A_d = \{\Sigma, Q' , [q_I ], \sigma' , F'\}$, where $Q'$ is the set of equivalence classes $[p]$ of the states $p \in Q$, the transition function $\sigma'$ is such that for all $a \in \Sigma$ we have that $\sigma'([p], a) = [\sigma(p, a)]$, and $F'$ is composed of the classes $[p]$ such that there is $q \in F$ such that $p \sim q$. We do not require states related by $\sim$ to agree on membership in $F$, and define $F_d$ so that the language of $A_d$ over-approximates that of $A$, $L(A) \subseteq L(A_d)$, as every word accepted by $A$ implies acceptance by $A_d$. 
+We obtain a \DFA $A_d = \{\Sigma, Q' , [q_I ], \sigma' , F'\}$, where $Q'$ is the set of equivalence classes $[p]$ of the states $p \in Q$, the transition function $\sigma'$ is such that for all $a \in \Sigma$ we have that $\sigma'([p], a) = [\sigma(p, a)]$, and $F'$ is composed of the classes $[p]$ such that there is $q \in F$ such that $p \sim q$. We do not require states related by $\sim$ to agree on membership in $F$, and define $F'$ so that the language of $A_d$ over-approximates that of $A$, $L(A) \subseteq L(A_d)$, as every word accepted by $A$ implies acceptance by $A_d$. 
 
 \begin{figure}[h]
 	\begin{minipage}[t]{\textwidth}
