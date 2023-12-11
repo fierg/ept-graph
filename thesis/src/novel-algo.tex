@@ -69,16 +69,16 @@ Instead of iterating over all potential sets of words $2^\mathcal{W}$, we iterat
 Additional we are not only interested in answering the yes/no question of the composite problem but we actually want to collect the factors and continue our computation.
 After all possible factors are computed, they are added greedily to the composite, in the order of their length, until no further changes occur.
 
-TODO: rework
-
-\begin{algorithm}[H]
+\begin{algorithm}[h]
 	\label{algo:composite}
 	\DontPrintSemicolon
 	\SetKwProg{Fn}{Function}{:}{}
 	\Fn{findGreedyComposite($A = \{{a}, Q, q_I , \sigma, F \}$: unary DFA)}{
 		Decomposition $\gets \emptyset$\; 
-		\ForEach{factor $\in$ getAllFactors($A$)}{
-			\If{factorChangesComposite($A$,binaryString)}{CompositeList.add(binaryString)}
+		\ForEach{$A' \in$ getAllFactors($A$)}{
+			\If{factorChangesComposite($A, A'$)}{
+				Decomposition.add($A'$)
+			}
 		}
 		\KwRet Decomposition\;
 	}
@@ -92,20 +92,26 @@ TODO: rework
 	}
 	
 	\Fn{getFactor($A = \{{a}, Q, q_I , \sigma, F \}$: unary DFA, integer $d$)}{
-		$F_d \gets \emptyset$
-		$A_d \gets \{{a}, Q, q_I , \sigma, F_d \}$
+		$F' \gets \emptyset$\;
+		$A' \gets \{{a}, Q', q_d , \sigma', F' \}$\;
 		\ForEach{$i \in [1,d]$}{
-			\If{isPeriodic($A$,$i$)}{
-				$F_d \gets F_d \cup q_i$ // TODO
+			\If{$q_i \in F$ and isPeriodic($A,i,d$)}{
+				$F' \gets F' \cup [q_i]$
 			}
 		}
+		\KwRet $A'$
 	}
-	\Fn{isPeriodic($A = \{{a}, Q, q_I , \sigma, F \}$: unary DFA, integer $i$)}{
-		\While{}{
-			//TODO	
+	\Fn{isPeriodic($A = \{{a}, Q, q_I , \sigma, F \}$: unary DFA, integer $d$, integer $i$)}{
+		$pos \gets (i + d) ~mod~ |A|$\;
+		\While{$pos \not= i$}{
+			\If{$q_{pos} \not\in F$}{
+				\KwRet false\;
+			}
+			$pos \gets (pos + d) ~mod~ |A|$
 		}
+	    \KwRet true\;
 	}
-	\caption{Algorithm for greedily computing an \orDecomp for unary DFAs and ¸returning the factors.}
+	\caption{Algorithm for greedily computing an \orDecomp for unary DFAs and returning the factors.}
 \end{algorithm}
 This algorithm finds more factors than actually required, since it also finds the multiples of the maximal divisors.
 In contrast, not all found factors are required to form the decomposition and we only want to add factors, which change the decomposition.
