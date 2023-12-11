@@ -37,11 +37,12 @@ A collection of labels with distinct information is generally easier for humans 
 Therefore, generally, a decomposition with many factors is preferred over a decomposition with few factors.
 
 To get some insight, consider the following imaginary example decompositions $\mathcal{D}$ to $\mathcal{D}''''$ of a \DFA with $|Q| = 100$ and $|F| = 50$.
-A zero in Figure \ref{tab:metric-example-decompositions} for any given factor size, implies that the decomposition with largest factor $\mathcal{D}_i$ covers the complete input \DFA with a factor of this size, a dash implies that a decomposition with largest factor of this size covers no states at all.
+A zero in Figure \ref{tab:metric-example-decompositions} for any given factor size, implies that the decomposition with largest factor $\mathcal{D}_i$ has zero outliers and covers the complete input \DFA with a factor of this size, a dash implies that a decomposition with largest factor of this size covers no final states at all.
 \begin{table}[h]
 	\centering
 	\begin{tabular}{l|ccccc|lllcc}
-		& \multicolumn{5}{c}{size of factor $|\mathcal{D}_i|$} & DS & DS-c & DS-m & precision in \% & size \\
+		& \multicolumn{5}{c}{outliers of decomposition}  & & & & & \\
+		& \multicolumn{5}{c}{with factor $|\mathcal{D}_i|$ of size} & DS & DS-c & DS-m & precision in \% & size \\
 		& 4 & 5 & 10 & 20 & 50 & & & & & \\
 		\hline
 		$\mathcal{D}$ & 25 & 0 & &  & & 0.02 & 0.11 & 0.003 & 100 & 2\\		

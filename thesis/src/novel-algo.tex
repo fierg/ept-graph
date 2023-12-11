@@ -261,9 +261,15 @@ The preprocessing changes the input data in a way that for each set value in the
 This increases the likelihood of e.g. a valid folding, but in turn, increases the number of values to cover overall. On the contrary, the delta window during folding does not change the input, but instead, a folding is considered valid, if a set value folds onto another by some delta window.
 The effectiveness of the delta window approach will be evaluated in Section \ref{ch:Evaluation:explainability}.
 
-\section{EPG Graph Creation}
+\section{EPG Creation from Decomposition}
 \label{ch:novel-algos:ept-graph}
-TODO: describe collection of covers into single EPG graph with multiedges
+In the final step, we want to construct a EPG instance, from the decompositions over all labels.
+For each edge and its label, we collect all factors of the computed \orDecomp and replace it with a multi edge for each factor.
+The resulting edge labels should ideally be smaller than the original label, in the case of hard outliers, a alternative representation needs to be added.
+Either in the form of the original label with serves as a fallback in the case of an outlier or in form of a list, where a edge is also present, when the current time step $t ~mod~$ the original label length is equal to an element of the list.
+This becomes inefficient with more than a few hard outliers but could be an improvement against a long label.
+
+
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: "thesis"
