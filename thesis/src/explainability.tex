@@ -16,7 +16,7 @@ By considering factors like decomposition structure, precision, and size, it off
 A standardized metric facilitates comparative analysis across different graphs and so this comparison allows for the selection of methods and different parameters in the algorithm to make it more understandable by humans.
 For a \DFA $A$, and its decomposition $(B_i)_{1 \leq i \leq k}$, we evaluate the following metrics:
 
-\textbf{Decomposition Structure} ($\operatorname{DS} =  \underset{factor~ B_i}{\Pi}\frac{|B_i|}{\text{|A|}} \cdot (1 + \frac{out_{\{B_1,\dots,B_i\}}}{|F_A|})$)
+\textbf{Decomposition Structure} ($\operatorname{DS} =  \underset{factor~ B_i}{\Pi}\frac{|B_i|}{\text{|A|}} \cdot (1 + \frac{out_{\{B_1,\dots,B_i\}}}{|F|})$)
 
 The decomposition structure is the sum of all relative factor sizes, weighted by their relative amount of outliers.
 It takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels.
@@ -25,7 +25,7 @@ For example, dividing the label into daily or weekly segments that represent mor
 A few small factors with few outliers imply a small decomposition structure value, which is visible in Figure \ref{tab:metric-example-decompositions} for decomposition $D$, a large factor, covering not many values implies a high decomposition structure value, see decomposition $D''''$.
 Generally, a low DS value is expected to be more explainable by a human interpreter. 
 
-\textbf{Precision} ($\operatorname{precision} = \frac{|F_A| - out_{\{B_1,\dots,B_k\}}}{|F_A|}$)
+\textbf{Precision} ($\operatorname{precision} = \frac{|F| - out_{\{B_1,\dots,B_k\}}}{|F|}$)
 
 Precision refers to the regularity of patterns in the label across different time steps.
 A decomposition that has a high precision value, implies that there are few outliers and many of the actual values can be read from the factors.
