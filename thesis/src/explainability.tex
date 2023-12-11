@@ -22,13 +22,15 @@ The decomposition structure is the sum of all relative factor sizes, weighted by
 It takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels.
 Labels with multiple shorter segments may facilitate explanation, as they enable a more granular understanding of connectivity changes at different time steps if they cover a relatively high amount of values.
 For example, dividing the label into daily or weekly segments that represent more or less the long temporal label could aid in interpreting temporal patterns.
-A few small factors with few outliers imply a small decomposition structure value as visible in Figure \ref{tab:metric-example-decompositions} for decomposition $D$, a large factor, covering not many values implies a high decomposition structure value.
+A few small factors with few outliers imply a small decomposition structure value, which is visible in Figure \ref{tab:metric-example-decompositions} for decomposition $D$, a large factor, covering not many values implies a high decomposition structure value, see decomposition $D''''$.
+Generally, a low DS value is expected to be more explainable by a human interpreter. 
 
 \textbf{Precision} ($\operatorname{precision} = \frac{|F_A| - out_{\{B_1,\dots,B_k\}}}{|F_A|}$)
 
 Precision refers to the regularity of patterns in the label across different time steps.
-A decomposition that has a high precision value, implies that there are few outliers and many of the actual values can be read from the smaller factors.
-Low precision implies that the decomposition covers only a few values for example in Figure \ref{tab:metric-example-decompositions} in decomposition $D''$, requiring either a list of all outliers to fully understand the full picture.
+A decomposition that has a high precision value, implies that there are few outliers and many of the actual values can be read from the factors.
+Low precision implies that the decomposition covers only a few values for example in Figure \ref{tab:metric-example-decompositions} in decomposition $D'''$, requiring either a list of all outliers to fully understand the full picture.
+A high precision is always preferred for an explainable label. 
 
 \textbf{Size} ($k$)
 
@@ -54,7 +56,8 @@ A zero in Figure \ref{tab:metric-example-decompositions} for any given factor si
 	\caption{Example decompositions and their outliers of combined factors}
 	\label{tab:metric-example-decompositions}
 \end{table}
-In this example, $\mathcal{D}$ is considered to be a very good decomposition after all metrics. It has only two factors of size 4 and 5, that cover the original \DFA with a precision of 1.
+In this example, $\mathcal{D}$ is considered to be a very good decomposition after all metrics.¸
+It has only two factors of size 4 and 5, that cover the original \DFA with a precision of 100\%.
 The decomposition structure is small as the two factors are small relative to the input size and the second factor is only included in the sum with a weight of 1 if there are no outliers.
 $\mathcal{D}'$ is similarly well decomposed, with a small decomposition structure and also a precision of 100\%.
 Although it has slightly larger factors, there might be a benefit in having more factors with different sizes when extracting semantic meaning.
