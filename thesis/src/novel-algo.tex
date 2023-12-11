@@ -1,7 +1,7 @@
 \chapter{Novel Approaches}
 \label{chap:novel-algos}
-We now have a concept of what an \enquote{explainable} edge label looks like, so we propose new ideas for decomposing \DFAs such that the resulting \orDecomp has a good structure, precision and size, resulting in good labels, understandable for humans.
-Additionally, we want the algorithm able to be able to handle outliers of a given \orDecomp, which might result in even shorter labels.
+We now have a concept of what an \enquote{explainable} edge label looks like, so we propose new ideas for decomposing \DFAs such that the resulting \orDecomp has a good structure, precision, and size, resulting in good labels, understandable for humans.
+Additionally, we want the algorithm to be able to handle outliers of a given \orDecomp, which might result in even shorter labels.
 If we have a \orDecomp where a small factor covers most of the original \DFA, but not all of it, we need either a larger factor or remember the uncovered values, which could increase explainability.
 
 \section{Greedy Short Factors}
@@ -62,11 +62,11 @@ In this particular example, there exists a smaller factor with size 2, $A_2$ whi
 	\label{fig:short-factors}
 \end{figure}
 
-Usually the algorithms and proofs are considering unary \DFAs consisting of a chain leading into a cycle of states.
+Usually, the algorithms and proofs consider unary \DFAs consisting of a chain leading into a cycle of states.
 Since we obtain our \DFAs by transforming from a periodic label, we only have \DFAs with empty chains, therefore only considering unary permutation \DFA.
 This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683} as seen in Algorithm \ref{algo:composite} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$, and we want to compute an \orDecomp.
 Instead of iterating over all potential sets of words $2^\mathcal{W}$, we iterate over the input states and generate possible factors.
-Additional we are not only interested in answering the yes/no question of the composite problem but we actually want to collect the factors and continue our computation.
+Additionally we are not only interested in answering the yes/no question of the composite problem but we want to collect the factors and continue our computation.
 After all possible factors are computed, they are added greedily to the composite, in the order of their length, until no further changes occur.
 
 \begin{algorithm}[h]
@@ -113,18 +113,17 @@ After all possible factors are computed, they are added greedily to the composit
 	}
 	\caption{Algorithm for greedily computing an \orDecomp for unary DFAs and returning the factors.}
 \end{algorithm}
-This algorithm finds more factors than actually required, since it also finds the multiples of the maximal divisors.
+This algorithm finds more factors than required since it also finds the multiples of the maximal divisors.
 In contrast, not all found factors are required to form the decomposition and we only want to add factors, which change the decomposition.
 In our example in Figure \ref{fig:short-factors} we find $A_2$ and $A_4$, but $A_2$ is fully sufficient for decomposing the \DFA $A$.
 By iterating over all possible factors ordered by size, we can greedily add factors, which are required to form the decomposition.
 To address the problem that most of the labels do not have proper decompositions in the mathematical sense, we will also consider a set of smaller automata that do not cover every value of a decomposition.
 For this, we want to keep track of the outliers of each factor and the decomposition itself.
-Regarding the explainability, it should be of preference, to have a small factor but a couple of outliers, in comparison to a long factor and even have a decomposition with hard outliers, e.g. values that cannot be covered by a decomposition.
+Regarding explainability, it should be of preference, to have a small factor but a couple of outliers, in comparison to a long factor, and even have a decomposition with hard outliers, e.g. values that cannot be covered by a decomposition.
 In this case, a decomposition including outliers is also preferred.
 
 \section{Problem Generalization}
-
-The original problem was solvable in \LogSpace, but extending the problem to finding the shortest possible factors, we face a different challenge.
+The original problem was solvable in \LogSpace, but by extending the problem to finding the shortest possible factors, we face a different challenge.
 Finding a valid decomposition is possible in \LogSpace but selecting a minimal amount of given factors needed to be a valid decomposition is not.
 This problem can be generalized for a given set of factors as follows:
 \begin{defn}[\sc{Min Factors Decomposition}]{\ \\}
@@ -133,7 +132,7 @@ This problem can be generalized for a given set of factors as follows:
 	$$w_{i_1}^{l / \ell(w_{i_1})} \lor w_{i_2}^{l / \ell(w_{i_2})} ~\dots~ \lor w_{i_k}^{l / \ell(w_{i_k})} = u $$
 \end{defn}
 
-In order to find lower bounds for this novel problem, we are going to reduce the {\sc{Set Cover}} problem, known to be NP-complete, to our novel {\sc{Min Factors Decomposition}} problem, using a polynomial time reduction.
+To find lower bounds for this novel problem, we are going to reduce the {\sc{Set Cover}} problem, known to be NP-complete, to our novel {\sc{Min Factors Decomposition}} problem, using a polynomial time reduction.
 
 \begin{defn}[\sc{Set Cover}]{\ \\}
 	Input: A set of elements $U = \{u_1, u_2, \dots , u_n\}$. A set $\mathcal{C} = \{C_1, C_2, \dots , C_m\}$ where $C_i \subseteq U ~\forall~ C_i \in \mathcal{C}$ and an integer $k$.\\
@@ -158,9 +157,9 @@ Finding shorter factors that just the maximal divisors should already increase t
 Factor $A_4$ alone would suffice to cover the original \DFA $A$ but most of the final states are already covered by the smaller factor $A_2$.
 Consider states $q_1, q_3 \dots$ which are covered by both factors, which is not required.
 We now can remove all the states from $A_4$ which are already covered by $A_2$ and this results in 2 Factors with each having just one final state.
-Of course there might be multiple states which are not part of any other smaller factors, but any factor of an or-decomposition can be replaced by multiple factors of same length, each with $|F_{B_i}| = 1 ~\forall~ (B_i)_{1 \leq i \leq k}$.
+Of course, there might be multiple states which are not part of any other smaller factors, but any factor of an or-decomposition can be replaced by multiple factors of the same length, each with $|F_{B_i}| = 1 ~\forall~ (B_i)_{1 \leq i \leq k}$.
 Each factor only having a single final state further increases explainability as it allows for each value to be represented as the position and the size of the factor or the periodicity, e.g. instead of a binary label, a list of integer tuples could represent the label.
-For a comparison between a single or multiple binary labels and a list of tuples with the factors, a detailed examination including human computer interaction would be required.
+For a comparison between single or multiple binary labels and a list of tuples with the factors, a detailed examination including human-computer interaction would be required.
 
 \begin{figure}[h]
 	\begin{minipage}[t]{\textwidth}
@@ -241,27 +240,25 @@ For a comparison between a single or multiple binary labels and a list of tuples
 \caption{The Fourier transformed factors $A_2$ \& $A_4$}
 \label{fig:fourier-transform-b}
 \end{figure}
-
-Of course this would also greatly increase the amount of factors required for a valid decomposition, and in turn could hurt performance.
+Of course, this would also greatly increase the amount of factors required for a valid decomposition, and in turn, could hurt performance.
 In general, the greedy approach of combining factors of increasing size should still suffice.
-
 
 \section{Relaxation of Requirements}
 \label{ch:novel-algos:relaxation}
 So far we only considered decompositions where the union over all factors $B_i$ results in exactly the original language, $L(A) = \cup_{1\leq i \leq k} L(B_i)$, and all factors $B_i$ in the decomposition satisfy $|B_i| < |A|$.
 Since our goal is not to find decompositions of minimal width but to find decomposition such that the explainability is maximized, we can relax the requirements to achieve greater explainability.
-If we allow for factors of original size $|B_i| \leq |A|$, we are able to find a factor of original size, which covers all values not covered by a factor so far.
-The values only covered by this final factor $B_k$ but not by any other, can be considered hard outliers and it allows for a decomposition of any \DFA.
-Obviously this is not properly defined for \DFAs but it makes sense in the context of explainable labels.
-Additionally we may allow for $L(A) \supseteq \cup_{1\leq i \leq k} L(B_i)$ and use the precision for a decomposition with $L(A) \not = \cup_{1\leq i \leq k} L(B_i)$ as $precision(\cup_{1\leq i \leq k}~ B_i) = \frac{|F_A| - out\{B_1\dots B_k\}}{|F_A|}$ used in the metric, and allow for a decomposition to be valid if a certain precision is reached.
+If we allow for factors of original size $|B_i| \leq |A|$, we can find a factor of the original size, which covers all values not covered by a factor so far.
+The values only covered by this final factor $B_k$ but not by any other can be considered hard outliers and it allows for a decomposition of any \DFA.
+This is not properly defined for \DFAs but it makes sense in the context of explainable labels.
+Additionally, we may allow for $L(A) \supseteq \cup_{1\leq i \leq k} L(B_i)$ and use the precision for a decomposition with $L(A) \not = \cup_{1\leq i \leq k} L(B_i)$ as $precision(\cup_{1\leq i \leq k}~ B_i) = \frac{|F_A| - out\{B_1\dots B_k\}}{|F_A|}$ used in the metric, and allow for a decomposition to be valid if a certain precision is reached.
 
 \section{Delta Window as Preprocessing or During Folding}
 \label{ch:novel-algos:delta-window}
-Working with real world data always poses a challenge as it might be very large or contain measurement errors.
+Working with real-world data always poses a challenge as it might be very large or contain measurement errors.
 The longer a label and therefore the corresponding automata gets, it becomes less and less likely that a valid folding of the automata exists.
 To mitigate this problem, we implemented a delta window as a preprocessing as well as during the folding step of the algorithm.
-The preprocessing actually changes the input data in a way that for each set value in the label, it gets extended to the desired delta window size.
-This increases the likelihood of e.g. a valid folding, but in turn increases the amount of values to cover overall. On the contrary, the delta window during folding does not change the input, but instead a folding is considered valid, if a set value folds onto another by some delta window.
+The preprocessing changes the input data in a way that for each set value in the label, it gets extended to the desired delta window size.
+This increases the likelihood of e.g. a valid folding, but in turn, increases the number of values to cover overall. On the contrary, the delta window during folding does not change the input, but instead, a folding is considered valid, if a set value folds onto another by some delta window.
 The effectiveness of the delta window approach will be evaluated in Section \ref{ch:Evaluation:explainability}.
 
 \section{EPG Graph Creation}
