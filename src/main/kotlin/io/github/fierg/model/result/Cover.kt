@@ -98,7 +98,11 @@ data class Cover(
      * @return The decomposition structure of the cover as a double value.
      */
     fun getDecompositionStructure() = factors.fold(0.0) { acc, factor ->
-        acc + (factor.array.size.toDouble() / target.size) * (factor.outliers.size.toDouble() / totalValues)
+        acc + (factor.array.size.toDouble() / target.size) * (1 + (factor.outliers.size.toDouble() / totalValues))
+    }
+
+    fun getModifiedDecompositionStructure() = factors.fold(1.0) { acc, factor ->
+        acc * ((factor.array.size.toDouble() / target.size) * (1 + (factor.outliers.size.toDouble() / totalValues)))
     }
 
     /**

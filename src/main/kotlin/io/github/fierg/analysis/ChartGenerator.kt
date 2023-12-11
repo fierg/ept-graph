@@ -1,6 +1,7 @@
 package io.github.fierg.analysis
 
 import io.github.fierg.algo.Decomposer
+import io.github.fierg.extensions.format
 import io.github.fierg.extensions.median
 import io.github.fierg.logger.Logger
 import io.github.fierg.model.options.Options
@@ -56,13 +57,15 @@ class ChartGenerator {
             } else if (precision > 0.75) {
                 okDecomposition++
             }
-            mDecompositionStructures.add(cover.getDecompositionStructure())
+            mDecompositionStructures.add(cover.getModifiedDecompositionStructure())
             mPrecision.add(precision)
             mSize.add(cover.factors.size)
         }
         mPrecision = mPrecision.filter { !it.isNaN() }.toMutableList()
         println("valid decompositions: $foundValidDecomposition, good decompositions: $veryGoodDecomposition, ok decompositions:$okDecomposition total hard outliers $hardOutliers")
-        println("& ${mDecompositionStructures.sum()} & ${mDecompositionStructures.average()} & ${mDecompositionStructures.median()} & ${mPrecision.sum()} & ${mPrecision.average()} & ${mPrecision.median()} & ${mSize.sum()} & ${mSize.average()} & ${mSize.median()}")
+        println("& ${mDecompositionStructures.sum().format(3)} & ${mDecompositionStructures.average().format(3)} & ${mDecompositionStructures.median().format(3)} &" +
+                //" ${mPrecision.sum().format(3)} & ${mPrecision.average().format(3)} & ${mPrecision.median().format(3)} &" +
+                " ${mSize.sum()} & ${mSize.average().format(3)} & ${mSize.median()}")
     }
 
     private fun generatePlots(evalResult: List<List<Cover>>, options: Options) {
