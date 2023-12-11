@@ -64,13 +64,12 @@ In this particular example, there exists a smaller factor with size 2, $A_2$ whi
 
 Usually, the algorithms and proofs consider unary \DFAs consisting of a chain leading into a cycle of states.
 Since we obtain our \DFAs by transforming from a periodic label, we only have \DFAs with empty chains, therefore only considering unary permutation \DFA.
-This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683} as seen in Algorithm \ref{algo:composite} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$, and we want to compute an \orDecomp.
-Instead of iterating over all potential sets of words $2^\mathcal{W}$, we iterate over the input states and generate possible factors.
+This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683} as seen in Algorithm \ref{algo:novel-greedy} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$, and we want to compute an \orDecomp.
+Instead of iterating over all potential sets of words $2^\mathcal{W}$, we iterate over divisors of $|Q|$ and generate possible factors.
+For each potential factor, we check if we are in a finial state and if the property is periodic in the size of the factor.
 Additionally we are not only interested in answering the yes/no question of the composite problem but we want to collect the factors and continue our computation.
 After all possible factors are computed, they are added greedily to the composite, in the order of their length, until no further changes occur.
-
 \begin{algorithm}[h]
-	\label{algo:composite}
 	\DontPrintSemicolon
 	\SetKwProg{Fn}{Function}{:}{}
 	\Fn{findGreedyComposite($A = \{{a}, Q, q_I , \sigma, F \}$: unary DFA)}{
@@ -102,16 +101,17 @@ After all possible factors are computed, they are added greedily to the composit
 		\KwRet $A'$
 	}
 	\Fn{isPeriodic($A = \{{a}, Q, q_I , \sigma, F \}$: unary DFA, integer $d$, integer $i$)}{
-		$pos \gets (i + d) ~mod~ |A|$\;
+		$pos \gets (i + d) ~mod~ |Q|$\;
 		\While{$pos \not= i$}{
 			\If{$q_{pos} \not\in F$}{
 				\KwRet false\;
 			}
-			$pos \gets (pos + d) ~mod~ |A|$
+			$pos \gets (pos + d) ~mod~ |Q|$
 		}
 	    \KwRet true\;
 	}
 	\caption{Algorithm for greedily computing an \orDecomp for unary DFAs and returning the factors.}
+	\label{algo:novel-greedy}
 \end{algorithm}
 This algorithm finds more factors than required since it also finds the multiples of the maximal divisors.
 In contrast, not all found factors are required to form the decomposition and we only want to add factors, which change the decomposition.
