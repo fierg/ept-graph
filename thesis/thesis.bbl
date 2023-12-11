@@ -2,103 +2,105 @@
 
 \bibitem{Holme_2012}
 Holme, P. and Saramäki, J.,
-\newblock Temporal networks,
+\newblock {Temporal Networks},
 \newblock volume 519, pages 97--125, Elsevier {BV}, 2012.
 
 \bibitem{DBLP:journals/corr/Erlebach0K15}
 Erlebach, T., Hoffmann, M., and Kammer, F.,
-\newblock On temporal graph exploration,
+\newblock {On Temporal Graph Exploration},
 \newblock volume abs/1504.07976, 2015.
 
 \bibitem{DBLP:journals/corr/Michail15}
 Michail, O.,
-\newblock An introduction to temporal graphs: An algorithmic perspective,
+\newblock {An Introduction to Temporal Graphs: An Algorithmic Perspective},
 \newblock volume abs/1503.00278, 2015.
 
 \bibitem{temporal-mining-oettershagen2022tglib}
 Oettershagen, L. and Mutzel, P.,
-\newblock Tglib: An open-source library for temporal graph analysis, 2022.
+\newblock {TGLib: An Open-Source Library for Temporal Graph Analysis}, 2022.
 
 \bibitem{temporal-comunity-detection-8861143}
 Al-sharoa, E., Al-khassaweneh, M.~A., and Aviyente, S.,
-\newblock IEEE Transactions on Signal and Information Processing over Networks
-  {\bf 5} (2019) 723.
+\newblock {Detecting and Tracking Community Structure in Temporal Networks: A
+  Low-Rank + Sparse Estimation Based Evolutionary Clustering Approach},
+\newblock volume~5, pages 723--738, 2019.
 
 \bibitem{arrighi2022multiparameter}
 Arrighi, E., Grüttemeier, N., Morawietz, N., Sommer, F., and Wolf, P.,
-\newblock Multi-parameter analysis of finding minors and subgraphs in edge
-  periodic temporal graphs, 2022.
+\newblock {Multi-Parameter Analysis of Finding Minors and Subgraphs in Edge
+  Periodic Temporal Graphs}, 2022.
 
 \bibitem{temporalLinkPrediction}
 Dunlavy, D.~M., Kolda, T.~G., and Acar, E.,
-\newblock Temporal link prediction using matrix and tensor factorizations,
+\newblock {Temporal Link Prediction Using Matrix and Tensor Factorizations},
 \newblock volume~5, New York, NY, USA, 2011, Association for Computing
   Machinery.
 
 \bibitem{temporalClusterCoefficient}
 Cui, J., Zhang, Y.-Q., and Li, X.,
-\newblock On the clustering coefficients of temporal networks and epidemic
-  dynamics,
+\newblock {On the clustering coefficients of temporal networks and epidemic
+  dynamics},
 \newblock pages 2299--2302, 2013.
 
 \bibitem{temporalEvolution}
 Fu, D., Fang, L., Maciejewski, R., Torvik, V.~I., and He, J.,
-\newblock Meta-learned metrics over multi-evolution temporal graphs,
+\newblock {Meta-Learned Metrics over Multi-Evolution Temporal Graphs},
 \newblock in {\em Proceedings of the 28th ACM SIGKDD Conference on Knowledge
   Discovery and Data Mining}, KDD '22, page 367–377, New York, NY, USA, 2022,
   Association for Computing Machinery.
 
 \bibitem{kerracher2014design}
 Kerracher, N., Kennedy, J., and Chalmers, K.,
-\newblock The design space of temporal graph visualisation.,
+\newblock {The design space of temporal graph visualisation},
 \newblock 2014.
 
 \bibitem{temporal-friends}
 Orlando, D., Ormachea, J., Soliani, V., and Vaisman, A.,
-\newblock Tgv: A visualization tool for temporal property graph databases,
+\newblock {TGV: A Visualization Tool for Temporal Property Graph Databases},
 \newblock 2023.
 
 \bibitem{temporal-information-diffusion}
 Dorner, M., Smite, D., Méndez~Fernández, D., Wnuk, K., and Czerwonka, J.,
-\newblock Only time will tell: Modelling information diffusion in code review
-  with time-varying hypergraphs,
+\newblock {Only Time Will Tell: Modelling Information Diffusion in Code Review
+  with Time-Varying Hypergraphs},
 \newblock pages 195--204, 2022.
 
 \bibitem{tang2009temporal}
 Tang, J., Musolesi, M., Mascolo, C., and Latora, V.,
-\newblock Temporal distance metrics for social network analysis,
+\newblock {Temporal distance metrics for social network analysis},
 \newblock in {\em Proceedings of the 2nd ACM workshop on Online social
   networks}, pages 31--36, 2009.
 
 \bibitem{fu2022dppin}
 Fu, D. and He, J.,
-\newblock Dppin: A biological repository of dynamic protein-protein interaction
-  network data,
+\newblock {DPPIN: A biological repository of dynamic protein-protein
+  interaction network data},
 \newblock in {\em 2022 IEEE International Conference on Big Data (Big Data)},
   pages 5269--5277, IEEE, 2022.
 
 \bibitem{dibrita2022temporal}
 DiBrita, N.~S., Eledlebi, K., Hildmann, H., Culley, L., and Isakovic, A.~F.,
-\newblock Temporal graphs and temporal network characteristics for bio-inspired
-  networks during optimization,
+\newblock {Temporal graphs and temporal network characteristics for
+  bio-inspired networks during optimization},
 \newblock volume~12, page 1315, MDPI, 2022.
 
 \bibitem{clique-mining-epg}
 Qin, H. et~al.,
-\newblock Mining periodic cliques in temporal networks,
+\newblock {Mining Periodic Cliques in Temporal Networks},
 \newblock in {\em 2019 IEEE 35th International Conference on Data Engineering
   (ICDE)}, pages 1130--1141, 2019.
 
 \bibitem{minor-subgraph-epg}
 Arrighi, E., Gr{\"u}ttemeier, N., Morawietz, N., Sommer, F., and Wolf, P.,
-\newblock Multi-parameter analysis of finding minors and subgraphs
-  in edge-periodic temporal graphs,
+\newblock {Multi-Parameter Analysis of Finding Minors and Subgraphs
+  in Edge-Periodic Temporal Graphs},
 \newblock in {\em SOFSEM 2023: Theory and Practice of Computer Science}, edited
   by G{\k{a}}sieniec, L., pages 283--297, Springer, 2023.
 
 \bibitem{erlebach2020game}
 Erlebach, T. and Spooner, J.~T.,
-\newblock A game of cops and robbers on graphs with periodic edge-connectivity,
+\newblock {A Game of Cops and Robbers on Graphs with Periodic
+  Edge-Connectivity},
 \newblock in {\em SOFSEM 2020: Theory and Practice of Computer Science: 46th
   International Conference on Current Trends in Theory and Practice of
   Informatics, SOFSEM 2020, Limassol, Cyprus, January 20–24, 2020,
@@ -106,7 +108,7 @@ Erlebach, T. and Spooner, J.~T.,
 
 \bibitem{prime-languages}
 Kupferman, O. and Mosheiff, J.,
-\newblock Prime languages,
+\newblock {Prime languages},
 \newblock volume 240, pages 90--107, 2015,
 \newblock MFCS 2013.
 
@@ -121,25 +123,26 @@ Jecker, I., Kupferman, O., and Mazzocchi, N.,
 
 \bibitem{DBLP:journals/corr/abs-2107-04683}
 Jecker, I., Mazzocchi, N., and Wolf, P.,
-\newblock Decomposing permutation automata,
+\newblock {Decomposing Permutation Automata},
 \newblock volume abs/2107.04683, 2021.
 
 \bibitem{f2f-bai2019predicting}
 Bai, C. et~al.,
-\newblock Predicting the visual focus of attention in multi-person discussion
-  videos,
+\newblock {Predicting the Visual Focus of Attention in Multi-Person Discussion
+  Videos},
 \newblock in {\em IJCAI 2019}, International Joint Conferences on Artificial
   Intelligence, 2019.
 
 \bibitem{f2f-kumar2021deception}
 Kumar, S., Bai, C., Subrahmanian, V., and Leskovec, J.,
-\newblock Deception detection in group video conversations using dynamic
-  interaction networks,
+\newblock {Deception Detection in Group Video Conversations using Dynamic
+  Interaction Networks},
 \newblock in {\em ICWSM 2021}, International AAAI Conference on Web and Social
   Media, 2021.
 
 \bibitem{DBLP:journals/corr/abs-1904-08355}
 Michail, D., Kinable, J., Naveh, B., and Sichi, J.~V.,
-\newblock CoRR {\bf abs/1904.08355} (2019).
+\newblock {JGraphT - A Java library for graph data structures and algorithms},
+\newblock volume abs/1904.08355, 2019.
 
 \end{thebibliography}
