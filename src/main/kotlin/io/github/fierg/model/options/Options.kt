@@ -24,7 +24,7 @@ data class Options(
                 debug = false,
                 quiet = false,
                 deltaWindowPreprocessing = 0,
-                deltaWindowAlgo = 0,
+                deltaWindowAlgo = 1,
                 threshold = 1.0,
                 allowFullLengthDecomposition = false
             )

@@ -28,7 +28,7 @@ class ChartGenerator {
             Logger.resetLogLevel()
             Logger.info("This took $elapsed.")
 
-            //generatePlots(evalResult, options)
+            generatePlots(evalResult, options)
             generateMetricTables(evalResult, options)
         }
         Logger.info("Done.")
@@ -64,18 +64,19 @@ class ChartGenerator {
         mPrecision = mPrecision.filter { !it.isNaN() }.toMutableList()
         println("valid decompositions: $foundValidDecomposition, good decompositions: $veryGoodDecomposition, ok decompositions:$okDecomposition total hard outliers $hardOutliers")
         println("& ${mDecompositionStructures.sum().format(3)} & ${mDecompositionStructures.average().format(3)} & ${mDecompositionStructures.median().format(3)} &" +
-                //" ${mPrecision.sum().format(3)} & ${mPrecision.average().format(3)} & ${mPrecision.median().format(3)} &" +
+                " ${mPrecision.sum().format(3)} & ${mPrecision.average().format(3)} & ${mPrecision.median().format(3)} &" +
                 " ${mSize.sum()} & ${mSize.average().format(3)} & ${mSize.median()}")
     }
 
     private fun generatePlots(evalResult: List<List<Cover>>, options: Options) {
+        val folder = "./delta-plots/"
         val boxPlot1 =
             Analyzer.createCoverByFactorPlotNormalized(evalResult.flatten(), createBoxPlot = true, showOutliers = false, xS = "Relative Factor Size", yS = "Relative covered values in cover")
-        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-relative-values-by-factor-boxplot.png", boxPlot1, "./plots/box-plots")
+        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-relative-values-by-factor-boxplot.png", boxPlot1, "${folder}box-plots")
 
         val boxPlot2 =
             Analyzer.createCoverByFactorPlotNormalized(evalResult.flatten(), createBoxPlot = true, showOutliers = true, xS = "Relative Factor Size", yS = "Relative covered values in cover")
-        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-relative-values-by-factor-boxplot-outliers.png", boxPlot2, "./plots/box-plots")
+        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-relative-values-by-factor-boxplot-outliers.png", boxPlot2, "${folder}box-plots")
 
         val minDistance = 0.05
         val boxPlot3 =
@@ -87,26 +88,26 @@ class ChartGenerator {
                 xS = "Relative Factor Size (min distance $minDistance)",
                 yS = "Relative covered values in cover"
             )
-        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-relative-values-by-factor-boxplot-dist.png", boxPlot3, "./plots/box-plots")
+        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-relative-values-by-factor-boxplot-dist.png", boxPlot3, "${folder}box-plots")
 
         val boxPlot4 =
             Analyzer.createCoverByFactorPlotNormalized(evalResult.flatten(), createBoxPlot = true, useFactorNrInsteadOfSize = true, xS = "Factor Percentile", yS = "Relative covered values in cover")
-        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-relative-values-by-factor-boxplot-factor-nr.png", boxPlot4, "./plots/box-plots")
+        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-relative-values-by-factor-boxplot-factor-nr.png", boxPlot4, "${folder}box-plots")
 
         val factorPlot1 = Analyzer.createCoverByFactorPlotNormalized(evalResult.flatten(), xS = "Relative Factor Size", yS = "Relative covered values")
-        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-relative-values-by-factor-size.png", factorPlot1, "./plots/point-plots")
+        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-relative-values-by-factor-size.png", factorPlot1, "${folder}point-plots")
 
         val factorPlot2 = Analyzer.createCoverByFactorPlotSum(evalResult.flatten(), xS = "Relative Factor Size", yS = "Sum of Covered Values")
-        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-values-by-factor-sum.png", factorPlot2, "./plots/point-plots")
+        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-values-by-factor-sum.png", factorPlot2, "${folder}point-plots")
 
         val factorPlot3 = Analyzer.createCoverByFactorPlotSum(evalResult.flatten(), normalized = true, xS = "Relative Factor Size", yS = "% of Sum of Covered Values")
-        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-values-by-factor-sum-normalized.png", factorPlot3, "./plots/point-plots")
+        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-values-by-factor-sum-normalized.png", factorPlot3, "${folder}point-plots")
 
         val factorPlot3b = Analyzer.createCoverByFactorPlotSum(evalResult.flatten(), normalized = true, fitCurve = true, xS = "Relative Factor Size", yS = "% of Sum of Covered Values")
-        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-values-by-factor-sum-normalized-curve.png", factorPlot3b, "./plots/point-plots")
+        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-values-by-factor-sum-normalized-curve.png", factorPlot3b, "${folder}point-plots")
 
         val factorPlot4 = Analyzer.createCoverByFactorPlotSum(evalResult.flatten(), byFactorNr = true, xS = "Factor Nr", yS = "Sum of Covered Values")
-        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-values-by-factor-sum-by-factor-nr.png", factorPlot4, "./plots/point-plots")
+        Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-values-by-factor-sum-by-factor-nr.png", factorPlot4, "${folder}point-plots")
     }
 }
 
