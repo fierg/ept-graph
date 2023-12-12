@@ -117,6 +117,7 @@ This algorithm finds more factors than required since it also finds the multiple
 In contrast, not all found factors are required to form the decomposition and we only want to add factors, which change the decomposition.
 In our example in Figure \ref{fig:short-factors} we find $A_2$ and $A_4$, but $A_2$ is fully sufficient for decomposing the \DFA $A$.
 By iterating over all possible factors ordered by size, we can greedily add factors, which are required to form the decomposition.
+The method \textit{factorChangesComposite($A,A'$)} is omitted, as its simply checks if the addition of the factor produces a decomposition with fewer outliers than currently present.
 To address the problem that most of the labels do not have proper decompositions in the mathematical sense, we will also consider a set of smaller automata that do not cover every value of a decomposition.
 For this, we want to keep track of the outliers of each factor and the decomposition itself.
 Regarding explainability, it should be of preference, to have a small factor but a couple of outliers, in comparison to a long factor, and even have a decomposition with hard outliers, e.g. values that cannot be covered by a decomposition.

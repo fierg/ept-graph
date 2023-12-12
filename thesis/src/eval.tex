@@ -133,7 +133,7 @@ This has to be evaluated with a human computer interaction study to weight impro
 	\begin{minipage}[h]{0.49\linewidth}
 		\centering
 		GreedyShortFactor\\
-		+ Delta window
+		+ Delta window ($\Delta_1$)
 		\includegraphics[width=\linewidth]{../delta-plots/box-plots/GREEDY_SHORT_FACTORS-OR-all-relative-values-by-factor-boxplot-dist.png}
 	\end{minipage}
 	\begin{minipage}[h]{0.49\linewidth}
@@ -142,7 +142,7 @@ This has to be evaluated with a human computer interaction study to weight impro
 		\hfill \break
 		\includegraphics[width=\linewidth]{../plots/box-plots/FOURIER_TRANSFORM-OR-all-relative-values-by-factor-boxplot-outliers.png}
 	\end{minipage}
-	\caption{Relative amount of covered values by relative factor size (Fourier Transform \& GreedyShortFactors with delta window)}
+	\caption{Relative amount of covered values by relative factor size (Fourier Transform \& GreedyShortFactors with delta window of size 1)}
 	\label{fig:eval:greedy-short-factors-all-factors-box-plot-delta}
 \end{figure}
 
@@ -154,46 +154,58 @@ For a proper analysis regarding the explainability and the possibility to compre
 
 \section{Explainability Evaluation}
 \label{ch:Evaluation:explainability}
-
-
+Our analysis now turn towards the evaluation of the explainability metric, presented in Section \ref{ch:explainability:metric}.
+As our greedy methods do not find better decompositions, only more factors, the quality is the same for different methods.
+It is to be noted, that the precision over all graphs is very low for the general \orDecomp, with only an average precision of 8\% (see Figure \ref{tab:eval-precision}) and only 3 valid decompositions.
+When also enabling the delta window with width 1, the precision increases drastically and we have over a thousand decompositions with at least 90\% precision. 
 \begin{table}[h]
 	\centering
 	\begin{tabular}{l|rr|rrr}
-		\multicolumn{1}{c}{Method} & \multicolumn{2}{c}{Precision} & \multicolumn{3}{c}{Decomposition Quality} \\
+		\multicolumn{1}{c}{Decomposition} & \multicolumn{2}{c}{Precision [\%]} & \multicolumn{3}{c}{Decomposition Quality} \\
 		& avg. & median & valid & $p \geq 90$ & $p \geq 75$ \\
 		\hline
-		\andDecomp & 0.86 & 0.93 &  182 & 1908 & 2670\\
-		\orDecomp & 0.08 & 0.03 & 3 & 3 & 3 \\
-		\orDecomp + $\Delta_1$ & 0.70 & 0.74 & 3 & 1091 & 1636  \\
-		\orDecomp + $\Delta_2$ & 0.74 & 0.79 & 3 & 1277 & 1772 \\
+		\orDecomp & 8 & 3 & 3 & 3 & 3 \\
+		\orDecomp + $\Delta_1$ & 70 & 74 & 3 & 1091 & 1636 \\
+		\orDecomp + $\Delta_2$ & 74 & 79 & 3 & 1277 & 1772 \\
+		\andDecomp & 86 & 93 &  182 & 1908 & 2670\\
 	\end{tabular}
-	\caption{Precision for \andDecomp and \orDecomp}
+	\caption{Precision for \orDecomp ($\cup$) and \andDecomp ($\cap$)}
 	\label{tab:eval-precision}
 \end{table}
-
-
-\begin{table}[h]
+Further increasing the delta window to size 2 does improve precision, but not by that much.
+Even with the delta window size of 2 we do not encounter more valid decompositions.
+The \andDecomp as on average much higher precision of 86\% and finds 182 valid decompositions out of the 3321 edges, and 1908 decompositions with precision $\geq 90\%$
+This is partially explained by the higher amount of 0 values in the input data as previously mentioned.
+Looking at the other metrics, decomposition structure and size of the decomposition, we see different result for different methods.
+The MaxDivisor approach finds very few factors on average, 2.1 when using an \andDecomp and only one when using an \orDecomp.
+The novel greedy approach finds more factors and also smaller ones, subsequently the decomposition structure metric is better for \andDecomp and \orDecomp.
+When considering also the delta window of size one or two, we find many more factors with up to 5.2 on average.
+With an decomposition structure value of 0.116 we find also small factors as part of the \orDecomp, which is desired.
+The FourierTransform method is only viable for regular \orDecomp but outperforms both other methods in terms of decomposition size and decomposition structure value.
+With an average decomposition structure of below 0.1 we seem to find lots of small factors.
+\begin{table}[b]
 	\centering
 	\begin{tabular}{ll|rr|rrr}
 		\multicolumn{2}{c}{Method} &  \multicolumn{2}{c}{DS} & \multicolumn{3}{c}{Size}  \\
-		& & avg. & median & $\Sigma$ & avg. & median\\
+		& & avg. & median & avg. & median & $\Sigma$ \\
 		\hline
-		\multirow{2}{*}{MaxDivisors} & $\cap$ & 0.213 & 0.201 & 7010 & 2.111 & 2 \\
-		& $\cup$ & 0.752 & 0.661 & 3629 & 1.093 & 1 \\
+		\multirow{2}{*}{MaxDivisors} 
+		& $\cup$ & 0.752 & 0.661 &  1.093 & 1 & 3629 \\
+		& $\cap$ & 0.213 & 0.201  & 2.111 & 2 & 7010 \\
 		\hline
-		\multirow{2}{*}{GreedyShortFactors} & $\cap$  & 0.116 & 0.006 & 17247 & 5.193 & 3 \\
-		& $\cup$ & 0.718 & 0.661 & 4095 & 1.233 & 1 \\
-		& $\cup + \Delta_1$ & 0.116 & 0.001  & 16265 & 4.898 & 3\\
-		& $\cup + \Delta_2$ & 0.115 & 0.001  & 17539 & 5.281 & 3\\
+		\multirow{4}{*}{GreedyShortFactors}
+		& $\cup$ & 0.718 & 0.661  & 1.233 & 1 & 4095\\
+		& $\cup + \Delta_1$ & 0.116 & 0.001   & 4.898 & 3& 16265\\
+		& $\cup + \Delta_2$ & 0.115 & 0.001   & 5.281 & 3& 17539\\
+		& $\cap$  & 0.125 & 0.006 & 5.193 & 3  & 17247\\
 		\hline
-		FourierTransform & $\cup$ & 0.066 & 0.001 & 7368 & 2.219 & 2 \\
+		FourierTransform & $\cup$ & 0.066 & 0.001 & 2.219 & 2  & 7368\\
 	\end{tabular}
 	\caption{Explainability metrics for different methods}
 	\label{tab:eval-metric}
 \end{table}
 
 
-TODO: explain
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: "thesis"
