@@ -39,7 +39,7 @@ A collection of labels with distinct information is generally easier for humans 
 Therefore, generally, a decomposition with many factors is preferred over a decomposition with few factors.
 
 To get some insight, consider the following imaginary example decompositions $\mathcal{D}$ to $\mathcal{D}''''$ of a \DFA with $|Q| = 100$ and $|F| = 50$.
-A zero in Figure \ref{tab:metric-example-decompositions} for any given factor size, implies that the decomposition with largest factor $\mathcal{D}_i$ has zero outliers and covers the complete input \DFA with a factor of this size, a dash implies that a decomposition with largest factor of this size covers no final states at all.
+A zero in Figure \ref{tab:metric-example-decompositions} for any given factor size, implies that the decomposition with largest factor $\mathcal{D}_i$ of that size has zero outliers and covers the complete input \DFA with a factor of this size, a dash implies that a decomposition with largest factor of this size covers no final states at all.
 \begin{table}[h]
 	\centering
 	\begin{tabular}{l|ccccc|lllcc}
@@ -67,8 +67,8 @@ In general, a low decomposition structure as well as high precision and size, al
 
 \section{Explainability Measurement}
 
-To measure the proposed explainability metric for edge periodic temporal graphs, a systematic approach is employed, utilizing real-world data from face-to-face (F2F) graphs.
-Existing algorithms for \DFA decomposition as well as novel approaches designed for explainable decomposition construction are used and the resulting decompositions are evaluated using the described metrics.
+To measure the proposed explainability metric for edge periodic temporal graphs, a systematic approach is employed, utilizing real-world data from face-to-face graphs.
+Existing algorithms for \DFA \andDecomp as well as novel approaches designed for explainable \orDecomp construction are used and the resulting decompositions are evaluated using the described metrics.
 For a more complete analysis of the quality of the measured explainability, a study with a human-computer interaction focus would be required but is out of scope for this project.
 Motivating the example from the introduction, an experiment quantifying the possibility with which humans can comprehend the structure of temporal or edge periodic graphs could include a train network. 
 If two groups of people are given the same network, one group becomes a description in the form of a temporal graph and the other an edge periodic multi-graph.

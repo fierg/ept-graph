@@ -126,7 +126,7 @@ Looking at the distribution of relative covered values, we see that even with fa
 	\label{fig:eval:greedy-short-factors-all-factors-box-plot}
 \end{figure}
 This shows that the greedy approach of finding short factors, can find factors which cover more of the input at a smaller relative factor size.
-When enabling the delta window of width 1, the distributions change drastically, factors $\leq \frac{1}{3}$ of the original size cover up to 100\% of the input, with the median above 50\%.
+When enabling the delta window of width 1, the distributions change drastically, factors $\leq \frac{1}{3}$ of the original size cover up to 100\% of the input, with the median above 50\%, see Figure \ref{fig:eval:greedy-short-factors-all-factors-box-plot-delta} on the left.
 So the delta window drastically improves the effectiveness of finding \orDecomp when few values are set to 1, while on the other hand accuracy drops with each delta window increase.
 This has to be evaluated with a human computer interaction study to weight improve effectiveness against a washed out result, since a 1 in a label now implies that an eges is present in the range  $[t, t + \Delta]$.
 \begin{figure}[b]
@@ -148,11 +148,10 @@ This has to be evaluated with a human computer interaction study to weight impro
 
 \subsection{Fourier-Transform Decomposition Evaluation}
 \label{ch:Evaluation:decomposition-quality:fourier}
-Moving on with the analysis of the Fourier-transformed factors, we see more factors but with the same quality since we do not find new ones, we just separate them into their  single state components.
+Moving on with the analysis of the Fourier-transformed factors, we see more factors in Figure \ref{fig:eval:greedy-short-factors-all-factors-box-plot-delta} on the right, but with the same quality since we do not find new ones, we just separate them into their  single state components.
 The goal for the Fourier-transformed \orDecomp was the increase explainability, so we have to evaluate the metrics for this approach.
 For a proper analysis regarding the explainability and the possibility to comprehend the factors as periodic elements of a temporal graph, has to be evaluated in a qualitative way.
 
-\newpage
 \section{Explainability Evaluation}
 \label{ch:Evaluation:explainability}
 
@@ -160,8 +159,8 @@ For a proper analysis regarding the explainability and the possibility to compre
 \begin{table}[h]
 	\centering
 	\begin{tabular}{l|rr|rrr}
-		& \multicolumn{2}{c}{precision} & \multicolumn{3}{c}{decomposition quality} \\
-		& average & median & valid & $p \geq 90$ & $p \geq 75$ \\
+		\multicolumn{1}{c}{Method} & \multicolumn{2}{c}{Precision} & \multicolumn{3}{c}{Decomposition Quality} \\
+		& avg. & median & valid & $p \geq 90$ & $p \geq 75$ \\
 		\hline
 		\andDecomp & 0.86 & 0.93 &  182 & 1908 & 2670\\
 		\orDecomp & 0.08 & 0.03 & 3 & 3 & 3 \\
@@ -176,8 +175,8 @@ For a proper analysis regarding the explainability and the possibility to compre
 \begin{table}[h]
 	\centering
 	\begin{tabular}{ll|rr|rrr}
-		& &  \multicolumn{2}{c}{DS} & \multicolumn{3}{c}{size}  \\
-		& & avg & median & $\Sigma$ & avg & median\\
+		\multicolumn{2}{c}{Method} &  \multicolumn{2}{c}{DS} & \multicolumn{3}{c}{Size}  \\
+		& & avg. & median & $\Sigma$ & avg. & median\\
 		\hline
 		\multirow{2}{*}{MaxDivisors} & $\cap$ & 0.213 & 0.201 & 7010 & 2.111 & 2 \\
 		& $\cup$ & 0.752 & 0.661 & 3629 & 1.093 & 1 \\
