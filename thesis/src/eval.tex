@@ -126,33 +126,52 @@ Looking at the distribution of relative covered values, we see that even with fa
 	\label{fig:eval:greedy-short-factors-all-factors-box-plot}
 \end{figure}
 This shows that the greedy approach of finding short factors, can find factors which cover more of the input at a smaller relative factor size.
-
+When enabling the delta window of width 1, the distributions change drastically, factors $\leq \frac{1}{3}$ of the original size cover up to 100\% of the input, with the median above 50\%.
+So the delta window drastically improves the effectiveness of finding \orDecomp when few values are set to 1, while on the other hand accuracy drops with each delta window increase.
+This has to be evaluated with a human computer interaction study to weight improve effectiveness against a washed out result, since a 1 in a label now implies that an eges is present in the range  $[t, t + \Delta]$.
 \begin{figure}[b]
-	\begin{minipage}[h]{0.49\linewidth}
-		\centering
-		Fourier Transform
-		\includegraphics[width=\linewidth]{../plots/box-plots/FOURIER_TRANSFORM-OR-all-relative-values-by-factor-boxplot-outliers.png}
-	\end{minipage}
 	\begin{minipage}[h]{0.49\linewidth}
 		\centering
 		GreedyShortFactor\\
 		+ Delta window
 		\includegraphics[width=\linewidth]{../delta-plots/box-plots/GREEDY_SHORT_FACTORS-OR-all-relative-values-by-factor-boxplot-dist.png}
 	\end{minipage}
+	\begin{minipage}[h]{0.49\linewidth}
+		\centering
+		Fourier Transform\\
+		\hfill \break
+		\includegraphics[width=\linewidth]{../plots/box-plots/FOURIER_TRANSFORM-OR-all-relative-values-by-factor-boxplot-outliers.png}
+	\end{minipage}
 	\caption{Relative amount of covered values by relative factor size (Fourier Transform \& GreedyShortFactors with delta window)}
 	\label{fig:eval:greedy-short-factors-all-factors-box-plot-delta}
 \end{figure}
 
-
 \subsection{Fourier-Transform Decomposition Evaluation}
 \label{ch:Evaluation:decomposition-quality:fourier}
 Moving on with the analysis of the Fourier-transformed factors, we see more factors but with the same quality since we do not find new ones, we just separate them into their  single state components.
-
-
+The goal for the Fourier-transformed \orDecomp was the increase explainability, so we have to evaluate the metrics for this approach.
+For a proper analysis regarding the explainability and the possibility to comprehend the factors as periodic elements of a temporal graph, has to be evaluated in a qualitative way.
 
 \newpage
 \section{Explainability Evaluation}
 \label{ch:Evaluation:explainability}
+
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{l|rr|rrr}
+		& \multicolumn{2}{c}{precision} & \multicolumn{3}{c}{decomposition quality} \\
+		& average & median & valid & $p \geq 90$ & $p \geq 75$ \\
+		\hline
+		\andDecomp & 0.86 & 0.93 &  182 & 1908 & 2670\\
+		\orDecomp & 0.08 & 0.03 & 3 & 3 & 3 \\
+		\orDecomp + $\Delta_1$ & 0.70 & 0.74 & 3 & 1091 & 1636  \\
+		\orDecomp + $\Delta_2$ & 0.74 & 0.79 & 3 & 1277 & 1772 \\
+	\end{tabular}
+	\caption{Precision for \andDecomp and \orDecomp}
+	\label{tab:eval-precision}
+\end{table}
+
 
 \begin{table}[h]
 	\centering
@@ -174,20 +193,6 @@ Moving on with the analysis of the Fourier-transformed factors, we see more fact
 	\label{tab:eval-metric}
 \end{table}
 
-\begin{table}[h]
-	\centering
-	\begin{tabular}{l|rr|rrr}
-		 & \multicolumn{2}{c}{precision} & \multicolumn{3}{c}{decomposition quality} \\
-		 & average & median & valid & $p \geq 90$ & $p \geq 75$ \\
-		 \hline
-		 \andDecomp & 0.86 & 0.93 &  182 & 1908 & 2670\\
-		 \orDecomp & 0.08 & 0.03 & 3 & 3 & 3 \\
-		 \orDecomp + $\Delta_1$ & 0.70 & 0.74 & 3 & 1091 & 1636  \\
-		 \orDecomp + $\Delta_2$ & 0.74 & 0.79 & 3 & 1277 & 1772 \\
-	\end{tabular}
-	\caption{Precision for \andDecomp and \orDecomp}
-	\label{tab:eval-precision}
-\end{table}
 
 TODO: explain
 %%% Local Variables: 
