@@ -84,9 +84,22 @@ Since we obtain a decomposition family, we might need to replace the original te
 \section{Structure of this Work}
 %% ==============================
 \label{ch:Intoduction:sec:Structure}
-This work is structured into a first introduction into the basics of EPGs and an analysis of the current state of the art.
-Then, the conceptual design is depicted with a following analysis of the results.
-Afterwards, the implementation of the algorithms are described and the work as a whole is evaluated with a short closing discussion.  
+This work is structured into a first introduction to notation and a survey of the current state of the art of temporal and edge periodic graph analysis as well as the decomposition of \DFAs.
+Following this, the used real-world data sets are described, in particular the F2F graphs.
+The core of the document revolves around the decomposition of edge labels by decomposing \DFAs.
+Section \ref{ch:analysis} explains the decomposition of \DFAs and unary \DFAs, while Section \ref{ch:analysis:max-divisors} explores a decomposition method employing maximal divisors.
+A dedicated section (Section \ref{chap:and-vs-or}) compares AND vs OR decomposition.
+The aspect of \enquote{explainability} and explainable edge labels or decompositions for human analysis is thoroughly examined in Section \ref{ch:explainability}.
+This includes the introduction of an explainability metric and the methodology for measuring explainability.
+Novel approaches to the problem are presented in Section \ref{ch:novel-algos}, including Greedy Short Factors and Fourier Transform 
+Additionally, a problem generalization is formally analyzed.
+The subsequent sections detail the implementation of these approaches in Section \ref{ch:Implementation} and their evaluation in Section \ref{ch:Evaluation}.
+The evaluation includes both performance and decomposition assessments, with a breakdown of different methods of decomposition.
+Furthermore, the document assesses the explainability of the proposed methods.
+Finally, the document concludes with a discussion (Section \ref{ch:Discussion}) where the findings are contextualized, and implications are explored.
 
-TODO: finish when rest is done
+
+
+
+
 
