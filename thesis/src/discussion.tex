@@ -5,15 +5,17 @@
 \chapter{Discussion}
 \label{ch:Discussion}
 %% ==============================
-Moving on to the conclusion and discussion, the introduced methods for obtaining explainable factors for comprehensible edge labels work, although it is not particularly suited for the given real world data-set, due to the abundance of zero values in the input labels.
+Moving on to the conclusion and discussion, the introduced methods for obtaining explainable factors for comprehensible edge labels work, although it is not particularly suited for the given real-world data-set, due to the abundance of zero values in the input labels.
 The greedy approach of finding shorter factors proved to be working and showed that an \orDecomp can be found in some cases and that it ranked better in the explainability metric compared to the maximal divisor approach and had more factors.
-When accuracy is not of greatest importance, a delta window approach can be deployed to further increase the effectiveness.
-The Fourier-transform approach of finding labels with only a single value set, outperformed in the decomposition structure metric but took considerably more time to compute.
-For the selected real word data-set, the \orDecomp was outperformed by any \andDecomp so it is also potentially interesting, to further analyze the possibility to visualize and \andDecomp in a way, that humans can easily comprehend the provided information.
-As previously mentioned, these findings and the underlying metric should be validated in an human computer interaction study to reassure the correctness and implications. 
+When accuracy is not of the greatest importance, a delta window approach can be deployed to further increase the effectiveness.
+The Fourier-transform approach of finding labels with only a single value set outperformed the decomposition structure metric but took considerably more time to compute.
+For the selected real word data-set, the \orDecomp was outperformed by any \andDecomp so it is also potentially interesting, to further analyze the possibility of visualizing and \andDecomp in a way, that humans can easily comprehend the provided information.
+As previously mentioned, these findings and the underlying metric should be validated in a human-computer interaction study to reassure the correctness and implications. 
 
-When extrapolating to the train schedule example, a train station has not necessarily only one outgoing edge at a given time step as the face-to-face network does, but it is safe to assume that for a majority of time intervals, there is no train leaving a station.
+When extrapolating to the train schedule example, a train station does not necessarily have only one outgoing edge at a given time step as the face-to-face network does, but it is safe to assume that for a majority of time intervals, there is no train leaving a station.
 It might be applicable for a \andDecomp or an \orDecomp with flipped input, then a set value would imply no train leaving which is an unconventional way of providing information, but not infeasible.
+Also, the Fourier-transformed factors allow for a different representation than factors with multiple values set, as they just consist of the information at which index a periodic value sits, and with which size it periodically repeats, which was not visualized yet.
+
 
 %%% Local Variables: 
 %%% mode: latex
