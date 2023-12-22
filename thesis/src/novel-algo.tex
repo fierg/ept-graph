@@ -7,9 +7,9 @@ If we have a \orDecomp where a small factor covers most of the original \DFA, bu
 \section{Greedy Short Factors}
 \label{ch:novel-algos:greedy-short-factors}
 Searching for a decomposition using only the maximal divisors of $|Q|$, provides good solutions in \LogSpace, but there are certain limitations.
-Consider for example Figure \ref{fig:short-factors} depicting the trivial \DFA $A$ with its factors $A_2$ and $A_4$.
+Consider for example Figure \ref{fig:short-factors} depicting the \DFA $A$ with its factors $A_2$ and $A_4$.
 Since for this \DFA, $|Q| = 8$, the only maximal divisor is 4 so the factor $A_4$ will be found by the original algorithm.
-In this particular example, there exists a smaller factor with size 2, $A_2$ which will only be found if checking all factors of $|Q|$ instead of only the maximal divisors.
+In this particular example, there exists a smaller factor with size 2, $A_2$ which will only be found if all factors of $|Q|$ are checked instead of only the maximal divisors.
 
 \begin{figure}[h]
 	\begin{minipage}[t]{\textwidth}
@@ -64,7 +64,7 @@ In this particular example, there exists a smaller factor with size 2, $A_2$ whi
 
 Usually, the algorithms and proofs consider unary \DFAs consisting of a chain leading into a cycle of states.
 Since we obtain our \DFAs by transforming from a periodic label, we only have \DFAs with empty chains, therefore only considering unary permutation \DFA.
-This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683} as seen in Algorithm \ref{algo:novel-greedy} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$, and we want to compute an \orDecomp.
+This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683} as visible in our Algorithm \ref{algo:novel-greedy} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$, and we want to compute an \orDecomp.
 Instead of iterating over all potential sets of words $2^\mathcal{W}$, we iterate over divisors of $|Q|$ and generate possible factors.
 For each potential factor, we check if we are in a finial state and if the property is periodic in the size of the factor.
 Additionally we are not only interested in answering the yes/no question of the composite problem but we want to collect the factors and continue our computation.

@@ -13,9 +13,8 @@ This metric aims to enhance our ability to analyze a decomposition and comprehen
 
 \section{Explainability Metric}
 \label{ch:explainability:metric}
-The comprehensive nature of the proposed metric is crucial.
-By considering factors like decomposition structure, precision, and size, it offers a holistic evaluation of label explainability.
-A standardized metric facilitates comparative analysis across different graphs and so this comparison allows for the selection of methods and different parameters in the algorithm to make it more understandable by humans.
+TODO: rewrite introduction
+
 For a \DFA $A$, and its decomposition $(B_i)_{1 \leq i \leq k}$, we evaluate the following metrics:
 
 \textbf{Decomposition Structure} ($\operatorname{DS} =  \underset{factor~ B_i}{\Pi}\frac{|B_i|}{\text{|A|}} \cdot (1 + \frac{out_{\{B_1,\dots,B_i\}}}{|F|})$)
@@ -24,14 +23,14 @@ The decomposition structure is the sum of all relative factor sizes, weighted by
 It takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels.
 Labels with multiple shorter segments may facilitate explanation, as they enable a more granular understanding of connectivity changes at different time steps if they cover a relatively high amount of values.
 For example, dividing the label into daily or weekly segments that represent more or less the long temporal label could aid in interpreting temporal patterns.
-A few small factors with few outliers imply a small decomposition structure value, which is visible in Figure \ref{tab:metric-example-decompositions} for decomposition $\mathcal{D}$, a large factor, covering not many values implies a high decomposition structure value, see decomposition $\mathcal{D}''''$.
+A few small factors with few outliers imply a small decomposition structure value, which is visible in Figure \ref{tab:metric-example-decompositions} for decomposition $\mathcal{D}$, a large factor, covering not many values implies a high decomposition structure value, see decomposition $\mathcal{D}^4$.
 Generally, a low DS value is expected to be more explainable by a human interpreter. 
 
 \textbf{Precision} ($\operatorname{precision} = \frac{|F| - out_{\{B_1,\dots,B_k\}}}{|F|}$)
 
 Precision refers to the regularity of patterns in the label across different time steps.
 A decomposition that has a high precision value, implies that there are few outliers and many of the actual values can be read from the factors.
-Low precision implies that the decomposition covers only a few values for example in Figure \ref{tab:metric-example-decompositions} in decomposition $D'''$, requiring either a list of all outliers to fully understand the full picture.
+Low precision implies that the decomposition covers only a few values for example in Figure \ref{tab:metric-example-decompositions} in decomposition $\mathcal{D}^4$, requiring either a list of all outliers to fully understand the full picture.
 A high precision is always preferred for an explainable label. 
 
 \textbf{Size} ($k$)
@@ -40,7 +39,7 @@ The decomposition size is fundamental in assessing explainability.
 A collection of labels with distinct information is generally easier for humans to understand, as it conveys information succinctly.
 Therefore, generally, a decomposition with many factors is preferred over a decomposition with few factors.
 
-To get some insight, consider the following imaginary example decompositions $\mathcal{D}$ to $\mathcal{D}''''$ of a \DFA with $|Q| = 100$ and $|F| = 50$.
+To get some insight, consider the following imaginary example decompositions $\mathcal{D}$ to $\mathcal{D}^4$ of a \DFA with $|Q| = 100$ and $|F| = 50$.
 A zero in Figure \ref{tab:metric-example-decompositions} for any given factor size, implies that the decomposition with largest factor $\mathcal{D}_i$ of that size has zero outliers and covers the complete input \DFA with a factor of this size, a dash implies that a decomposition with largest factor of this size covers no final states at all.
 \begin{table}[h]
 	\centering
@@ -50,10 +49,10 @@ A zero in Figure \ref{tab:metric-example-decompositions} for any given factor si
 		& 4 & 5 & 10 & 20 & 50 & & & & & \\
 		\hline
 		$\mathcal{D}$ & 25 & 0 & &  & & 0.02 & 0.11 & 0.003 & 100 & 2\\		
-		$\mathcal{D}'$ & - & 30 & 20 & 0 & & 0.07 & 0.22& 0.011 & 100 & 3\\
-		$\mathcal{D}''$ & - & - & - & 40 & 2 & 0.18 & 0.88 & 0.187 &  96 & 2\\
-		$\mathcal{D}'''$ & - & - & - & 45 & 29 & 0.47 & 1.13 & 0.3 & 26 & 2\\
-		$\mathcal{D}''''$ & - & - & - & - & 40 & 0.40 & 0.90 & 0.9 & 20 & 1\\
+		$\mathcal{D}^1$ & - & 30 & 20 & 0 & & 0.07 & 0.22& 0.011 & 100 & 3\\
+		$\mathcal{D}^2$ & - & - & - & 40 & 2 & 0.18 & 0.88 & 0.187 &  96 & 2\\
+		$\mathcal{D}^3$ & - & - & - & 45 & 29 & 0.47 & 1.13 & 0.3 & 26 & 2\\
+		$\mathcal{D}^4$ & - & - & - & - & 40 & 0.40 & 0.90 & 0.9 & 20 & 1\\
 	\end{tabular}
 	\caption{Example decompositions and their outliers of combined factors}
 	\label{tab:metric-example-decompositions}
@@ -61,10 +60,10 @@ A zero in Figure \ref{tab:metric-example-decompositions} for any given factor si
 In this example, $\mathcal{D}$ is considered to be a very good decomposition after all metrics.¸
 It has only two factors of size 4 and 5, that cover the original \DFA with a precision of 100\%.
 The decomposition structure is small as the two factors are small relative to the input size and the second factor is only included in the sum with a weight of 1 if there are no outliers.
-$\mathcal{D}'$ is similarly well decomposed, with a small decomposition structure and also a precision of 100\%.
+$\mathcal{D}^1$ is similarly well decomposed, with a small decomposition structure and also a precision of 100\%.
 Although it has slightly larger factors, there might be a benefit in having more factors with different sizes when extracting semantic meaning.
-$\mathcal{D}''$ only consists of only two larger factors, but only has a few hard outliers, compared to $\mathcal{D}'''$ with a precision of 26\%.
-The last decomposition $\mathcal{D}''''$ has only a large factor with many hard outliers, which implies that it is hard to explain in a periodic way.
+$\mathcal{D}^2$ only consists of only two larger factors, but has a few hard outliers, compared to $\mathcal{D}^3$ with a precision of 26\%.
+The last decomposition $\mathcal{D}^4$ has only a large factor with many hard outliers, which implies that it is hard to explain in a periodic way.
 In general, a low decomposition structure as well as high precision and size, allow for greater \enquote{explainability}.
 
 \section{Explainability Measurement}

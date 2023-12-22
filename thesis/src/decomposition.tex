@@ -37,7 +37,7 @@ As our goal is to represent general dynamic networks and temporal graphs as EPGs
 				\node (E) at (1,3) {};
 			\end{scope}
 			
-			\draw (A) edge[bend left, below,"101"] (B)
+			\path (A) edge[bend left, below,"101"] (B)
 			(A) edge[bend right, below,"0001"] (B)
 			(B) edge["100"] (C)
 			(D) edge[bend right, below,"0100"] (C)
@@ -51,17 +51,19 @@ As our goal is to represent general dynamic networks and temporal graphs as EPGs
 		EPG with multi edges but short labels
 	\end{minipage}
 	\caption{Desired transformation of temporal graphs into EPGs}
+	\label{fig:transformation}
 \end{figure}
-To transform the long, confusing schedule from the example in Section \ref{ch:Introduction:sec:Motivation} into a periodic and clear schedule, the temporal graph needs to be broken down and transformed into an edge periodic graph.
+To transform the long, confusing schedule from the example in Section \ref{ch:Introduction:sec:Motivation} into a periodic and clear schedule, the temporal graph needs to be broken down and transformed into an edge periodic graph, see Figure~\ref{fig:transformation}.
 To transform a temporal graph, for each label the shortest possible string $w'$ which is equal to the original label at every time step $\forall t \geq 0, \tau(e)[t] = w'[t]$ has to be found.
-This $w'$ can itself be composed by combining different words $w_1,w_2,\dots,w_n$.
+This $w'$ can itself be composed by combining multiple words $w_1,w_2,\dots,w_n$ of different length, with $w'[t] = 1$ if there is an $w_i$ with $w_i[t~mod~\ell(w_i)] = 1$ which represent the periodic components of the original label.
+Representing it as graph, the edges become multi edges, one for each word representing the original label.
 Initially, we start with a temporal graph where all edge labels $\tau(e)$ have fixed length and there are no periods present.
 To find and analyze such words in the given labels, the label is interpreted as a \DFA, and an algorithm for decomposing \DFAs is adapted to our problem to find smaller \DFAs called factors.
 To apply the algorithm that is defined for automata, a label $ w \in \{0,1\}^*$ is interpreted as an unary \DFA.
 In the label either the $0s$ or the $1s$ symbols are used to represent final states $F$, see Figure \ref{fig:equivalence-label-dfa}.
 The algorithm from \cite{DBLP:journals/corr/abs-2107-04683} which is also described in closer detail in Section \ref{ch:analysis:max-divisors} as well as two novel algorithms are used for decomposing \DFAs.
-Since we only represent unary automata with \textbf{$|\Sigma| = 1$} and therefore only have a single transition from each state, basically forming a simple circle of all possible states.
-This means that for a period length of $i$ we only have to check $i$ states on the circle being in the same state.
+We only represent unary automata with \textbf{$|\Sigma| = 1$} and therefore only have a single transition from each state, basically forming a simple cycle of all possible states.
+This means that for a period length of $i$ we only have to check $i$ states on the cycle being in the same state.
 Decomposing the obtained \DFA results in a family of smaller \DFAs, with $\cap^k_{i=1} L(\mathcal{A}_i)$ which can be interpreted as a set of binary labels $w_i$ and their bitwise intersection $\land^k_{i=1} w_i$ equals $w'$.
 Either the bit-wise intersection over all found words is assigned the new label, or each word obtained by interpreting a factor can be its own label, forming an edge periodic multi-graph. 
 
@@ -105,7 +107,7 @@ Either the bit-wise intersection over all found words is assigned the new label,
 A \DFA $\mathcal{A}$ is composite if its language $L(\mathcal{A})$ can be decomposed into an intersection $\cap^k_{i=1} L(\mathcal{A}_i)$ of languages of smaller \DFAs. Otherwise, $\mathcal{A}$ is prime.
 This notion of \textit{primality} was introduced by Kupferman and Mosheiff in \cite{prime-languages}, and they proved that we can decide whether a \DFA is composite in \ExpSpace and later in \cite{unara-prime-languages}, the decomposition question for unary \DFAs was proven to be in \LogSpace.
 In the paper~\cite{DBLP:journals/corr/abs-2107-04683} by Jecker, Mazzocchi, and Wolf, they provided a \LogSpace algorithm for commutative permutation \DFAs, if the alphabet size is fixed.
-This also puts the bounded $k$-composite question for unary \DFAs in the \LogSpace complexity class, since unary \DFAs are commutative permutation \DFAs by definition.
+This also puts the bounded $k$-composite question for unary \DFAs in the \LogSpace complexity class, since the unary \DFAs we obtain from parsing labels, are commutative permutation \DFAs by definition.
 See Table \ref{tab:dfa-decomp-complexity} for all complexity bounds.
 The decomposition of unary \DFAs is usually characterized by utilizing clean quotients. Let  $A = \lbrace\Sigma, Q, q_I , \sigma, F\rbrace$ be a unary \DFA.
 A clean quotient $A_d$ of $A$ is a \DFA obtained by folding its cycle of length $l$ to a cycle of length $d$, for some strict divisor $d$ of $l$. Formally, $A_d$ is induced by the equivalence relation $\sim_d$ defined by:
@@ -171,20 +173,20 @@ By only considering maximal divisors the complexity can be further improved, whi
 
 \section{Decomposition of \DFAs Using Maximal Divisors}
 \label{ch:analysis:max-divisors}
-The idea of folding \DFAs was greatly improved by Jecker, Mazzocchi, and Wolf in \cite{DBLP:journals/corr/abs-2107-04683} by limiting the potential factors to maximal divisors instead of strict divisors of $d$.
+The idea of folding \DFAs was greatly improved by Jecker, Mazzocchi, and Wolf in~\cite{DBLP:journals/corr/abs-2107-04683} by limiting the potential factors to maximal divisors instead of strict divisors of~$d$.
 This can be done because every factor with length $i_1$ where $i_1$ is not a maximal divisor of $|Q|$, there is a factor with length $i_2$ and an integer $n \in \mathbb{N}$ such that $n \cdot i_1 = i_2$ and the factor with $i_2$ will also cover all the values of the $i_1$ factor.
-This property will be useful in another way later in Chapter \ref{chap:novel-algos} when searching for shorter factors instead of as few factors as possible.
+This property will be useful in another way later in Chapter \ref{ch:novel-algos} when searching for shorter factors instead of as few factors as possible.
 
-Algorithm 3 from \cite{DBLP:journals/corr/abs-2107-04683}, solves the bounded decomposition problem for an unary \DFA $A$, by iterating over all $2^\mathcal{W}$ possible word combinations from  $\mathcal{W} = \{a^{|Q|/p_i} | 1 \geq i \geq m\}$ and finding a selection of $k$ words from the set, that cover all the rejecting states of $A$.
+Algorithm 3 from~\cite{DBLP:journals/corr/abs-2107-04683}, solves the bounded decomposition problem for an unary \DFA~$A$, by iterating over all $2^\mathcal{W}$ possible word combinations from  $\mathcal{W} = \{a^{|Q|/p_i} | 1 \geq i \geq m\}$ and finding a selection of $k$ words from the set, that cover all the rejecting states of~$A$.
 For each set of binary strings with the length of a maximal divisor of $|Q|$ and $\leq k$ ones, the word combination is tested by checking if there are any non-final states, not covered by the current set.
 Iterating over all states $q \in Q \backslash F$, the function \textit{coverBySet} is called, to find states which are not covered by the current set.
-In the function, we go through all $k$ words in the set and check if $q$ is covered by the word $a^{|Q|/p_i}$ by calling the \textit{cover} function from Algorithm 2. Here $Q_{q,w_i} = \{\sigma(q,w^\lambda_i)|\lambda \geq |Q|\}$ is generated for the word $a^{|Q|/p_i}$.
+In the function, we go through all $k$ words in the set and check if $q$ is covered by the word $a^{|Q|/p_i}$ by calling the \textit{cover} function from Algorithm 2 from~\cite{DBLP:journals/corr/abs-2107-04683}. Here $Q_{q,w_i} = \{\sigma(q,w^\lambda_i)|\lambda \geq |Q|\}$ is generated for the word $a^{|Q|/p_i}$.
 If the intersection of $Q_{q,w_i}$ and the final states $F$ of $A$ is empty, $a^{|Q|/p_i}$ covers only rejecting states, and if this is true for all words from the current word combination set, a valid decomposition is found.
 The complexity of the given decomposition algorithm is \LogSpace since the prime factor decomposition and the checking of the word combination is in \LogSpace.
 The prime factor decomposition of $|Q|$ is in space logarithmic in $|Q|$ since $A$ is given in unary.
 As the set of word combinations $\mathcal{W}$ only contains words of the length of a maximal divisor of $|Q|$, $|\mathcal{W}|$ is also logarithmic in $|Q|$ and iteration over all sets of $2^\mathcal{W}$ is also possible in \LogSpace, by using a binary string which indicates the characteristic function.
 
-For the \andDecomp problem for \DFAs this is as good as it gets, but since we actually want to decompose labels to increase understandability, we will focus on the \orDecomp and finding decompositions with different properties than minimal width. We can still evaluate the approach using maximal divisors only as potential factor size while searching for a \orDecomp of binary labels.
+For the \andDecomp problem for \DFAs this is as good as it gets, but since we actually want to decompose labels to increase understandability, we will focus on the \orDecomp and finding decompositions with different properties than minimal width. We can still evaluate the approach using maximal divisors only as potential factor size while searching for an \orDecomp of binary labels.
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: "thesis"

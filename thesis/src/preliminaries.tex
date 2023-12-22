@@ -5,12 +5,12 @@
 \section{Notation}
 \label{ch:prelimiaries:notation}
 We denote by $\mathbb{N}$ the set of non-negative integers $\{0, 1, 2, \dots \}$.
-We call $d \in H$ a maximal divisor of a subset $B \subset H$ if the two criteria are met: $d|b$ for all $b \in B$ and if there is a $c \in H$ with $d|c$ and $c|b$ for all $b \in B$, then $c \simeq d$.
+We call $d \in \mathbb{N}$ a maximal divisor of an integer $i \in \mathbb{N}$, if $d|i$ and there is no $c \in \mathbb{N}$ with $c|d$ and $c|i$.
 
 For a word $w = w_1 w_2 \dots w_n$ with $w_i \in \sum$ for $1 \leq i \leq n$, $w[i]$ represents the symbol $w_i$ at position $i$ in $w$ and $\ell(w)$ be the length of $w$.
 We write the concatenation of strings $u$ and $v$ as $u \cdot v$.
 Moreover, for every $\sigma \in \Sigma$, we denote by $\#\sigma(w)$ the number of times the letter $\sigma$ appears in $w$ and let $w^n$ be the concatenation of $w$ with itself, $n$ times.
-The bit wise or operation on binary words is denoted as $\lor$, the bit-wise and operation as $\land$ such that $a = b \vee c$ as, for $1 < i < \max{\ell(b), \ell(c)}$, $a[i] = b[i] \vee c[i] if \min{\ell(b), \ell(c)} > i$ and  $a[i] = b[i]$ (respectively $c[i]$), if $\ell(c) < i$ (respectively $\ell(b) < i$).
+The bit wise or operation on binary words is denoted as $\lor$, the bit-wise and operation as $\land$ such that $a = b \vee c$ with, for $1 < i < \max{\ell(b), \ell(c)}$, $a[i] = b[i] \vee c[i]$ if $\min{\ell(b), \ell(c)} > i$ and  $a[i] = b[i]$ (respectively $c[i]$), if $\ell(c) < i$ (respectively $\ell(b) < i$).
 
 \textit{A deterministic finite automaton} (\DFA) is a 5-tuple $A = \lbrace\Sigma, Q, q_I , \sigma, F\rbrace$, where $\Sigma$ is a finite non-empty alphabet, $Q$ is a finite set of states, $\sigma : Q \times \Sigma \rightarrow Q$ is a transition function, $q_I \in Q$ is the initial state, and $F \subseteq Q$ is a set of accepting states.
 The states in $Q \backslash F$ are called rejecting states.
@@ -30,9 +30,9 @@ The width of $A$ is the smallest $k$ for which there is a $k$-factor decompositi
 We call a DFA $A$ prime if it is not composite.
 Similarly, we call $A$ or-composite, if there exists a family $L(A) = \cup_{1\leq i \leq k} L(B'_i)$ of DFAs with $|B'_i| < |A|$ and we call $\cup_{1\leq i \leq k} L(B'_i)$ an \orDecomp of $A$.
 
-When analyzing a \orDecomp $(B_i)_{1 \leq i \leq k}$, a partial \orDecomp up to $j < k$ might have words which are accepted by $A$ but not by $(B_i)_{1 \leq i \leq j}$, those are called \textit{outliers}.
+When analyzing an \orDecomp $(B_i)_{1 \leq i \leq k}$, a partial \orDecomp up to $j < k$ might have words which are accepted by $A$ but not by $(B_i)_{1 \leq i \leq j}$, those are called \textit{outliers}.
 Let $A = (\Sigma, Q, q_I, \sigma, F)$.
-We define $out(\{B_1, B_2, \dots, B_j\} = \{q \in F \mid \forall w \in \Sigma^* \colon \sigma(q_I, w) = q \rightarrow w \notin \bigcup_{1\leq i \leq j} L(B_i)\}$.
+We define $out(\{B_1, B_2, \dots, B_j\}) = \{q \in F \mid \forall w \in \Sigma^* \colon \sigma(q_I, w) = q \rightarrow w \notin \bigcup_{1\leq i \leq j} L(B_i)\}$.
 
 An \textit{edge periodic temporal graph} (EPG), $G = (V, E, \tau)$ consists of a graph $G = (V, E)$ called the underlying graph and a function $\tau : E \rightarrow \{0, 1\}^*$ where $\tau$ maps each edge $e$ to a string $\tau(e) \in \{0, 1\}^*$, such that $e$ exists in a time step $t \geq 0$ if and only if $\tau(e)[t] = 1$, where $\tau(e)[t] := \tau(e)[t~ mod~ |\tau(e)|]$.
 We denote the subgraph of $G$ in time step $t$ with $G(t)$ and call it the \textit{snapshot graph} at time step $t$.
@@ -97,26 +97,30 @@ Instead of a time span of 1 second between events, it would also be possible to 
 			\node (E) at (2,2) {};
 		\end{scope}
 		
-		\draw (A) edge["101\dots"] (B)
-		(D) edge["001\dots"] (C)
-		(A) edge["000\dots"] (C)
-		(D) edge[""] (E)
-		(B) edge["011\dots"] (D)
-		(B) edge[""] (E)
-		(A) edge[""] (E)	
-		(C) edge[""] (E)
-		(B) edge[""] [loop] (B)
-		(A) edge[""] [loop left] (A)
-		(C) edge[""] [loop right] (C)	
-		(D) edge[""] [loop] (D);		
+		 
+		\path[->](A) edge["101\dots"] (B);
+		\path[->](B) edge["101\dots"] (A);
+		\path[->](D) edge["001\dots"] (C);
+		\path[->](C) edge["010\dots"] (D);
+		\path[->](A) edge["000\dots"] (C);
+		\path[->](C) edge["000\dots"] (A);
+		\path[->](D) edge[""] (E);
+		\path[->](B) edge["011\dots"] (D);
+		\path[->](D) edge["011\dots"] (B);
+		\path[->](B) edge[""] (E);
+		\path[->](A) edge[""] (E);	
+		\path[->](C) edge[""] (E);
+		\path(B) edge[""] [loop] (B);
+		\path(A) edge[""] [loop left] (A);
+		\path(C) edge[""] [loop right] (C);	
+		\path(D) edge[""] [loop] (D);		
 	\end{tikzpicture}
 	\caption{Example of the real word input data (F2F Files)}
 	\label{tikz:realWorldDataFiles}
 \end{figure}
-We opted to used the \href{https://snap.stanford.edu/data/comm-f2f-Resistance.html}{Dynamic Face-to-Face Interaction Networks (F2F)} dataset, where the data format is very close to the formal definition, containing binary labels with discrete steps and a one at step $t$ indicating the existence of any given edge. 6
-These networks represent the interactions that happen during discussions between a group of participants playing the Resistance game.
-This dataset contains networks extracted from 62 games.
-Each game is played by 5-8 participants and lasts between 45-60 minutes.
+We opted to used the \href{https://snap.stanford.edu/data/comm-f2f-Resistance.html}{Dynamic Face-to-Face Interaction Networks (F2F)} dataset, where the data format is very close to the formal definition, containing binary labels with discrete steps and a one at step $t$ indicating the existence of the respective edge.
+These networks represent the interactions that happen during discussions between a group of participants playing a game called Resistance.
+This dataset contains networks extracted from 62 games, each game is played by 5-8 participants and lasts between 45-60 minutes.
 They extracted dynamically evolving networks from the free-form discussions using the ICAF algorithm~\cite{f2f-bai2019predicting}.
 The extracted networks are used to characterize and detect group deceptive behavior using the DeceptionRank algorithm~\cite{f2f-kumar2021deception}.
 The networks are unweighted, directed and temporal, each node represents a participant.

@@ -1,7 +1,7 @@
 \chapter{Implementation}
 \label{ch:Implementation}
 %% ==============================
-All algorithms described have been implemented using Kotlin because it can be compiled for the Java Virtual Machine and native execution, therefore it seemed like a good balance between a native implementation and higher language conciseness and fault tolerance.
+All algorithms described above have been implemented using Kotlin because it can be compiled for the Java Virtual Machine and native execution, therefore it seemed like a good balance between a native implementation and higher language conciseness and fault tolerance.
 The project is realized as a maven project, to simplify dependency management.
 Although all theoretic results have been performed for \DFAs, since none of the properties of a \DFA is actually used except for the set of final states, the input as well as the factors are represented as boolean arrays, where a 1 indicates a final state.
 This benefits performance, as array operations are usually faster than e.g. lists of custom objects and this also enabled easy transformation between labels and boolean arrays and vise versa. 
@@ -10,7 +10,7 @@ This benefits performance, as array operations are usually faster than e.g. list
 \label{ch:Implementation:file-reader}
 Initially, a network from the F2F set described in Section \ref{ch:prelimiaries:real-world-data} is selected and the file reader parses the desired network id and the number of participants from the \verb*|network_list.csv| file.
 With these metadata, the selected dynamic face-to-face interaction network is parsed from the \verb*|network/network[ID].csv|.
-Each file has the time series of the who-looks-at-whom networks where each row consists of a timestamp an a binary adjacency matrix.
+Each file has the time series of the who-looks-at-whom networks where each row consists of a timestamp and a binary adjacency matrix.
 The binary variables in the adjacency matrix indicate where participant $i$ is looking at in the current timestamp, either one of the other participants or the laptop in front.
 As a participant can look at only one direction at a given timestamp, only one of the binary variables is 1 per row.
 The file reader parses the adjacency matrix and returns a JGraph object with boolean arrays to represent the edge labels.
@@ -23,7 +23,7 @@ For the initial implementation, only maximal divisors were used as this is alrea
 For an input array of size $n$, all maximal divisors are lazily yielded into a sequence, via a \textit{NumbersExtensions}.
 Extension functions are a useful Kotlin tool if you want to extend the static functionality of base classes, e.g. Integers.
 Then a preliminary Factor is created for each maximal divisor, with an empty array the size of the divisor, and a job is spawned for each factor as the periodicity of the factors can be tested in parallel.
-With the help of Kotlin Co-routines, a modest multi-threading approach is implemented where the main algorithm thread waits for all the factors to be checked. Afterward, they are collected into a \textit{Cover} object, which handles all the validation and quality assessment.
+With the help of Kotlin co-routines, a modest multi-threading approach is implemented where the main algorithm thread waits for all the factors to be checked. Afterward, they are collected into a \textit{Cover} object, which handles all the validation and quality assessment.
 For this, a cover array is created, where all factors are consolidated and uncovered values, so-called outliers, are visible.
 As not all inputs are decomposable and by default, we do not allow  $|B_i| = |A|$, we may find labels for which the \DFAs are not decomposable. In this case, we consider them partially decomposable, as the found factors create a cover array that is partially identical to the original but not in all places, so a warning is issued with the number of hard outliers.
 

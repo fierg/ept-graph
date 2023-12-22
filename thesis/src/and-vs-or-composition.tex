@@ -4,7 +4,7 @@ All theoretical studies so far used the \andDecomp with the complement over all 
 This idea is easily expandable to the \orDecomp, where the union over all factors $B_i$ results in the original language, $L(A) = \cup_{1\leq i \leq k} L(B_i)$.
 Note that, all $B_i$ in the decomposition satisfy $|B_i| < |A|$ and $L(A) \supseteq L(B_i)$.
 With this change, a single factor implies certain final states, whereas, with the \andDecomp, all factors have to be considered to know whether a given state is final in $A$.
-As we defined the \orDecomp as a conceptual counterpart to the \andDecomp, we considered different \DFAs with either a \andDecomp or an \orDecomp.
+As we defined the \orDecomp as a conceptual counterpart to the \andDecomp, we considered different \DFAs with either an \andDecomp or an \orDecomp.
 Of course, there exist \DFAs with both and- and \orDecomp but we also prove that this is not the case for every \DFA.
 For an example see Figures \ref{fig:factors-and-example} and \ref{fig:factors-or-example}, where $A$ has a \andDecomp and $B$ has a \orDecomp but not vice versa.
 
@@ -105,19 +105,30 @@ To prove that there exist words that are and-decomposable but not OR-decomposabl
 For this purpose we have extended the logic operators $\lor$ and $\land$ to binary words.
 
 \begin{theorem}
-	There exists a word $w \in \{0,1\}^*$ such that $w$ is and-decomposable but not or-decomposable
+	There exists a word $w \in \{0,1\}^*$ such that $w$ is OR-decomposable but not AND-decomposable
 \end{theorem}
 
 \begin{proof}
-	Assume $\overbar{w}$ is not AND-decomposable and $w = v_1 \lor v_2 \lor \dots \lor v_k$.
-	Using the fact that $A \lor B = \overbar{\overbar{A} \land \overbar{B}}$, we obtain $w = \overbar{\overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}}$ which is equal to $\overbar{w} = \overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}$.
-	This implies $w$ is not or-decomposable via contradiction.
+	Assume the \DFA $B$ from Figure \ref{fig:factors-or-example}.
+	As from Lemma 7 from \cite{unara-prime-languages}, for an \andDecomp it suffices to consider the quotient \DFAs of $B$.
+	This implies that there exists no \andDecomp for \DFA $B$ since 2 and 3 are the only divisors and the possible factors of this size, do not generate a valid \andDecomp.
 \end{proof}
+
+%\begin{proof}
+%	Assume $\overbar{w}$ is not AND-decomposable and $w = v_1 \lor v_2 \lor \dots \lor v_k$.
+%	Using the fact that $A \lor B = \overbar{\overbar{A} \land \overbar{B}}$, we obtain $w = \overbar{\overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}}$ which is equal to $\overbar{w} = \overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}$.
+%	This implies $w$ is not or-decomposable via contradiction.
+%\end{proof}
 
 
 \begin{theorem}
-	There exists a word $w$ such that $w$ is OR-decomposable but not AND-decomposable
+	There exists a word $w$ such that $w$ is AND-decomposable but not OR-decomposable
 \end{theorem}
+
+TODO:
+Hier musst du als erstes zeigen, dass eine AND Zerlegung vom Komplement einer OR-Zerlegung vom originalen Automaten entspricht.
+
+Dann zeigst du, dass das Komplement von A keine And decomposition hat indem du das Komplement von A explizit betrachtest und zeigst dass beide Quotienten keine AND Zerlegung liefern. Daraus musst du dann Schlussfolgern, dass A keine Or Decomposition haben kann. Das ist dann was du hier schreibst. 
 
 \begin{proof}
 	Assume $\overbar{w}$ is not OR-decomposable and $w = v_1 \land v_2 \land \dots \land v_k$.
