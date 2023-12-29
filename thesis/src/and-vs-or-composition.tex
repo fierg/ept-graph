@@ -103,6 +103,16 @@ For an example see Figures \ref{fig:factors-and-example} and \ref{fig:factors-or
 
 To prove that there exist words that are and-decomposable but not OR-decomposable and vice versa, we need a bit of background.
 For this purpose we have extended the logic operators $\lor$ and $\land$ to binary words.
+We also need the following Lemma:
+\begin{lemma}
+	Consider $w$, a binary string and $A$ the corresponding unary \DFA.
+	Let the complement of $w$ be $w'$ where every value is flipped and $A'$ its corresponding \DFA.
+	An \andDecomp of $A'$ is equivalent to an \orDecomp of $A$.
+\end{lemma}
+
+\begin{proof}
+	Since an \andDecomp covers the non final states and an \orDecomp covers the final states, an \andDecomp of the complement of a \DFA will cover its final states, exactly like an \orDecomp and vice versa.
+\end{proof}
 
 \begin{theorem}
 	There exists a word $w \in \{0,1\}^*$ such that $w$ is OR-decomposable but not AND-decomposable
@@ -114,26 +124,36 @@ For this purpose we have extended the logic operators $\lor$ and $\land$ to bina
 	This implies that there exists no \andDecomp for \DFA $B$ since 2 and 3 are the only divisors and the possible factors of this size, do not generate a valid \andDecomp.
 \end{proof}
 
-%\begin{proof}
-%	Assume $\overbar{w}$ is not AND-decomposable and $w = v_1 \lor v_2 \lor \dots \lor v_k$.
-%	Using the fact that $A \lor B = \overbar{\overbar{A} \land \overbar{B}}$, we obtain $w = \overbar{\overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}}$ which is equal to $\overbar{w} = \overbar{v_1} \land \overbar{v_2} \land \dots \land \overbar{v_k}$.
-%	This implies $w$ is not or-decomposable via contradiction.
-%\end{proof}
-
-
 \begin{theorem}
 	There exists a word $w$ such that $w$ is AND-decomposable but not OR-decomposable
 \end{theorem}
 
-TODO:
-Hier musst du als erstes zeigen, dass eine AND Zerlegung vom Komplement einer OR-Zerlegung vom originalen Automaten entspricht.
-
-Dann zeigst du, dass das Komplement von A keine And decomposition hat indem du das Komplement von A explizit betrachtest und zeigst dass beide Quotienten keine AND Zerlegung liefern. Daraus musst du dann Schlussfolgern, dass A keine Or Decomposition haben kann. Das ist dann was du hier schreibst. 
-
 \begin{proof}
-	Assume $\overbar{w}$ is not OR-decomposable and $w = v_1 \land v_2 \land \dots \land v_k$.
-	Using the fact  that $A \land B = \overbar{\overbar{A} \lor \overbar{B}}$, we obtain $w = \overbar{\overbar{v_1} \lor \overbar{v_2} \lor \dots \lor \overbar{v_k}}$ which is equal to $\overbar{w} = \overbar{v_1} \lor \overbar{v_2} \lor \dots \lor \overbar{v_k}$.
-	This implies $w$ is not and-decomposable via contradiction.
+	Let $A$ be the \DFA from Figure \ref{fig:factors-and-example}.
+	Consider the complement \DFA of $A$, $A'$ with $F'=\lbrace q_0, q_2, q_4, q_5\rbrace$.
+	\begin{figure}[h]
+			\centering
+			\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+				\node[state,initial,accepting,fill=lightgray,fill opacity=0.5] (q_0)   {$q_0$}; 
+				\node[state] (q_1) [ right=of q_0] {$q_1$}; 
+				\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_2) [ right=of q_1] {$q_2$}; 
+				\node[state] (q_3) [ right=of q_2] {$q_3$};
+				\node[state,accepting,fill=lightgray,fill opacity=0.5](q_4) [ right=of q_3] {$q_4$};
+				\node[state,accepting,fill=lightgray,fill opacity=0.5](q_5) [ right=of q_4] {$q_5$};
+				\path[->] 
+				(q_0) edge  node {} (q_1)
+				(q_1) edge  node {} (q_2)
+				(q_2) edge  node {} (q_3)
+				(q_3) edge  node {} (q_4)
+				(q_4) edge  node {} (q_5)
+				(q_5) edge[bend right, above]  node {} (q_0);
+			\end{tikzpicture}	
+		\label{fig:a-complement-from-proof}
+		\caption{The DFA $A'$, complement of $A$}	
+	\end{figure}
+	Since the \DFA has 6 states, it has only 2 potential quotients with size 2 and 3.
+	The non final states $q_1$ and $q_3$ are neither periodic in the length 2 or 3, so both quotients are empty as they consist only of final states.
+	With both quotients empty, there is no valid \andDecomp of the \DFA $A'$ and therefore $A$ does not have a valid \orDecomp.
 \end{proof}
 
 \begin{corollary}
