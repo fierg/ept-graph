@@ -64,7 +64,7 @@ In the label either the $0s$ or the $1s$ symbols are used to represent final sta
 The algorithm from \cite{DBLP:journals/corr/abs-2107-04683} which is also described in closer detail in Section \ref{ch:analysis:max-divisors} as well as two novel algorithms are used for decomposing \DFAs.
 We only represent unary automata with \textbf{$|\Sigma| = 1$} and therefore only have a single transition from each state, basically forming a simple cycle of all possible states.
 This means that for a period length of $i$ we only have to check $i$ states on the cycle being in the same state.
-Decomposing the obtained \DFA results in a family of smaller \DFAs, with $\cap^k_{i=1} L(\mathcal{A}_i)$ which can be interpreted as a set of binary labels $w_i$ and their bitwise intersection $\land^k_{i=1} w_i$ equals $w'$.
+Decomposing the obtained \DFA results in a family of smaller \DFAs, with $\cap^k_{i=1} L(\mathcal{A}_i)$ which can be interpreted as a set of binary labels $w_i$ and their bitwise intersection $\land^k_{i=1} w_i^{\ell(w')/\ell(w_i)}$ equals $w'$.
 Either the bit-wise intersection over all found words is assigned the new label, or each word obtained by interpreting a factor can be its own label, forming an edge periodic multi-graph. 
 
 \section{Decomposition of \DFAs and Unary \DFAs}
@@ -78,10 +78,10 @@ Either the bit-wise intersection over all found words is assigned the new label,
 	\begin{minipage}[t]{0.69\textwidth}
 		\centering
 		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
-			\node[state,initial,accepting] (q_0)   {$q_0$}; 
+			\node[state,initial,accepting,fill=lightgray,fill opacity=0.5] (q_0)   {$q_0$}; 
 			\node[state] (q_1) [right=of q_0] {$q_1$}; 
 			\node[state] (q_2) [right=of q_1] {$q_2$}; 
-			\node[state,accepting](q_3) [right=of q_2] {$q_3$};
+			\node[state,accepting,fill=lightgray,fill opacity=0.5 ](q_3) [right=of q_2] {$q_3$};
 			\path[->] 
 			(q_0) edge  node {} (q_1)
 			(q_1) edge  node {} (q_2)
@@ -90,8 +90,8 @@ Either the bit-wise intersection over all found words is assigned the new label,
 		\end{tikzpicture}
 		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
 			\node[state,initial] (q_0)   {$q_0$}; 
-			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
-			\node[state,accepting] (q_2) [right=of q_1] {$q_2$}; 
+			\node[state,accepting,fill=lightgray,fill opacity=0.5 ] (q_1) [right=of q_0] {$q_1$}; 
+			\node[state,accepting,fill=lightgray,fill opacity=0.5 ] (q_2) [right=of q_1] {$q_2$}; 
 			\node[state](q_3) [right=of q_2] {$q_3$};
 			\path[->] 
 			(q_0) edge  node {} (q_1)
@@ -108,22 +108,25 @@ A \DFA $\mathcal{A}$ is composite if its language $L(\mathcal{A})$ can be decomp
 This notion of \textit{primality} was introduced by Kupferman and Mosheiff in \cite{prime-languages}, and they proved that we can decide whether a \DFA is composite in \ExpSpace and later in \cite{unara-prime-languages}, the decomposition question for unary \DFAs was proven to be in \LogSpace.
 In the paper~\cite{DBLP:journals/corr/abs-2107-04683} by Jecker, Mazzocchi, and Wolf, they provided a \LogSpace algorithm for commutative permutation \DFAs, if the alphabet size is fixed.
 This also puts the bounded $k$-composite question for unary \DFAs in the \LogSpace complexity class, since the unary \DFAs we obtain from parsing labels, are commutative permutation \DFAs by definition.
-See Table \ref{tab:dfa-decomp-complexity} for all complexity bounds.
-The decomposition of unary \DFAs is usually characterized by utilizing clean quotients. Let  $A = \lbrace\Sigma, Q, q_I , \sigma, F\rbrace$ be a unary \DFA.
-A clean quotient $A_d$ of $A$ is a \DFA obtained by folding its cycle of length $l$ to a cycle of length $d$, for some strict divisor $d$ of $l$. Formally, $A_d$ is induced by the equivalence relation $\sim_d$ defined by:
-
+Refer to Table \ref{tab:dfa-decomp-complexity} for comprehensive details on complexity bounds.
+Typically, the decomposition of unary \DFAs induced by its clean quotients.
+Consider a unary \DFA represented as $A = \lbrace\Sigma, Q, q_I , \sigma, F\rbrace$.
+A clean quotient $A_d$ of $A$ is a \DFA created by folding its cycle of length $l$ to a cycle of length $d$, for some strict divisor $d$ of $l$.
+Formally, $A_d$ is induced by the equivalence relation $\sim_d$ defined by:
 \[ q_i \sim_d q_j ~\text{if and only if}~i \equiv j ~mod~ d \]
 
-We obtain a \DFA $A_d = \{\Sigma, Q' , [q_I ], \sigma' , F'\}$, where $Q'$ is the set of equivalence classes $[p]$ of the states $p \in Q$, the transition function $\sigma'$ is such that for all $a \in \Sigma$ we have that $\sigma'([p], a) = [\sigma(p, a)]$, and $F'$ is composed of the classes $[p]$ such that there is $q \in F$ such that $p \sim q$. We do not require states related by $\sim$ to agree on membership in $F$, and define $F'$ so that the language of $A_d$ over-approximates that of $A$, $L(A) \subseteq L(A_d)$, as every word accepted by $A$ implies acceptance by $A_d$.
+We obtain a \DFA $A_d = \{\Sigma, Q' , [q_I ], \sigma' , F'\}$, where $Q'$ is the set of equivalence classes $[p]$ of the states $p \in Q$
+The transition function $\sigma'$ is defined such that for all $a \in \Sigma$ we have that $\sigma'([p], a) = [\sigma(p, a)]$, and $F'$ is composed of the classes $[p]$ such that there is $q \in F$ such that $p \sim q$.
+we define $F'$ in a manner that the language of $A_d$ overestimates that of $A$, i.e., $L(A) \subseteq L(A_d)$, as every word accepted by $A$ implies acceptance by $A_d$.
 
 \begin{figure}[h]
 	\begin{minipage}[t]{\textwidth}
 		\centering
 		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
 			\node[state,initial] (q_0)   {$q_0$}; 
-			\node[state,accepting] (q_1) [ right=of q_0] {$q_1$}; 
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_1) [ right=of q_0] {$q_1$}; 
 			\node[state] (q_2) [ right=of q_1] {$q_2$}; 
-			\node[state,accepting] (q_3) [ right=of q_2] {$q_3$};
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_3) [ right=of q_2] {$q_3$};
 			\node[state](q_4) [ right=of q_3] {$q_4$};
 			\node[state](q_5) [ right=of q_4] {$q_5$};
 			\path[->] 
@@ -139,7 +142,7 @@ We obtain a \DFA $A_d = \{\Sigma, Q' , [q_I ], \sigma' , F'\}$, where $Q'$ is th
 		\centering
 		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
 			\node[state,initial] (q_0)   {$q_0$}; 
-			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_1) [right=of q_0] {$q_1$}; 
 			\path[->] 
 			(q_0) edge  node {} (q_1)
 			(q_1) edge[bend right, above]  node {} (q_0);
@@ -148,8 +151,8 @@ We obtain a \DFA $A_d = \{\Sigma, Q' , [q_I ], \sigma' , F'\}$, where $Q'$ is th
 	\begin{minipage}[b]{0.59\textwidth}
 		\centering
 		\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
-			\node[state,initial,accepting] (q_0)   {$q_0$}; 
-			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+			\node[state,initial,accepting,fill=lightgray,fill opacity=0.5] (q_0)   {$q_0$}; 
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_1) [right=of q_0] {$q_1$}; 
 			\node[state](q_2) [right=of q_1] {$q_2$};
 			\path[->] 
 			(q_0) edge  node {} (q_1)

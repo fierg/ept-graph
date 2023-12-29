@@ -16,13 +16,13 @@ In this particular example, there exists a smaller factor with size 2, $A_2$ whi
 		\centering
 		\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
 			\node[state,initial] (q_0)   {$q_0$}; 
-			\node[state,accepting] (q_1) [ right=of q_0] {$q_1$}; 
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_1) [ right=of q_0] {$q_1$}; 
 			\node[state] (q_2) [ right=of q_1] {$q_2$}; 
-			\node[state,accepting] (q_3) [ right=of q_2] {$q_3$};
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_3) [ right=of q_2] {$q_3$};
 			\node[state](q_4) [ right=of q_3] {$q_4$};
-			\node[state,accepting] (q_5) [ right=of q_4] {$q_5$};
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_5) [ right=of q_4] {$q_5$};
 			\node[state] (q_6) [ right=of q_5] {$q_6$};
-			\node[state,accepting] (q_7) [ right=of q_6] {$q_7$};
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_7) [ right=of q_6] {$q_7$};
 			\path[->] 
 			(q_0) edge  node {} (q_1)
 			(q_1) edge  node {} (q_2)
@@ -38,7 +38,7 @@ In this particular example, there exists a smaller factor with size 2, $A_2$ whi
 		\centering
 		\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
 			\node[state,initial] (q_0)   {$q_0$}; 
-			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_1) [right=of q_0] {$q_1$}; 
 			\path[->] 
 			(q_0) edge  node {} (q_1)
 			(q_1) edge[bend right, above]  node {} (q_0);
@@ -48,9 +48,9 @@ In this particular example, there exists a smaller factor with size 2, $A_2$ whi
 		\centering
 		\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
 			\node[state,initial] (q_0)   {$q_0$}; 
-			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_1) [right=of q_0] {$q_1$}; 
 			\node[state](q_2) [right=of q_1] {$q_2$};
-			\node[state,accepting](q_3) [right=of q_2] {$q_3$};
+			\node[state,accepting,fill=lightgray,fill opacity=0.5](q_3) [right=of q_2] {$q_3$};
 			\path[->] 
 			(q_0) edge  node {} (q_1)
 			(q_1) edge  node {} (q_2)
@@ -167,13 +167,13 @@ For a comparison between single or multiple binary labels and a list of tuples w
 		\centering
 		\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
 			\node[state,initial] (q_0)   {$q_0$}; 
-			\node[state,accepting] (q_1) [ right=of q_0] {$q_1$}; 
-			\node[state,accepting] (q_2) [ right=of q_1] {$q_2$}; 
-			\node[state,accepting] (q_3) [ right=of q_2] {$q_3$};
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_1) [ right=of q_0] {$q_1$}; 
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_2) [ right=of q_1] {$q_2$}; 
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_3) [ right=of q_2] {$q_3$};
 			\node[state](q_4) [ right=of q_3] {$q_4$};
-			\node[state,accepting] (q_5) [ right=of q_4] {$q_5$};
-			\node[state,accepting] (q_6) [ right=of q_5] {$q_6$};
-			\node[state,accepting] (q_7) [ right=of q_6] {$q_7$};
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_5) [ right=of q_4] {$q_5$};
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_6) [ right=of q_5] {$q_6$};
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_7) [ right=of q_6] {$q_7$};
 			\path[->] 
 			(q_0) edge  node {} (q_1)
 			(q_1) edge  node {} (q_2)
@@ -189,7 +189,7 @@ For a comparison between single or multiple binary labels and a list of tuples w
 		\centering
 		\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
 			\node[state,initial] (q_0)   {$q_0$}; 
-			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_1) [right=of q_0] {$q_1$}; 
 			\path[->] 
 			(q_0) edge  node {} (q_1)
 			(q_1) edge[bend right, above]  node {} (q_0);
@@ -199,9 +199,9 @@ For a comparison between single or multiple binary labels and a list of tuples w
 		\centering
 		\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
 			\node[state,initial] (q_0)   {$q_0$}; 
-			\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
-			\node[state,accepting](q_2) [right=of q_1] {$q_2$};
-			\node[state,accepting](q_3) [right=of q_2] {$q_3$};
+			\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_1) [right=of q_0] {$q_1$}; 
+			\node[state,accepting,fill=lightgray,fill opacity=0.5](q_2) [right=of q_1] {$q_2$};
+			\node[state,accepting,fill=lightgray,fill opacity=0.5](q_3) [right=of q_2] {$q_3$};
 			\path[->] 
 			(q_0) edge  node {} (q_1)
 			(q_1) edge  node {} (q_2)
@@ -218,7 +218,7 @@ For a comparison between single or multiple binary labels and a list of tuples w
 	\centering
 	\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
 		\node[state,initial] (q_0)   {$q_0$}; 
-		\node[state,accepting] (q_1) [right=of q_0] {$q_1$}; 
+		\node[state,accepting,fill=lightgray,fill opacity=0.5] (q_1) [right=of q_0] {$q_1$}; 
 		\path[->] 
 		(q_0) edge  node {} (q_1)
 		(q_1) edge[bend right, above]  node {} (q_0);
@@ -229,7 +229,7 @@ For a comparison between single or multiple binary labels and a list of tuples w
 	\begin{tikzpicture}[shorten >=1pt,node distance=1.5cm,on grid,auto] 
 		\node[state,initial] (q_0)   {$q_0$}; 
 		\node[state] (q_1) [right=of q_0] {$q_1$}; 
-		\node[state,accepting](q_2) [right=of q_1] {$q_2$};
+		\node[state,accepting,fill=lightgray,fill opacity=0.5](q_2) [right=of q_1] {$q_2$};
 		\node[state](q_3) [right=of q_2] {$q_3$};
 		\path[->] 
 		(q_0) edge  node {} (q_1)
