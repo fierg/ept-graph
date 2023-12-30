@@ -64,11 +64,13 @@ In this particular example, there exists a smaller factor with size 2, $A_2$ whi
 
 Usually, the algorithms and proofs consider unary \DFAs consisting of a chain leading into a cycle of states.
 Since we obtain our \DFAs by transforming from a periodic label, we only have \DFAs with empty chains, therefore only considering unary permutation \DFA.
-This allows us to use a slightly simplified version of the Algorithm from \cite{DBLP:journals/corr/abs-2107-04683} as visible in our Algorithm \ref{algo:novel-greedy} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$, and we want to compute an \orDecomp.
-Instead of iterating over all potential sets of words $2^\mathcal{W}$, we iterate over divisors of $|Q|$ and generate possible factors.
-For each potential factor, we check if we are in a finial state and if the property is periodic in the size of the factor.
-Additionally we are not only interested in answering the yes/no question of the composite problem but we want to collect the factors and continue our computation.
-After all possible factors are computed, they are added greedily to the composite, in the order of their length, until no further changes occur.
+This allows us to use a slightly simplified version of the Algorithm~3 from \cite{DBLP:journals/corr/abs-2107-04683} as visible in our Algorithm~\ref{algo:novel-greedy} as we do not encounter unary automata with $\sigma(q, uv) \not = \sigma(q, vu)$, and we want to compute an \orDecomp.
+Instead of iterating over all potential sets of words $2^\mathcal{W}$ from $\mathcal{W} = \{a^{|Q|/p_i} | 1 \geq i \geq m\}$, we iterate over divisors of $|Q|$ and generate possible factors.
+For each divisor $d$ we call the method \textit{getFactor} and generate the potential factor $A_d$, where $Q'$ is the set of equivalence classes $[p]$ of the states $p \in Q$, $\sigma'$ is defined as $a \in \Sigma$ we have that $\sigma'([p], a) = [\sigma(p, a)]$.
+Iterating over all states of the factor in the method \textit{allAccepting}, we check if we are in a finial state and if all states folded onto the state $\sigma(q_I, a^{i})$ are also final in the original \DFA.
+If this is the case, we include it in the final states of the current factor.
+We are not only interested in answering the yes/no question of the composite problem but we want to collect the factors and continue our computation.
+After all possible factors are computed, they are added greedily to the decomposition, in the order of their length, until no further changes occur.
 \begin{algorithm}[h]
 	\DontPrintSemicolon
 	\SetKwProg{Fn}{Function}{:}{}
@@ -92,18 +94,18 @@ After all possible factors are computed, they are added greedily to the composit
 	
 	\Fn{getFactor($A = \{{a}, Q, q_I , \sigma, F \}$: unary DFA, integer $d$)}{
 		$F' \gets \emptyset$\;
-		$A' \gets \{{a}, Q', q_d , \sigma', F' \}$\;
+		$A_d \gets \{{a}, Q', [q_d] , \sigma', F' \}$\;
 		\ForEach{$i \in [1,d]$}{
-			\If{$q_i \in F$ and isPeriodic($A,i,d$)}{
-				$F' \gets F' \cup [q_i]$
+			\If{$\sigma(q_I,a^i) \in F$ and allAccepting($A,i,d$)}{
+				$F' \gets F' \cup \sigma(q_I, a^{i})$
 			}
 		}
-		\KwRet $A'$
+		\KwRet $A_d$
 	}
-	\Fn{isPeriodic($A = \{{a}, Q, q_I , \sigma, F \}$: unary DFA, integer $d$, integer $i$)}{
+	\Fn{allAccepting($A = \{{a}, Q, q_I , \sigma, F \}$: unary DFA, integer $d$, integer $i$)}{
 		$pos \gets (i + d) ~mod~ |Q|$\;
 		\While{$pos \not= i$}{
-			\If{$q_{pos} \not\in F$}{
+			\If{$\sigma(q_I, a^{pos}) \not\in F$}{
 				\KwRet false\;
 			}
 			$pos \gets (pos + d) ~mod~ |Q|$
@@ -113,13 +115,13 @@ After all possible factors are computed, they are added greedily to the composit
 	\caption{Algorithm for greedily computing an \orDecomp for unary DFAs and returning the factors.}
 	\label{algo:novel-greedy}
 \end{algorithm}
-This algorithm finds more factors than required since it also finds the multiples of the maximal divisors.
+This algorithm finds more factors than required since it also finds the divisors of the maximal divisors.
 In contrast, not all found factors are required to form the decomposition and we only want to add factors, which change the decomposition.
 In our example in Figure \ref{fig:short-factors} we find $A_2$ and $A_4$, but $A_2$ is fully sufficient for decomposing the \DFA $A$.
-By iterating over all possible factors ordered by size, we can greedily add factors, which are required to form the decomposition.
-The method \textit{factorChangesComposite($A,A'$)} is omitted, as its simply checks if the addition of the factor produces a decomposition with fewer outliers than currently present.
+By iterating over all possible factors ordered by size, we can greedily add factors, that cover accepting states that have not yet been covered.
+The details of the method \textit{factorChangesComposite($A,A'$)} are omitted, as it simply checks if the addition of the factor produces a decomposition with fewer outliers than currently present.
 To address the problem that most of the labels do not have proper decompositions in the mathematical sense, we will also consider a set of smaller automata that do not cover every value of a decomposition.
-For this, we want to keep track of the outliers of each factor and the decomposition itself.
+For this, we want to keep track of the outliers of each factor of the decomposition and the outliers of decomposition itself.
 Regarding explainability, it should be of preference, to have a small factor but a couple of outliers, in comparison to a long factor, and even have a decomposition with hard outliers, e.g. values that cannot be covered by a decomposition.
 In this case, a decomposition including outliers is also preferred.
 

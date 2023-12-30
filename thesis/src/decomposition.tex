@@ -117,7 +117,7 @@ Formally, $A_d$ is induced by the equivalence relation $\sim_d$ defined by:
 
 We obtain a \DFA $A_d = \{\Sigma, Q' , [q_I ], \sigma' , F'\}$, where $Q'$ is the set of equivalence classes $[p]$ of the states $p \in Q$
 The transition function $\sigma'$ is defined such that for all $a \in \Sigma$ we have that $\sigma'([p], a) = [\sigma(p, a)]$, and $F'$ is composed of the classes $[p]$ such that there is $q \in F$ such that $p \sim q$.
-we define $F'$ in a manner that the language of $A_d$ overestimates that of $A$, i.e., $L(A) \subseteq L(A_d)$, as every word accepted by $A$ implies acceptance by $A_d$.
+$F'$ is defined in a manner, that the language of $A_d$ overestimates that of $A$, i.e., $L(A) \subseteq L(A_d)$, as every word accepted by $A$ implies acceptance by $A_d$.
 
 \begin{figure}[h]
 	\begin{minipage}[t]{\textwidth}
