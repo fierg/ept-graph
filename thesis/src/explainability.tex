@@ -35,7 +35,7 @@ A zero in Figure \ref{tab:example-decompositions} for any given factor size, imp
 \end{table}
 For a \DFA $A$, and its decomposition $(B_i)_{1 \leq i \leq k}$, we evaluate the following metrics:
 
-\textbf{Decomposition Structure} ($\operatorname{DS} =  \underset{factor~ B_i}{\Pi}\frac{|B_i|}{\text{|A|}} \cdot (1 + \frac{out_{\{B_1,\dots,B_i\}}}{|F|})$)
+\textbf{Decomposition Structure} ($\operatorname{DS} =  \underset{factor~ B_i}{\Pi}\frac{|B_i|}{\text{|A|}} \cdot (1 + \frac{out(\{B_1,\dots,B_i\})}{|F|})$)
 
 The decomposition structure is the sum of all relative factor sizes, weighted by their relative amount of outliers.
 It takes into account whether the label is presented as a single, continuous binary string or is split into multiple, shorter labels.
@@ -44,18 +44,18 @@ For example, dividing the label into daily or weekly segments that represent mor
 A few small factors with few outliers imply a small decomposition structure value, which is visible in Table~\ref{tab:example-decompositions-and-metrics} for decomposition $\mathcal{D}$, a large factor, covering not many values implies a high decomposition structure value, see decomposition $\mathcal{D}^4$.
 Generally, a low DS value is expected to be more explainable by a human interpreter.
 Initially it was defined as:
-$$DS_{rev1} = \underset{factor~ B_i}{\Sigma}\frac{|B_i|}{\text{|A|}} \cdot \frac{out_{\{B_1,\dots,B_i\}}}{|F|}$$
+$$DS_{rev1} = \underset{factor~ B_i}{\Sigma}\frac{|B_i|}{\text{|A|}} \cdot \frac{out(\{B_1,\dots,B_i\})}{|F|}$$
 but that ignored the larges factor if it covered all values, as it was weighted by zero.
 This lead to decompositions with a small factor covering all values having the same decomposition structure metric as a decomposition with a single large factor covering all values.
 Also decompositions with a single factor with many outliers is ranked better, than a decomposition with two factors and less outliers, as visible in Table~\ref{tab:example-decompositions-and-metrics}, comparing $\mathcal{D}^3$ and $\mathcal{D}^4$ in $DS_{rev1}$
 So the weight was set to be in range $[1,2)$ by setting the definition to:
-$$DS_{rev2} = \underset{factor~ B_i}{\Sigma}\frac{|B_i|}{\text{|A|}} \cdot (1 + \frac{out_{\{B_1,\dots,B_i\}}}{|F|})$$
+$$DS_{rev2} = \underset{factor~ B_i}{\Sigma}\frac{|B_i|}{\text{|A|}} \cdot (1 + \frac{out(\{B_1,\dots,B_i\})}{|F|})$$
 This resolved the issue of the uncounted largest factor but another problem arose.
 As we were computing the sum, a decomposition with only one large factor and many outliers, was ranked better than a decomposition with many factors each covering only a few values.
 This is also visible in the last two decompositions in Table~\ref{tab:example-decompositions-and-metrics} in $DS_{rev2}$.
 Best results were archived with the current definition of the decomposition structure, where all imaginary decomposition in decreasing quality also gave a decreasing decomposition structure value.
 
-\textbf{Precision} ($\operatorname{precision} = \frac{|F| - out_{\{B_1,\dots,B_k\}}}{|F|}$)
+\textbf{Precision} ($\operatorname{precision} = \frac{|F| - out(\{B_1,\dots,B_k\})}{|F|}$)
 
 Precision refers to the regularity of patterns in the label across different time steps.
 A decomposition that has a high precision value, implies that there are few outliers and many of the actual values can be read from the factors.

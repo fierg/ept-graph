@@ -128,40 +128,39 @@ In this case, a decomposition including outliers is also preferred.
 \section{Problem Generalization}
 The original problem was solvable in \LogSpace, but by extending the problem to finding the shortest possible factors, we face a different challenge.
 Finding a valid decomposition is possible in \LogSpace but selecting a minimal amount of given factors needed to be a valid decomposition is not.
-This problem can be generalized for a given set of factors as follows:
-\begin{defn}[\sc{Min Factors Decomposition}]{\ \\}
+This problem can be generalized for picking a minimal decomposition from a given set of factors as follows:
+\begin{defn}[\sc{Select Factors Decomposition}]{\ \\}
 	Input: A binary string $u$ with $\ell(u)= l$ and a set of binary strings $\mathcal{W} = \{w_1, w_2, \dots, w_n\}$ with $\ell(w_i) < l$ and $\ell(w_i)$ divides $l$ for $1 \leq i \leq n$ and an integer $k$.\\
 	Question: Exists indices $i_1, i_2, \dots i_k$ such that
 	$$w_{i_1}^{l / \ell(w_{i_1})} \lor w_{i_2}^{l / \ell(w_{i_2})} ~\dots~ \lor w_{i_k}^{l / \ell(w_{i_k})} = u $$
 \end{defn}
 
-To find lower bounds for this novel problem, we are going to reduce the {\sc{Set Cover}} problem, known to be NP-complete, to our novel {\sc{Min Factors Decomposition}} problem, using a polynomial time reduction.
+To find lower bounds for this novel problem, we are going to reduce the {\sc{Set Cover}} problem, known to be NP-complete, to our novel {\sc{Select Factors Decomposition}} problem, using a polynomial time reduction.
 
 \begin{defn}[\sc{Set Cover}]{\ \\}
 	Input: A set of elements $U = \{u_1, u_2, \dots , u_n\}$. A set $\mathcal{C} = \{C_1, C_2, \dots , C_m\}$ where $C_i \subseteq U ~\forall~ C_i \in \mathcal{C}$ and an integer $k$.\\
 	Question: Exists a set $\mathcal{O} \subseteq \mathcal{C}$ of size  at most $k$ such that $\underset{C_i \in \mathcal{O}}{\bigcup}C_i = U$.
 \end{defn}
 To reduce the {\sc{Set Cover}} problem to our novel problem, we create an instance as follows.
-For the universe $U = \{u_1, u_2, \dots, u_n\}$ we will construct a binary string $u= 1^{2|U|}$ with length $\ell(u) = 2|U|$. For each subset of $\mathcal{C} = \{C_1, C_2, \dots, C_m\}$ we create a word $w_i$ such that $w_i[j] = 1$ iff $u_j \in C_i$. 
+For the universe $U = \{u_1, u_2, \dots, u_n\}$ we will construct a binary string $u= 1^{2|U|}$ with length $\ell(u) = 2|U|$.
+For each subset of $\mathcal{C} = \{C_1, C_2, \dots, C_m\}$ we create a word $w_i$ such that $w_i[j] = 1$ iff $u_j \in C_i$. 
 
-Assume a solution to the {\sc{Min Factors Decomposition}} problem $i_1, i_2, \dots, i_k$ that chooses from the words $w_i$ to form $u$, then the corresponding subsets $C_{i_1}, C_{i_2}, \dots, C_{i_k}$ in the constructed {\sc{Set Cover}} instance cover the entire universe $U$.
+Assume a solution to the {\sc{Select Factors Decomposition}} problem $i_1, i_2, \dots, i_k$ that chooses from the words $w_i$ to form $u$, then the respective subsets $C_{i_1}, C_{i_2}, \dots, C_{i_k}$ in the constructed {\sc{Set Cover}} instance cover the entire universe $U$.
 Assume there exists an element $u_x \in U$ with $u_x \not \in C_{i_k} ~\forall~ i_1, i_2, \dots, i_k$.
 This implies that there is no $w_{i_k} ~\forall~ i_1, i_2, \dots, i_k$ with $w_{i_k}[x]=1$ which is in contradiction to the found solution with $w_{i_1}^{l / \ell(w_{i_1})} \lor w_{i_2}^{l / \ell(w_{i_2})} ~\dots~ \lor w_{i_k}^{l / \ell(w_{i_k})} = u = 1^{2|U|}$.
 This means that $u_x$ cannot exist and we found a {\sc{Set Cover}} of size $k$.
-
-If the {\sc{Set Cover}} problem has a solution $\mathcal{O} \subseteq \mathcal{C}, |\mathcal{O}|=k$ with $\bigcup_{C_i \in O} C_i = U$, then $w_{i_1}^{l / \ell(w_{i_1})} \lor w_{i_2}^{l / \ell(w_{i_2})} ~\dots~ \lor w_{i_k}^{l / \ell(w_{i_k})}$ is a solution to the {\sc{Min Factors Decomposition}} problem.
+If the {\sc{Set Cover}} problem has a solution $\mathcal{O} = \lbrace C_{i_1}, C_{i_2}, \dots, C_{i_k} \rbrace$ with $\bigcup_{C_i \in \mathcal{O}} C_i = U$, then $w_{i_1}^{l / \ell(w_{i_1})} \lor w_{i_2}^{l / \ell(w_{i_2})} ~\dots~ \lor w_{i_k}^{l / \ell(w_{i_k})}$ is a solution to the {\sc{Select Factors Decomposition}} problem.
 Assume $w_{i_1}^{l / \ell(w_{i_1})} \lor w_{i_2}^{l / \ell(w_{i_2})} ~\dots~ \lor w_{i_k}^{l / \ell(w_{i_k})} \not = u$, that implies there is at least one position $x$ where $(w_{i_1}^{l / \ell(w_{i_1})} \lor w_{i_2}^{l / \ell(w_{i_2})} ~\dots~ \lor w_{i_k}^{l / \ell(w_{i_k})})[x] \not= u[x] $.
-This is in contradiction to the construction as there has to be a $C_{i_x} \in \mathcal{O}$ with $u_x \in C_{i_x}$ and therefore a word $w_{i_x}[x]=1$. This reduction demonstrates that solving the original problem is as hard as solving the {\sc{Set Cover}} problem.
-
+This is in contradiction to the construction as there has to be a $C_{i_x} \in \mathcal{O}$ with $u_x \in C_{i_x}$ and therefore a word $w_{i_x}$ with $w_{i_x}[x]=1$. This reduction demonstrates that solving the {\sc{Select Factors Decomposition}} problem is as hard as solving the {\sc{Set Cover}} problem.
 
 \section{Fourier Transform}
 \label{ch:novel-algos:fourier}
-Finding shorter factors that just the maximal divisors should already increase the explainability but consider the following example from Figure \ref{fig:fourier-transform-a}.
+Finding shorter factors than just the maximal divisors should already increase the explainability but consider the following example from Figure \ref{fig:fourier-transform-a}.
 Factor $A_4$ alone would suffice to cover the original \DFA $A$ but most of the final states are already covered by the smaller factor $A_2$.
-Consider states $q_1, q_3 \dots$ which are covered by both factors, which is not required.
-We now can remove all the states from $A_4$ which are already covered by $A_2$ and this results in 2 Factors with each having just one final state.
-Of course, there might be multiple states which are not part of any other smaller factors, but any factor of an or-decomposition can be replaced by multiple factors of the same length, each with $|F_{B_i}| = 1 ~\forall~ (B_i)_{1 \leq i \leq k}$.
-Each factor only having a single final state further increases explainability as it allows for each value to be represented as the position and the size of the factor or the periodicity, e.g. instead of a binary label, a list of integer tuples could represent the label.
+Consider the states $q_1, q_3 q_5$ and $q_7$ which are covered by both factors, which is not required for the decomposition to be valid.
+We can remove all the states from $A_4$ which are already covered by $A_2$ and this results in 2 Factors with each having just one final state.
+Of course, there might be multiple states which are not part of any other smaller factors, but any factor of an \orDecomp can be replaced by multiple factors of the same length, each with $|F_{B_i}| = 1 ~\forall~ (B_i)_{1 \leq i \leq k}$.
+Each factor only having a single final state further increases explainability as it allows for each value to be represented as the position and the size of the factor or the periodicity, e.g.~instead of a binary label, a list of integer tuples could represent the label.
 For a comparison between single or multiple binary labels and a list of tuples with the factors, a detailed examination including human-computer interaction would be required.
 
 \begin{figure}[h]
@@ -251,26 +250,27 @@ In general, the greedy approach of combining factors of increasing size should s
 So far we only considered decompositions where the union over all factors $B_i$ results in exactly the original language, $L(A) = \cup_{1\leq i \leq k} L(B_i)$, and all factors $B_i$ in the decomposition satisfy $|B_i| < |A|$.
 Since our goal is not to find decompositions of minimal width but to find decomposition such that the explainability is maximized, we can relax the requirements to achieve greater explainability.
 If we allow for factors of original size $|B_i| \leq |A|$, we can find a factor of the original size, which covers all values not covered by a factor so far.
-The values only covered by this final factor $B_k$ but not by any other can be considered hard outliers and it allows for a decomposition of any \DFA.
-This is not properly defined for \DFAs but it makes sense in the context of explainable labels.
-Additionally, we may allow for $L(A) \supseteq \cup_{1\leq i \leq k} L(B_i)$ and use the precision for a decomposition with $L(A) \not = \cup_{1\leq i \leq k} L(B_i)$ as $precision(\cup_{1\leq i \leq k}~ B_i) = \frac{|F_A| - out\{B_1\dots B_k\}}{|F_A|}$ used in the metric, and allow for a decomposition to be valid if a certain precision is reached.
+The values only covered by this final factor $B_k$ but not by any other factor, can be considered hard outliers and it allows for a decomposition of any \DFA.
+This might not make much sense for \DFAs but it makes sense in the context of explainable labels.
+Additionally, we may allow for $L(A) \supseteq \cup_{1\leq i \leq k} L(B_i)$ and use the precision for a decomposition with $L(A) \not = \cup_{1\leq i \leq k} L(B_i)$ as $precision(\cup_{1\leq i \leq k}~ B_i) = \frac{|F_A| - out(\{B_1\dots B_k\})}{|F_A|}$ used in the metric, and allow for a decomposition to be valid if a certain precision is reached.
 
 \section{Delta Window as Preprocessing or During Folding}
 \label{ch:novel-algos:delta-window}
-Working with real-world data always poses a challenge as it might be very large or contain measurement errors.
+Working with real-world data always poses a challenge as the dataset might be very large or contain measurement errors.
 The longer a label and therefore the corresponding automata gets, it becomes less and less likely that a valid folding of the automata exists.
-To mitigate this problem, we implemented a delta window as a preprocessing as well as during the folding step of the algorithm.
-The preprocessing changes the input data in a way that for each set value in the label, it gets extended to the desired delta window size.
-This increases the likelihood of e.g. a valid folding, but in turn, increases the number of values to cover overall. On the contrary, the delta window during folding does not change the input, but instead, a folding is considered valid, if a set value folds onto another by some delta window.
+To mitigate this problem, we implemented a delta window during the folding step of the algorithm.
+The delta window during folding does not change the input, but instead, a folding is considered valid, if a set value folds onto another by some delta window.
+Formally, with applied delta window of width $w$, a state $q_i$ is final in the input, if there exists a $q_j \in F$ with $j \in \lbrace ((i - w)~mod~|Q|), \dots, ((i + w)~mod~|Q|) \rbrace$.
 The effectiveness of the delta window approach will be evaluated in Section \ref{ch:Evaluation:explainability}.
 
 \section{EPG Creation from Decomposition}
 \label{ch:novel-algos:ept-graph}
-In the final step, we want to construct a EPG instance, from the decompositions over all labels.
-For each edge and its label, we collect all factors of the computed \orDecomp and replace it with a multi edge for each factor.
-The resulting edge labels should ideally be smaller than the original label, in the case of hard outliers, a alternative representation needs to be added.
-Either in the form of the original label with serves as a fallback in the case of an outlier or in form of a list, where a edge is also present, when the current time step $t ~mod~$ the original label length is equal to an element of the list.
-This becomes inefficient with more than a few hard outliers but could be an improvement against a long label.
+
+In the last step, our goal is to create an EPG instance by combining decompositions across all labels.
+For each edge and its corresponding label, we gather all factors from the computed \orDecomp and substitute them with multiple edges, each representing a factor.
+Ideally, the resulting edge labels should be smaller than the original label.
+In cases of severe outliers, an alternative representation must be introduced. This can take the form of the original label, serving as a fallback for outliers, or as a list where an edge is included whenever the current time step $t~mod$ the original label length equals an element in the list.
+While this method becomes less efficient with numerous hard outliers, it could still be an improvement compared to using a lengthy label.
 
 
 %%% Local Variables: 
