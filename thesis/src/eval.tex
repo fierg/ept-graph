@@ -37,11 +37,10 @@ Also, it is not implemented for \andDecomp as it is not considered reasonable, s
 
 \section{Decomposition Evaluation}
 \label{ch:Evaluation:decomposition-quality}
-TODO: def boxplot
-
 Moving on to the decomposition evaluation, we validate each method separately and then compare them against each other.
 We also benchmark \andDecomp and \orDecomp.
-To get an insight into how well a particular decomposition method is performing, decompose the whole data-set and then plot each factor of each decomposition by its relative size compared to the original \DFA size and the relative amount of covered values of the \DFA by this factor.
+To get an insight into how well a particular decomposition method is performing, we decompose the whole data-set and then plot each decomposition.
+For each decomposition, we plot its factors by its relative size compared to the original \DFA size and the relative amount of covered values of the \DFA up to this factor.
 \begin{figure}[t]
 	\begin{minipage}[h]{0.49\linewidth}
 		\centering
@@ -79,6 +78,9 @@ The results are shown in Figure \ref{fig:eval:max-divisor-all-factors} and it cl
 A lot of data-points collapse onto a single $x$ value since they are grouped by their relative size, not their absolute.
 For the \andDecomp there are many values scattered around a small relative factor size.
 To get some more insight into the distribution, a box plot is also provided in Figure \ref{fig:eval:max-divisor-all-factors-box-plot}.
+Box plots visually present data using five values: the median, first quartile, third quartile, and the smallest and largest values within the lower and upper bounds of the distribution.
+The edges of the box are always the first and third quartile, and the line inside the box is the median.
+Lines extending from the boxes indicate the spread outside the upper and lower quartile and values outside $\pm 1.5$ times the inter-quartile range are considered outliers of the distribution and will be depicted as individual points.
 Here, the same $x$ and $y$ values are chosen but the values are aggregated such that if a $x$ value is too close to another, their data points get merged.
 The \orDecomp shows that even with a relative factor size of $\frac{1}{2}$ which is the largest possible factor, the median over all these factors only covers 10\% of the target \DFA.
 There are some outliers with $\frac{1}{3}$ or $\frac{1}{2}$ the original size which covers already up to 60-80\% of the original \DFA but they are outliers and most of the \orDecomp found by using the maximal divisors cover almost nothing of the original, especially the short factors.
@@ -174,17 +176,6 @@ When also enabling the delta window with width 1, the precision increases drasti
 	\caption{Precision for \orDecomp ($\cup$) and \andDecomp ($\cap$)}
 	\label{tab:eval-precision}
 \end{table}
-Further increasing the delta window to size 2 does improve precision, but not by that much.
-Even with the delta window size of 2 we do not encounter more valid decompositions.
-The \andDecomp as on average much higher precision of 86\% and finds 182 valid decompositions out of the 3321 edges, and 1908 decompositions with precision $\geq 90\%$
-This is partially explained by the higher amount of 0 values in the input data as previously mentioned.
-Looking at the other metrics, decomposition structure and size of the decomposition, we see different result for different methods.
-The MaxDivisor approach finds very few factors on average, 2.1 when using an \andDecomp and only one when using an \orDecomp.
-The novel greedy approach finds more factors and also smaller ones, subsequently the decomposition structure metric is better for \andDecomp and \orDecomp.
-When considering also the delta window of size one or two, we find many more factors with up to 5.2 on average.
-With an decomposition structure value of 0.116 we find also small factors as part of the \orDecomp, which is desired.
-The FourierTransform method is only viable for regular \orDecomp but outperforms both other methods in terms of decomposition size and decomposition structure value.
-With an average decomposition structure of below 0.1 we seem to find lots of small factors, increasing potential explainability.
 \begin{table}[b]
 	\centering
 	\begin{tabular}{ll|rr|rrr}
@@ -206,6 +197,18 @@ With an average decomposition structure of below 0.1 we seem to find lots of sma
 	\caption{Explainability metrics for different methods}
 	\label{tab:eval-metric}
 \end{table}
+Further increasing the delta window to size 2 does improve precision, but not by that much.
+Even with the delta window size of 2 we do not encounter more valid decompositions.
+The \andDecomp as on average much higher precision of 86\% and finds 182 valid decompositions out of the 3321 edges, and 1908 decompositions with precision $\geq 90\%$
+This is partially explained by the higher amount of 0 values in the input data as previously mentioned.
+Looking at the other metrics, decomposition structure and size of the decomposition, we see different result for different methods.
+The MaxDivisor approach finds very few factors on average, 2.1 when using an \andDecomp and only one when using an \orDecomp.
+The novel greedy approach finds more factors and also smaller ones, subsequently the decomposition structure metric is better for \andDecomp and \orDecomp.
+When considering also the delta window of size one or two, we find many more factors with up to 5.2 on average.
+With an decomposition structure value of 0.116 we find also small factors as part of the \orDecomp, which is desired.
+The FourierTransform method is only viable for regular \orDecomp but outperforms both other methods in terms of decomposition size and decomposition structure value.
+With an average decomposition structure of below 0.1 we seem to find lots of small factors, increasing potential explainability.
+
 
 
 %%% Local Variables: 
