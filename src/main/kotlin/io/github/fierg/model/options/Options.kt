@@ -24,13 +24,30 @@ data class Options(
                 debug = false,
                 quiet = false,
                 deltaWindowPreprocessing = 0,
-                deltaWindowAlgo = 1,
+                deltaWindowAlgo = 0,
                 threshold = 1.0,
                 allowFullLengthDecomposition = false
             )
         }
 
-        fun getBenchmarkSuit(): Triple<List<Options>, List<Options>, List<Options>> {
+        fun getDeltaSuit(): List<Options> {
+            val orMaxD1 = emptyOptions()
+            orMaxD1.decompositionMode = DecompositionMode.MAX_DIVISORS
+            orMaxD1.deltaWindowAlgo = 1
+
+            val orGreedyD1 = emptyOptions()
+            orGreedyD1.deltaWindowAlgo = 1
+
+            val orFourierD1 = emptyOptions()
+            orFourierD1.decompositionMode = DecompositionMode.FOURIER_TRANSFORM
+            orFourierD1.deltaWindowAlgo = 1
+
+            return listOf(
+                orMaxD1, orGreedyD1, orFourierD1
+            )
+        }
+
+        fun getDefaultSuit(): List<Options> {
             val orMax = emptyOptions()
             orMax.decompositionMode = DecompositionMode.MAX_DIVISORS
 
@@ -46,28 +63,30 @@ data class Options(
             val andGreedy = emptyOptions()
             andGreedy.compositionMode = CompositionMode.AND
 
-            val orMaxD1 = emptyOptions()
-            orMaxD1.decompositionMode = DecompositionMode.MAX_DIVISORS
-            orMaxD1.deltaWindowAlgo = 1
-
-            val orGreedyD1 = emptyOptions()
-            orGreedyD1.deltaWindowAlgo = 1
-
-            val orFourierD1 = emptyOptions()
-            orFourierD1.decompositionMode = DecompositionMode.FOURIER_TRANSFORM
-            orFourierD1.deltaWindowAlgo = 1
-
-            val defaultSuit = listOf(
+            return listOf(
                 orMax, andMax, orGreedy, andGreedy, orFourier
             )
+        }
 
-            val deltaSuit = listOf(
-                orMaxD1, orGreedyD1, orFourierD1
+        fun getPrecisionSuit() : List<Options> {
+            val orMax = emptyOptions()
+            orMax.decompositionMode = DecompositionMode.MAX_DIVISORS
+
+            val andMax = emptyOptions()
+            andMax.decompositionMode = DecompositionMode.MAX_DIVISORS
+            andMax.compositionMode = CompositionMode.AND
+
+            val orMaxD1 = emptyOptions()
+            orMaxD1.decompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS
+            orMaxD1.deltaWindowAlgo = 1
+
+            val orMaxD2 = emptyOptions()
+            orMaxD2.decompositionMode = DecompositionMode.GREEDY_SHORT_FACTORS
+            orMaxD2.deltaWindowAlgo = 2
+
+            return  listOf(
+                orMax, andMax, orMaxD1, orMaxD2
             )
-
-            val fullSuit = defaultSuit + deltaSuit
-
-            return Triple(defaultSuit, deltaSuit, fullSuit)
         }
     }
 }

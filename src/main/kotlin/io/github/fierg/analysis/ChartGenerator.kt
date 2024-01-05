@@ -17,8 +17,7 @@ class ChartGenerator {
         Logger.info("This might take a while...")
         Logger.setLogLevelToDebug()
 
-        val suit = Options.getBenchmarkSuit()
-        suit.third.forEach { options ->
+        Options.getPrecisionSuit().forEach { options ->
             val decomposer = Decomposer(options)
 
             Logger.setLogLevelToQuiet()
@@ -28,7 +27,7 @@ class ChartGenerator {
             Logger.resetLogLevel()
             Logger.info("This took $elapsed.")
 
-            generatePlots(evalResult, options)
+            //generatePlots(evalResult, options)
             generateMetricTables(evalResult, options)
         }
         Logger.info("Done.")
@@ -61,11 +60,13 @@ class ChartGenerator {
             mPrecision.add(precision)
             mSize.add(cover.factors.size)
         }
-        mPrecision = mPrecision.filter { !it.isNaN() }.toMutableList()
+        mPrecision = mPrecision.filter { !it.isNaN() }.filter { it != 0.0 }.toMutableList()
         println("valid decompositions: $foundValidDecomposition, good decompositions: $veryGoodDecomposition, ok decompositions:$okDecomposition total hard outliers $hardOutliers")
-        println("& ${mDecompositionStructures.sum().format(3)} & ${mDecompositionStructures.average().format(3)} & ${mDecompositionStructures.median().format(3)} &" +
-                " ${mPrecision.sum().format(3)} & ${mPrecision.average().format(3)} & ${mPrecision.median().format(3)} &" +
-                " ${mSize.sum()} & ${mSize.average().format(3)} & ${mSize.median()}")
+        //println("& ${mDecompositionStructures.sum().format(3)} & ${mDecompositionStructures.average().format(3)} & ${mDecompositionStructures.median().format(3)} &" +
+        //        " ${mPrecision.sum().format(3)} & ${mPrecision.average().format(3)} & ${mPrecision.median().format(3)} &" +
+        //        " ${mSize.sum()} & ${mSize.average().format(3)} & ${mSize.median()}")
+
+        println(" ${mPrecision.average().format(3)} & ${mPrecision.median().format(3)} ")
     }
 
     private fun generatePlots(evalResult: List<List<Cover>>, options: Options) {

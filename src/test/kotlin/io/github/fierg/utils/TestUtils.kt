@@ -20,7 +20,7 @@ class TestUtils {
 
     @Test
     fun testUtils2b() {
-        val number = 8
+        val number = 7233
         val factors = number.factors().toList()
         Logger.info("Factors of $number are $factors")
         Logger.info("Max Divisors of $number are ${number.maximalDivisors().toList()}")
