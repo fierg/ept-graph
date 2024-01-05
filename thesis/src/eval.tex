@@ -4,13 +4,11 @@
 \chapter{Evaluation}
 \label{ch:Evaluation}
 %% ==============================
-TODO: def boxplot
-
 In this evaluation section, we explore how well the algorithm performs by looking at the performance and examining the decompositions.
 Our primary interest lies in two aspects, the size of the factors contributing to the decomposition and the coverage of final states by each factor.
 Through this analysis, we aim to gauge the algorithm's effectiveness in generating meaningful decompositions.
 This evaluation is pivotal for understanding the algorithm's capability to produce concise and relevant factors, providing insights into the temporal structure of the given labels.
-For this purpose, the complete f2f dataset was evaluated, described in Section \ref{ch:prelimiaries:real-world-data} consisting of 62 Temporal graphs with 20 to 56 edges each, ignoring loop edges.
+For this purpose, the complete F2F dataset was evaluated, described in Section \ref{ch:prelimiaries:real-world-data} consisting of 62 Temporal graphs with 20 to 56 edges each, ignoring loop edges.
 In total, there are 3321 edges with a combined label length of around 2.3 million giving an average label length of 6993.
 Please note that the data sets represent people looking at each other, a directed edge from node $u$ to $v$ indicates participant $u$ looks at participant $v$ therefore only one edge label at a given time step $t$ has its value set, $\tau(e)[t] = 1$ for exactly one outgoing edged of $u$.
 This is also visible in the data as only 13.4\% of values in the labels is set to 1 over all the labels.
@@ -39,6 +37,8 @@ Also, it is not implemented for \andDecomp as it is not considered reasonable, s
 
 \section{Decomposition Evaluation}
 \label{ch:Evaluation:decomposition-quality}
+TODO: def boxplot
+
 Moving on to the decomposition evaluation, we validate each method separately and then compare them against each other.
 We also benchmark \andDecomp and \orDecomp.
 To get an insight into how well a particular decomposition method is performing, decompose the whole data-set and then plot each factor of each decomposition by its relative size compared to the original \DFA size and the relative amount of covered values of the \DFA by this factor.
@@ -166,10 +166,10 @@ When also enabling the delta window with width 1, the precision increases drasti
 		\multicolumn{1}{c}{Decomposition} & \multicolumn{2}{c}{Precision [\%]} & \multicolumn{3}{c}{Decomposition Quality} \\
 		& avg. & median & valid & $p \geq 90$ & $p \geq 75$ \\
 		\hline
-		\orDecomp & 8 & 3 & 3 & 3 & 3 \\
-		\orDecomp + $\Delta_1$ & 70 & 74 & 3 & 1091 & 1636 \\
-		\orDecomp + $\Delta_2$ & 74 & 79 & 3 & 1277 & 1772 \\
-		\andDecomp & 86 & 93 &  182 & 1908 & 2670\\
+		\orDecomp & 11.7 & 16.9 & 3 & 3 & 3 \\
+		\orDecomp + $\Delta_1$ & 71.0 & 74.6 & 3 & 1091 & 1636 \\
+		\orDecomp + $\Delta_2$ & 73.5 & 78.8 & 3 & 1277 & 1772 \\
+		\andDecomp & 85.6 & 93.2 &  182 & 1908 & 2670\\
 	\end{tabular}
 	\caption{Precision for \orDecomp ($\cup$) and \andDecomp ($\cap$)}
 	\label{tab:eval-precision}
