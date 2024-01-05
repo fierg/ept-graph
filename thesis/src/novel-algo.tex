@@ -130,7 +130,7 @@ The original problem was solvable in \LogSpace, but by extending the problem to 
 Finding a valid decomposition is possible in \LogSpace but selecting a minimal amount of given factors needed to be a valid decomposition is not.
 This problem can be generalized for picking a minimal decomposition from a given set of factors as follows:
 \begin{defn}[\sc{Select Factors Decomposition}]{\ \\}
-	Input: A binary string $u$ with $\ell(u)= l$ and a set of binary strings $\mathcal{W} = \{w_1, w_2, \dots, w_n\}$ with $\ell(w_i) < l$ and $\ell(w_i)$ divides $l$ for $1 \leq i \leq n$ and an integer $k$.\\
+	Input: A set of binary strings $\mathcal{W} = \{w_1, w_2, \dots, w_n\}$ with $\ell(w_i) < l$ and $\ell(w_i)$ divides $l$ for $1 \leq i \leq n$, a binary string $u$ with $\ell(u)= l$ and an integer $k$.\\
 	Question: Exists indices $i_1, i_2, \dots i_k$ such that
 	$$w_{i_1}^{l / \ell(w_{i_1})} \lor w_{i_2}^{l / \ell(w_{i_2})} ~\dots~ \lor w_{i_k}^{l / \ell(w_{i_k})} = u $$
 \end{defn}
@@ -138,7 +138,7 @@ This problem can be generalized for picking a minimal decomposition from a given
 To find lower bounds for this novel problem, we are going to reduce the {\sc{Set Cover}} problem, known to be NP-complete, to our novel {\sc{Select Factors Decomposition}} problem, using a polynomial time reduction.
 
 \begin{defn}[\sc{Set Cover}]{\ \\}
-	Input: A set of elements $U = \{u_1, u_2, \dots , u_n\}$. A set $\mathcal{C} = \{C_1, C_2, \dots , C_m\}$ where $C_i \subseteq U ~\forall~ C_i \in \mathcal{C}$ and an integer $k$.\\
+	Input: A set of elements $U = \{u_1, u_2, \dots , u_n\}$, a set $\mathcal{C} = \{C_1, C_2, \dots , C_m\}$ where $C_i \subseteq U ~\forall~ C_i \in \mathcal{C}$ and an integer $k$.\\
 	Question: Exists a set $\mathcal{O} \subseteq \mathcal{C}$ of size  at most $k$ such that $\underset{C_i \in \mathcal{O}}{\bigcup}C_i = U$.
 \end{defn}
 To reduce the {\sc{Set Cover}} problem to our novel problem, we create an instance as follows.

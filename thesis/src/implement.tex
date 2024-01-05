@@ -1,7 +1,7 @@
 \chapter{Implementation}
 \label{ch:Implementation}
 %% ==============================
-All algorithms described above have been implemented using Kotlin because it can be compiled for the Java Virtual Machine and native execution, therefore it seemed like a good balance between a native implementation and higher language conciseness and fault tolerance.
+All algorithms described above have been implemented using Kotlin because it can be compiled for the Java Virtual Machine or native execution.
 The project is realized as a maven project, to simplify dependency management.
 Although all theoretic results have been performed for \DFAs, since none of the properties of a \DFA is actually used except for the set of final states, the input as well as the factors are represented as boolean arrays, where a 1 indicates a final state.
 This benefits performance, as array operations are usually faster than e.g. lists of custom objects and this also enabled easy transformation between labels and boolean arrays and vise versa. 
@@ -18,10 +18,9 @@ For each label then a decomposition is performed, using the specified algorithm.
 
 \section{Decomposition using Maximal Divisors}
 \label{ch:Implementation:max-divisor}
-
 For the initial implementation, only maximal divisors were used as this is already well studied.
 For an input array of size $n$, all maximal divisors are lazily yielded into a sequence, via a \textit{NumbersExtensions}.
-Extension functions are a useful Kotlin tool if you want to extend the static functionality of base classes, e.g. Integers.
+Extension functions are a useful Kotlin tools if you want to extend the static functionality of base classes, e.g. Integers.
 Then a preliminary Factor is created for each maximal divisor, with an empty array the size of the divisor, and a job is spawned for each factor as the periodicity of the factors can be tested in parallel.
 With the help of Kotlin co-routines, a modest multi-threading approach is implemented where the main algorithm thread waits for all the factors to be checked. Afterward, they are collected into a \textit{Cover} object, which handles all the validation and quality assessment.
 For this, a cover array is created, where all factors are consolidated and uncovered values, so-called outliers, are visible.
@@ -29,62 +28,65 @@ As not all inputs are decomposable and by default, we do not allow  $|B_i| = |A|
 
 \section{Greedy Short Factor Decomposition}
 \label{ch:Implementation:greedy-short-factor}
-The implementation of the greedy approach to find shorter factors is very similar to the previous method.
-As described in Section \ref{ch:novel-algos:greedy-short-factors}, all divisors of the length of the original \DFA are considered instead of just the maximal divisors.
-Multi-threading in the job implementation is even more useful as we consider a greater amount of possible factor sizes.
-All found factors are again collected into a Cover object, this time we are only adding factors to the cover object if their addition changes the resulting cover array.
-In the example from Figure \ref{fig:short-factors} we would only add $A_2$ and skip over $A_4$ since the further addition of factors does not change the resulting decomposition.
-If after the addition of a factor a complete decomposition is formed with $L(A) = \cup_{B_i \in \text{Cover}} L(B_i)$ which is validated by counting the outliers and checking for $out(\{B_i \in~\text{Cover}\}) = 0$.
-Since is to be expected that a considerable amount of \DFAs generated from labels from real-world data are prime, a decomposition with a given $precision(\{B_i \in~\text{Cover}\})$ is also implemented.
+The implementation of the greedy approach to identify shorter factors closely resembles the previous method.
+As explained in Section \ref{ch:novel-algos:greedy-short-factors}, we consider all divisors of the length of the original \DFA instead of just the maximal divisors. Multi-threading in the job implementation becomes even more advantageous when dealing with a larger number of potential factors.
+All identified factors are once again gathered into a Cover object.
+However, this time, we only include factors in the cover object if their addition alters the resulting cover array.
+For instance, in the example illustrated in Figure \ref{fig:short-factors}, we would add $A_2$ and skip over $A_4$ since the further addition of factors doesn't alter the resulting decomposition.
+If, following the addition of a factor, a complete decomposition is formed with $L(A) = \cup_{B_i \in \text{Cover}} L(B_i)$, it is then validated by counting the outliers and checking for $out({B_i \in~\text{Cover}}) = 0$.
+Given that a substantial number of \DFAs generated from labels in real-world data are likely prime, we've implemented a decomposition with a specified $precision({B_i \in~\text{Cover}})$, as well as a decomposition that allows for potential factors to be as large as the original \DFA size.
 
 \section{Fourier Transformed Decomposition}
 \label{ch:Implementation:fourier-transform}
 With the goal of increased explainability, the Fourier-transformed decomposition is implemented according to Section \ref{ch:novel-algos:fourier}.
-Similar to the greedy approach, all divisors of the length of the original \DFA are considered.
-With the Fourier-transformation of the possible factors, we first remove all multiples of periods as described.
-Afterward, the single set value requirement $|F_{B_i}| = 1$ is enforced, by replacing all factors not meeting the requirement, with multiple factors which do hold.
-The collecting into a cover is performed greedily again, to reduce the number of factors in the cover to improve explainability.
-
-Independent from the decomposition method used, a \textit{Cover} object can be turned into an EPT multi-graph with the same nodes as the original F2F graph but for each cover, there is now a multi-edge, one for each decomposition with the cover array as the label.
+Similar to the the greedy approach, we consider all divisors of the length of the original \DFA.
+Employing the Fourier transformation on potential factors involves an additional step where values of a factor $B_i$, that are also covered by a smaller factor $B_j$ with $j|i$, are removed from $B_i$.
+Subsequently, we enforce the requirement for a single set value, $|F_{B_i}| = 1$ by replacing factors that fall short of this criterion with multiple factors that each satisfy it and together cover the same values.
+The aggregation into a cover is once again executed in a greedy fashion, aiming to minimize the number of factors in the cover for improved clarity.
+Regardless of the decomposition method employed, a \textit{Cover} object can be transformed into an EPG multi-graph.
+This new graph retains the same nodes as the original F2F graph, but for each cover, there exists a multi-edge, corresponding to each decomposition with the cover array serving as the label.
 
 \section{External Libraries}
 \label{ch:Implementation:external-libs}
 Some external libraries are used throughout this project which was quite simple through the use of maven.
-\emph{org.junit.jupiter} provided the packages \emph{junit}, \emph{engine} and \emph{api} in version 4.13.2, which allows a simple test unit creation and execution. Multi-threading was enabled by the use of Kotlin \emph{coroutines} in version 1.7.1, provided by JetBrains.
+The library \emph{org.junit.jupiter} provided the packages \emph{junit}, \emph{engine} and \emph{api} in version 4.13.2, which allows a simple test unit creation and execution. Multi-threading was enabled by the use of Kotlin \emph{coroutines} in version 1.7.1, provided by JetBrains.
 JGraph \cite{DBLP:journals/corr/abs-1904-08355}, a Java library of graph theory data structures and algorithms, was used in version 1.5.1 for general data structures such as simple and multi-graphs.
-Lets-Plot\footnote{\url{https://github.com/JetBrains/lets-plot}} is an open-source plotting library for statistical data was used for analysis, debugging and visualizations used in this document.
-A argument parser\footnote{\url{https://github.com/xenomachina/kotlin-argparser}} for Kotlin was used to facilitate the creation of a command line interface.
+Lets-Plot\footnote{\url{https://github.com/JetBrains/lets-plot}} is an open-source plotting library for statistical data and was used for analysis, debugging and visualizations used in this document.
+An argument parser\footnote{\url{https://github.com/xenomachina/kotlin-argparser}} for Kotlin was used to facilitate the creation of a command line interface.
 
 \section{Usage}
 \label{ch:Implementation:usage}
-To enable a convenient usage, the algorithm is obtainable as jar file but it can also be built from sources. It provides a simple command line interface
+To enable a convenient usage, the algorithm is obtainable as jar file but it can also be built from sources.
+It provides a simple command line interface (CLI) for the EPG generator, providing functionality for generating EPG instances based on the F2F dataset and specified options.
+The basic usage involves selecting the temporal network id in the range of 0 to 61 and using the preset default values.
 
-\verb|Usage: EPT Graph Reader options_list|\\
-\verb|Arguments: |\\
-\verb|input -> input (Network id in range (0..61) { Int }|\\
-\verb|threshold [1.0] -> Min threshold of cover to be valid (optional) { Double }|\\
-\verb|Options: |\\
-\verb|--dotenv, -env [false] -> Use config from .env file|\\
-\verb|		(Recommended usage due to amount of args) |\\
-\verb|--state, -s [false] -> Invert state to substitute in decomposition|\\
-\verb|		(if set, decomposition will replace 0s instead of 1s) |\\
-\verb|--Mode of decomposing DFAs [GREEDY_SHORT_FACTORS] -> Choose how|\\
-\verb|		a decomposition is found, using only maximal divisors,|\\
-\verb|		using all factors and greedily collect up to the threshold|\\
-\verb|		or perform a fourier transform for increased understandability.|\\
-\verb|		{ Value should be one of [max_divisors, greedy_short_factors,|\\
-\verb| 		fourier_transform] }|\\
-\verb|--Mode of composing factors [OR] -> Choose how a composition is formed,|\\
-\verb|		using AND or OR operator for adding factors together to|\\
-\verb|		a decomposition. { Value should be one of [and, or] }|\\
-\verb|--skipSelfEdges, -skipSelfEdges [false] -> Skip loop back edges|\\
-\verb|		with same source and target, these are often useless. |\\
-\verb|--debug, -d [false] -> Turn on debug mode |\\
-\verb|--quiet, -q [false] -> Turn on quiet mode |\\
-\verb|--deltaWindowPreprocessing [0] -> Delta window|\\
-\verb|		 in preprocessing of the label { Int }|\\
-\verb|--deltaWindowAlgo [0] -> Delta window during decomposing { Int }|\\
-\verb|--help, -h -> Usage info |\\
-
+\begin{verbnobox}[\fontsize{10.5pt}{10.5pt}\selectfont]
+Usage: EPG Generator options_list
+Arguments: 
+input -> input (Temporal Network id in range (0..61) { Int }
+threshold [1.0] -> Min threshold of cover to be valid (optional) { Double }
+Options: 
+--dotenv, -env [false] -> Use config from .env file
+		(Recommended usage due to amount of args) 
+--state, -s [false] -> Invert state to substitute in decomposition
+		(if set, decomposition will replace 0s instead of 1s) 
+--Mode of decomposing DFAs [GREEDY_SHORT_FACTORS] -> Choose how
+		a decomposition is found, using only maximal divisors,
+		using all factors and greedily collect up to the threshold
+		or perform a fourier transform for increased understandability.
+		{ Value should be one of [max_divisors, greedy_short_factors,
+ 		fourier_transform] }
+--Mode of composing factors [OR] -> Choose how a composition is formed,
+		using AND or OR operator for adding factors together to
+		a decomposition. { Value should be one of [and, or] }
+--skipSelfEdges, -skipSelfEdges [false] -> Skip loop back edges
+		with same source and target, these are often useless. 
+--debug, -d [false] -> Turn on debug mode 
+--quiet, -q [false] -> Turn on quiet mode 
+--deltaWindowPreprocessing [0] -> Delta window
+		 in preprocessing of the label { Int }
+--deltaWindowAlgo [0] -> Delta window during decomposing { Int }
+--help, -h -> Usage info 
+\end{verbnobox}
 As it comes with a lot of different modes and parameters, a \verb*|.env| file is also provided, for persisting arguments.
 The project is available on Github\footnote{\url{https://github.com/fierg/ept-graph}} and released with an MIT License.
