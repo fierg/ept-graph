@@ -31,7 +31,7 @@ All benchmarks were performed on an AMD Ryzen 5 2600X six-core processor (12 thr
 \end{table}
 It is to be noted that the \andDecomp is expected to be slower because of the considerably greater amount of zeros in the data set as well as the modification to the cover finding algorithm.
 While with an \orDecomp, each additional factor can only remove outliers, in an \andDecomp an additional factor can also add new outliers.
-Because of that, the current outliers of a decomposition must be recalculated considering all factors.
+Because of that, the current outliers  are recalculated, considering all factors currently in the decomposition.
 The Fourier-transform method again increases the number of factors per cover, which hurts performance.
 Also, it is not implemented for \andDecomp as it is not considered reasonable, since a human would still need to look at all factors since it is an \andDecomp.
 
@@ -45,7 +45,8 @@ For each decomposition, we plot its factors by its relative size compared to the
 \subsection{Maximal Divisor Decomposition Evaluation}
 \label{ch:Evaluation:decomposition-quality:max-divisor}
 Decomposing with the Maximal Divisor method implemented as described in Section~\ref{ch:Implementation:max-divisor} was used first for decomposing the complete dataset.
-Analyzing the resulting decompositions and plotting each factor $B_i$ of each decomposition of a \DFA $A$ by its size relative to the original $\frac{|B_i|}{|A|}$ with the precision of the partial decomposition up to that factor.
+Analyzing the resulting decompositions, for each decomposition of a \DFA $A$ we plot each factor $B_i$ in increasing size.
+For $B_i$ we plot its size relative to the original \DFA $\frac{|B_i|}{|A|}$ with the precision of the partial decomposition up to that factor.
 \begin{figure}[h]
 	\begin{minipage}[h]{0.49\linewidth}
 		\centering
@@ -74,24 +75,23 @@ Analyzing the resulting decompositions and plotting each factor $B_i$ of each de
 	\caption{Relative amount of covered values by relative factor size (MaxDivisors)}
 	\label{fig:eval:max-divisor-all-factors-box-plot}
 \end{figure}
-The results are shown in Figure \ref{fig:eval:max-divisor-all-factors} and it clearly shows that the \orDecomp finds factors, but there are fewer factors in the decompositions and they cover fewer values than the comparable \andDecomp.
+The results are shown in Figure \ref{fig:eval:max-divisor-all-factors} and it clearly shows that the \orDecomp finds decompositions, but there are fewer factors in the decompositions and they cover fewer values than the comparable \andDecomp.
 A lot of data-points collapse onto a single $x$ value since they are grouped by their relative size, not their absolute.
 For the \andDecomp there are many values scattered around a small relative factor size.
 To get some more insight into the distribution, a box plot is also provided in Figure \ref{fig:eval:max-divisor-all-factors-box-plot}.
-Box plots visually present data using five values: the median, first quartile, third quartile, and the smallest and largest values within the lower and upper bounds of the distribution.
+Box plots visualize data using typically five values: the median, first quartile, third quartile, and the smallest and largest values within the lower and upper bounds of the distribution.
 The edges of the box are always the first and third quartile, and the line inside the box is the median.
 Lines extending from the boxes indicate the spread outside the upper and lower quartile and values outside $\pm 1.5$ times the inter-quartile range are considered outliers of the distribution and will be depicted as individual points.
 Here, the same $x$ and $y$ values are chosen but the values are aggregated such that if a $x$ value is too close to another, their data points get merged.
-The \orDecomp shows that even with a relative factor size of $\frac{1}{2}$ which is the largest possible factor, the median over all these factors only covers 10\% of the target \DFA.
-There are some outliers with $\frac{1}{3}$ or $\frac{1}{2}$ the original size which covers already up to 60-80\% of the original \DFA but they are outliers and most of the \orDecomp found by using the maximal divisors cover almost nothing of the original, especially the short factors.
-For the \andDecomp a lot of the small relative factor sizes have to be aggregated to visualize them as box-plots, so if a relative factor size value is less than $\frac{1}{20}$ away from a previous data-point, they become one distribution.
-Notably, factors of size between $\frac{1}{12}$ and $\frac{1}{5}$ stretch over the entire range of relative covered values in the decomposition. With $\frac{1}{6}$ relative factor size, the \andDecomp already covered more than 50\% of a given \DFAs final states.
-
+The \orDecomp plot shows that even partial decompositions with largest factor size of $\frac{1}{2}$ which is the largest possible factor, the median over all these partial decompositions only covers 10\% of the target \DFA.
+There are some partial decompositions with largest factor $\frac{1}{3}$ or $\frac{1}{2}$ of the original size, which cover already up to 60-80\% of the original \DFA but they are outliers and most of the \orDecomp found by using the maximal divisors cover almost nothing of the original \DFA, especially partial decompositions with only small factors.
+For the \andDecomp a lot of the small relative factor sizes have to be aggregated to able to visualize them as box-plots, so if a relative factor size value is less than $\frac{1}{20}$ away from a previous data-point, they become one distribution.
+Notably, partial decompositions with largest factors of size between $\frac{1}{12}$ and $\frac{1}{5}$ stretch over the entire range of relative covered values in the decomposition. With partial decompositions with largest factor of $\frac{1}{6}$ relative factor size, the \andDecomp already covered more than 50\% of a given \DFAs final states.
 
 \subsection{Greedy Short Factor Decomposition Evaluation}
 \label{ch:Evaluation:decomposition-quality:greedy-short-factors}
 Looking at the novel greedy approach for finding short factors, a similar picture becomes evident.
-We find more factors in an \orDecomp and some better ones as before when using just the maximal divisors as potential factor sizes, but some factor size data points from 
+We find partial decompositions with more factors in an \orDecomp and some better ones as before when using just the maximal divisors as potential factor sizes,
 \begin{figure}[h]
 	\begin{minipage}[h]{0.49\linewidth}
 		\centering
@@ -106,15 +106,15 @@ We find more factors in an \orDecomp and some better ones as before when using j
 	\caption{Relative amount of covered values by relative factor size}
 	\label{fig:eval:greedy-short-factors-all-factors}
 \end{figure}
-Figure \ref{fig:eval:greedy-short-factors-all-factors} only have a single factor with that relative size.
-Although there are now more factors present overall, the short factors found, only cover at most 20\% of the final states of the \DFA they compose.
-As Figure \ref{fig:eval:greedy-short-factors-all-factors-box-plot} shows, we find more factors and even some better outliers of the distribution, but the overall covered values stay very low.
-There are factors of relative size $\frac{1}{3}$ or $\frac{1}{2}$ which cover up to 80\% of the final states of their \DFA present, but the median over the distributions never exceed 16\%.
+ but some factor size data points from Figure \ref{fig:eval:greedy-short-factors-all-factors} only have a single partial decomposition with a factor of that relative size.
+Although there are now more factors present per decomposition, the partial decompositions with short factors only cover at most 20\% of the final states of the \DFA they compose.
+As Figure \ref{fig:eval:greedy-short-factors-all-factors-box-plot} shows, we find decompositions with smaller factors and even some better outliers of the distribution, but the overall relative covered values by the decompositions stay very low.
+There are partial decompositions with factors of relative size $\frac{1}{3}$ or $\frac{1}{2}$ which cover up to 80\% of the final states of their \DFA present, but the median over the distribution never exceed 16\%.
 This is partially expected, due to the real-world scenario and the way the data is generated.
 There are not that many 1 values in the labels, so the probability of them reoccurring after a periodic time is also low.
 It is also just not likely that a person looks at another person in an exactly periodic way, the data is temporal but just not very periodic in terms of 1 values.
-The \andDecomp is very effective on the other hand, we find so many small factors that the plot becomes a bit overwhelmed.
-Looking at the distribution of relative covered values, we see that even with factors of up to 10\% of the original size, the distribution is covering the complete range but the median is close to 60\% of covered final states.
+The \andDecomp is very effective on the other hand, we find so many decompositions with small factors that the plot becomes a bit overwhelmed.
+Looking at the distribution of relative covered values, we see that even with partial decompositions of only 10\% of the original size, the distribution is covering the complete range but the median is close to 60\% of covered final states.
 \begin{figure}[t]
 	\begin{minipage}[h]{0.49\linewidth}
 		\centering
@@ -130,10 +130,8 @@ Looking at the distribution of relative covered values, we see that even with fa
 	\label{fig:eval:greedy-short-factors-all-factors-box-plot}
 \end{figure}
 This shows that the greedy approach of finding short factors, can find factors which cover more of the input at a smaller relative factor size.
-When enabling the delta window of width 1, the distributions change drastically, factors $\leq \frac{1}{3}$ of the original size cover up to 100\% of the input, with the median above 50\%, see Figure \ref{fig:eval:greedy-short-factors-all-factors-box-plot-delta} on the left.
-So the delta window drastically improves the effectiveness of finding \orDecomp when few values are set to 1, while on the other hand accuracy drops with each delta window increase.
-This has to be evaluated with a human computer interaction study to weight improve effectiveness against a washed out result, since a 1 in a label now implies that an eges is present in the range  $[t, t + \Delta]$.
-\begin{figure}[b]
+When enabling the delta window of width 1, the distributions change drastically, partial decompositions with factors of size $\leq \frac{1}{3}$ of the original \DFA cover up to 100\% of the input, with the median above 50\%, see Figure~\ref{fig:eval:greedy-short-factors-all-factors-box-plot-delta} on the left.
+\begin{figure}[h]
 	\begin{minipage}[h]{0.49\linewidth}
 		\centering
 		GreedyShortFactor\\
@@ -149,19 +147,20 @@ This has to be evaluated with a human computer interaction study to weight impro
 	\caption{Relative amount of covered values by relative factor size (Fourier Transform \& GreedyShortFactors with delta window of size 1)}
 	\label{fig:eval:greedy-short-factors-all-factors-box-plot-delta}
 \end{figure}
+So the delta window drastically improves the effectiveness of finding \orDecomp when few values are set to 1, while on the other hand accuracy drops with each delta window increase.
+This has to be evaluated with a human computer interaction study to weight improve effectiveness against a washed out result, since a 1 in a label now implies that an edge is present in the range  $[t - \Delta, t + \Delta]$.
 
 \subsection{Fourier-Transform Decomposition Evaluation}
 \label{ch:Evaluation:decomposition-quality:fourier}
 Moving on with the analysis of the Fourier-transformed factors, we see more factors in Figure \ref{fig:eval:greedy-short-factors-all-factors-box-plot-delta} on the right, but with the same quality since we do not find new ones, we just separate them into their  single state components.
 The goal for the Fourier-transformed \orDecomp was the increase explainability, so we have to evaluate the metrics for this approach.
-For a proper analysis regarding the explainability and the possibility to comprehend the factors as periodic elements of a temporal graph, has to be evaluated in a qualitative way.
+For a proper analysis regarding the explainability and the possibility to comprehend the factors as periodic elements of a temporal graph, the effectiveness has to be evaluated in a qualitative way with human interaction.
 
 \section{Explainability Evaluation}
 \label{ch:Evaluation:explainability}
 Our analysis now turn towards the evaluation of the explainability metric, presented in Section \ref{ch:explainability:metric}.
 As our greedy methods do not find better decompositions, only more factors, the quality is the same for different methods.
-It is to be noted, that the precision over all graphs is very low for the general \orDecomp, with only an average precision of 8\% (see Figure \ref{tab:eval-precision}) and only 3 valid decompositions.
-When also enabling the delta window with width 1, the precision increases drastically and we have over a thousand decompositions with at least 90\% precision. 
+It is to be noted, that the precision over all graphs is very low for the general \orDecomp, with only an average precision of 11.7\% (see 
 \begin{table}[h]
 	\centering
 	\begin{tabular}{l|rr|rrr}
@@ -176,7 +175,7 @@ When also enabling the delta window with width 1, the precision increases drasti
 	\caption{Precision for \orDecomp ($\cup$) and \andDecomp ($\cap$)}
 	\label{tab:eval-precision}
 \end{table}
-\begin{table}[b]
+\begin{table}[t]
 	\centering
 	\begin{tabular}{ll|rr|rrr}
 		\multicolumn{2}{c}{Method} &  \multicolumn{2}{c}{DS} & \multicolumn{3}{c}{Size}  \\
@@ -197,17 +196,19 @@ When also enabling the delta window with width 1, the precision increases drasti
 	\caption{Explainability metrics for different methods}
 	\label{tab:eval-metric}
 \end{table}
+Figure \ref{tab:eval-precision}) and only 3 valid decompositions.
+When also enabling the delta window with width 1, the precision increases drastically and we have over a thousand decompositions with at least 90\% precision. 
 Further increasing the delta window to size 2 does improve precision, but not by that much.
 Even with the delta window size of 2 we do not encounter more valid decompositions.
-The \andDecomp as on average much higher precision of 86\% and finds 182 valid decompositions out of the 3321 edges, and 1908 decompositions with precision $\geq 90\%$
+The \andDecomp as on average much higher precision of 86\% and finds 182 valid decompositions out of the 3321 edges, and 1908 decompositions with precision $\geq 90\%$.
 This is partially explained by the higher amount of 0 values in the input data as previously mentioned.
 Looking at the other metrics, decomposition structure and size of the decomposition, we see different result for different methods.
-The MaxDivisor approach finds very few factors on average, 2.1 when using an \andDecomp and only one when using an \orDecomp.
-The novel greedy approach finds more factors and also smaller ones, subsequently the decomposition structure metric is better for \andDecomp and \orDecomp.
+The MaxDivisor approach finds very few factors per decomposition, on average,2.1 and the median is only 2 factors per decomposition when using an \andDecomp and even less when using the \orDecomp.
+The novel greedy approach finds more factors per decomposition and also smaller ones, subsequently the decomposition structure metric is better for \andDecomp and \orDecomp.
 When considering also the delta window of size one or two, we find many more factors with up to 5.2 on average.
 With an decomposition structure value of 0.116 we find also small factors as part of the \orDecomp, which is desired.
 The FourierTransform method is only viable for regular \orDecomp but outperforms both other methods in terms of decomposition size and decomposition structure value.
-With an average decomposition structure of below 0.1 we seem to find lots of small factors, increasing potential explainability.
+With an average decomposition structure of below 0.1 we seem to find decompositions with lots of small factors, increasing potential explainability.
 
 
 

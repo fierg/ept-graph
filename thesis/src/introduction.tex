@@ -5,7 +5,7 @@
 \section{Motivation}
 %% ==============================
 \label{ch:Introduction:sec:Motivation}
-Edge periodic temporal graphs are graphs where each edge is associated with a binary string that indicates in which time-step the edge is present.
+Temporal graphs are graphs where each edge is associated with a binary string that indicates in which time-step the edge is present.
 They allow us to identify and capture recurring patterns in temporal data.
 By detecting periodicity, we can gain insights into regular behaviors or events that occur at fixed intervals.
 This can be valuable in fields such as finance, transportation, and social networks, where understanding periodic trends can aid in decision-making and prediction.
@@ -20,8 +20,8 @@ In conclusion, the transformation of temporal graphs into edge periodic temporal
 
 Imagine standing at a train station connecting place $A$ to place $B$, departing every half and full hour.
 The schedule gives information about a leaving train for any time-step $t$ for intervals of 5 minutes.
-To cover all possible time-steps in a day, a long index with all steps is listed, where you have to search for your exact arrival time, to see when the next train is leaving as this is not apparent in the large table with many additional time points.
-Now imagine a different schedule, showing and periodically repeating after one hour.
+To cover all possible time-steps in a day, a long index with all steps is listed, where you have to search for your exact arrival time, to see when the next train is leaving, as this is not apparent in the large table with many additional time points.
+Now imagine the schedule in a different representation, which is periodically repeating after one hour.
 To find the next train, one just has to check at which time of an hour a train departs, which is not only more concise but also easier to understand for human interpreters.
 %% ==============================
 \section{Problem Statement}
@@ -79,7 +79,7 @@ Labels from a temporal graph, consisting of binary strings, can be interpreted a
 \end{figure}
 
 Then the \DFA decomposition algorithms can be applied, to get a family of smaller \DFAs, which combined resembles the language of the original \DFA.
-These so-called factors each represent a periodic part of the input and can be used to get a shorter and periodic label.
+These so-called factors each represent a periodic part of the input and can be used to get a shorter and periodic label as visible in Figure~\ref{fig:initial-idea}.
 Since we obtain a decomposition family, we might need to replace the original temporal graph with an edge periodic graph with multi-edges. 
 
 %% ==============================
@@ -89,16 +89,16 @@ Since we obtain a decomposition family, we might need to replace the original te
 This work is structured into a first introduction to notation and a survey of the current state of the art of temporal and edge periodic graph analysis as well as the decomposition of \DFAs.
 Following this, the used real-world data sets are described, in particular the F2F graphs.
 The core of the document revolves around the decomposition of edge labels by decomposing \DFAs.
-Section \ref{ch:analysis} explains the decomposition of \DFAs and unary \DFAs, while Section \ref{ch:analysis:max-divisors} explores a decomposition method employing maximal divisors.
-A dedicated section (Section \ref{chap:and-vs-or}) compares AND vs OR decomposition.
-The aspect of \enquote{explainability} and explainable edge labels or decompositions for human analysis is thoroughly examined in Section \ref{ch:explainability}.
+Section \ref{ch:analysis} explains the decomposition of \DFAs and unary \DFAs, while Section~\ref{ch:analysis:max-divisors} describes a \LogSpace decomposition algorithm, employing maximal divisors.
+A dedicated Section \ref{chap:and-vs-or} compares AND vs OR decomposition.
+The aspect of \enquote{explainability} and explainable edge labels or decompositions for human analysis is thoroughly examined in Section~\ref{ch:explainability}.
 This includes the introduction of an explainability metric and the methodology for measuring explainability.
 Novel approaches to the problem are presented in Section \ref{ch:novel-algos}, including Greedy Short Factors and Fourier Transform.
 Additionally, a problem generalization is formally analyzed.
-The subsequent sections detail the implementation of these approaches in Section \ref{ch:Implementation} and their evaluation in Section \ref{ch:Evaluation}.
+The subsequent sections detail the implementation of these approaches in Section~\ref{ch:Implementation} and their evaluation in Section~\ref{ch:Evaluation}.
 The evaluation includes both performance and decomposition assessments, with a breakdown of different methods of decomposition.
 Furthermore, the document assesses the explainability of the proposed methods.
-Finally, the document concludes with a discussion (Section~\ref{ch:Discussion}) where the findings are contextualized, and implications are explored.
+Finally, the document concludes with a discussion in Section~\ref{ch:Discussion} where the findings are contextualized, and implications are explored.
 
 
 

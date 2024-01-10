@@ -17,7 +17,7 @@ class ChartGenerator {
         Logger.info("This might take a while...")
         Logger.setLogLevelToDebug()
 
-        Options.getPrecisionSuit().forEach { options ->
+        Options.getDefaultSuit().forEach { options ->
             val decomposer = Decomposer(options)
 
             Logger.setLogLevelToQuiet()
@@ -27,7 +27,7 @@ class ChartGenerator {
             Logger.resetLogLevel()
             Logger.info("This took $elapsed.")
 
-            //generatePlots(evalResult, options)
+            generatePlots(evalResult, options)
             generateMetricTables(evalResult, options)
         }
         Logger.info("Done.")
@@ -70,7 +70,7 @@ class ChartGenerator {
     }
 
     private fun generatePlots(evalResult: List<List<Cover>>, options: Options) {
-        val folder = "./delta-plots/"
+        val folder = "./plots/"
         val boxPlot1 =
             Analyzer.createCoverByFactorPlotNormalized(evalResult.flatten(), createBoxPlot = true, showOutliers = false, xS = "Relative Factor Size", yS = "Relative covered values in cover")
         Visualizer.savePlotToFile("${options.decompositionMode.name}-${options.compositionMode.name}-all-relative-values-by-factor-boxplot.png", boxPlot1, "${folder}box-plots")
